@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>989662773201-0l0lqcpp1a02k788fomif1h5uceoeqee.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.989662773201-0l0lqcpp1a02k788fomif1h5uceoeqee</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDnAv1-8aCgO9YqywaolOZLwJwUiJWY2Do</string>
+	<key>GCM_SENDER_ID</key>
+	<string>989662773201</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.viphometutors.app</string>
+	<key>PROJECT_ID</key>
+	<string>vip-home-tutors</string>
+	<key>STORAGE_BUCKET</key>
+	<string>vip-home-tutors.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:989662773201:ios:728539324107edc1932af0</string>
+</dict>
+</plist>

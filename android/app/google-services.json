@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "989662773201",
+    "project_id": "vip-home-tutors",
+    "storage_bucket": "vip-home-tutors.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989662773201:android:18de2fe5af1739e7932af0",
+        "android_client_info": {
+          "package_name": "com.viphometutors.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "989662773201-uuoulb06j47d33pjh95ik1g26h4qh7s5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWlGTtBFb3ZRm36JtXgQTqDZPBZMyRjjk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "989662773201-uuoulb06j47d33pjh95ik1g26h4qh7s5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
