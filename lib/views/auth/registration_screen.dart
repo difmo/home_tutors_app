@@ -161,7 +161,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             EasyLoading.dismiss();
                             if (user?.uid != null) {
                               if (mounted) {
-                                context.go(AppRoutes.home);
+                                context.go(AppRoutes.teacherProfile);
                               }
                             }
                           });

@@ -23,6 +23,7 @@ class AuthControllers {
     } catch (e) {
       debugPrint(e.toString());
     }
+    return null;
   }
 
   static Future<User?> login(
@@ -42,6 +43,7 @@ class AuthControllers {
     } catch (e) {
       debugPrint(e.toString());
     }
+    return null;
   }
 
   static Future changePassword({required String email}) async {
