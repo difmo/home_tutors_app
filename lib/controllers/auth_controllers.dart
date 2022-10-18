@@ -2,12 +2,35 @@ import 'package:app/controllers/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+import 'profile_controllers.dart';
+
 class AuthControllers {
   static Future<User?> register(
       {required String email, required String password}) async {
     try {
       final credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      Map<String, dynamic> profilData = {
+        'uid': credential.user?.uid,
+        'name': "",
+        'email': credential.user?.email,
+        'isEmailVerified': false,
+        'phone': "",
+        'photoUrl': "",
+        'locality': "",
+        'city': "",
+        'state': "",
+        'preferedClass': "",
+        'preferedSubject': "",
+        'preferedMode': "",
+        'gender': "",
+        'totalExp': "",
+        'qualification': "",
+        'idType': "",
+        'idUrlFront': "",
+        'idUrlBack': ""
+      };
+      await ProfileController.createProfile(profileBody: profilData);
       return credential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

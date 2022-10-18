@@ -6,8 +6,8 @@ class Utils {
     EasyLoading.showToast(text, toastPosition: EasyLoadingToastPosition.bottom);
   }
 
-  static void loading() {
-    EasyLoading.show(maskType: EasyLoadingMaskType.clear);
+  static void loading({String? msg}) {
+    EasyLoading.show(maskType: EasyLoadingMaskType.clear, status: msg);
   }
 }
 
@@ -30,4 +30,45 @@ void formSubmitFunction(
     submitFunction();
   }
   formKey.currentState!.save();
+}
+
+bool checkEmpty(mixedVar) {
+  //print('checkEmpty in 1');
+  if (mixedVar is List || mixedVar is Map) {
+    if (mixedVar.isEmpty) {
+      return true;
+    }
+  } else {
+    //print('checkEmpty in 2');
+    var undef;
+    var undefined;
+    var i;
+    var emptyValues = [
+      undef,
+      null,
+      'null',
+      'Null',
+      'NULL',
+      false,
+      0,
+      '',
+      '0',
+      '0.00',
+      '0.0',
+      'empty',
+      undefined,
+      'undefined'
+    ];
+    var len = emptyValues.length;
+    if (mixedVar is String) {
+      mixedVar = mixedVar.trim();
+    }
+
+    for (i = 0; i < len; i++) {
+      if (mixedVar == emptyValues[i]) {
+        return true;
+      }
+    }
+  }
+  return false;
 }

@@ -2,6 +2,7 @@ import 'package:app/views/auth/login_screen.dart';
 import 'package:app/views/auth/registration_screen.dart';
 import 'package:app/views/home/home_screen.dart';
 import 'package:app/views/profile/teacher_profile_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,7 +13,8 @@ class AppRoutes {
   static const String teacherProfile = '/teacherProfile';
 
   static final GoRouter router = GoRouter(
-    initialLocation: login,
+    initialLocation:
+        FirebaseAuth.instance.currentUser?.uid != null ? home : login,
     routes: <GoRoute>[
       GoRoute(
         path: login,
@@ -29,7 +31,7 @@ class AppRoutes {
       GoRoute(
         path: home,
         builder: (BuildContext context, GoRouterState state) {
-          return const HomeScreen();
+          return HomeScreen();
         },
       ),
       GoRoute(

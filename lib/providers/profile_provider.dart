@@ -7,3 +7,8 @@ final cityListProvider =
   final apiService = ref.read(profileApiProviders);
   return apiService.getCityList(state);
 });
+
+final profileDataProvider = FutureProvider.autoDispose((Ref ref) async {
+  final apiService = ref.read(profileApiProviders);
+  return apiService.fetchProfileData();
+});

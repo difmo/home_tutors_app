@@ -148,7 +148,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             EasyLoading.dismiss();
                             if (user?.uid != null) {
                               if (mounted) {
-                                context.go(AppRoutes.home);
+                                if (checkEmpty(user?.photoURL)) {
+                                  Utils.toast("Complete profile");
+                                  context.go(AppRoutes.teacherProfile);
+                                } else {
+                                  context.go(AppRoutes.home);
+                                }
                               }
                             }
                           });

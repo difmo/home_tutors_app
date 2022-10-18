@@ -1,6 +1,11 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:app/models/city_list_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,44 +36,56 @@ class ProfileController {
     }
   }
 
-  Future updateProfile({
-    required String name,
-    required String phone,
-    required String locality,
-    required String city,
-    required String state,
-    required String preferedClass,
-    required String preferedSubject,
-    required String preferedMode,
-    required String gender,
-    required String totalExp,
-    required String qualification,
-    required String idType,
-    required String idUrlFront,
-    required String idUrlBack,
-    required String photoUrl,
+  static Future createProfile({
+    required Map<String, dynamic> profileBody,
   }) async {
-    User? user = FirebaseAuth.instance.currentUser;
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(profileBody["uid"])
+          .set(profileBody);
+    } catch (e) {
+      rethrow;
+    }
+  }
 
-    FirebaseFirestore.instance.collection('teachers').doc().set({
-      'uid': user?.uid,
-      'name': name,
-      'email': user?.email,
-      'isEmailVerified': user?.emailVerified, // will also be false
-      'phone': phone,
-      'photoUrl': user?.photoURL, // will always be null
-      'locality': locality,
-      'city': city,
-      'state': state,
-      'preferedClass': preferedClass,
-      'preferedSubject': preferedSubject,
-      'preferedMode': preferedMode,
-      'gender': gender,
-      'totalExp': totalExp,
-      'qualification': qualification,
-      'idType': idType,
-      'idUrlFront': idUrlFront,
-      'idUrlBack': idUrlBack
-    });
+  static Future updateProfile({
+    required Map<String, dynamic> profileBody,
+  }) async {
+    try {
+      final CollectionReference users =
+          FirebaseFirestore.instance.collection("users");
+      final String uid = FirebaseAuth.instance.currentUser!.uid;
+      await users.doc(uid).update(profileBody);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future uploadImage(File image) async {
+    String filePath = 'images/${image.path.split("/").last}';
+    try {
+      TaskSnapshot uploadTask =
+          await FirebaseStorage.instance.ref(filePath).putFile(image);
+      String? url = await uploadTask.ref.getDownloadURL();
+      debugPrint("download url : $url");
+      return url;
+    } on FirebaseException catch (e) {
+      log(e.code);
+      // e.g, e.code == 'canceled'
+      rethrow;
+    }
+  }
+
+  Future<Map<dynamic, dynamic>?> fetchProfileData() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    var collection = FirebaseFirestore.instance.collection('users');
+    var docSnapshot = await collection.doc(auth.currentUser!.uid).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      return data;
+    } else {
+      return null;
+    }
   }
 }
