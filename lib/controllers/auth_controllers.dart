@@ -1,3 +1,4 @@
+import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -83,5 +84,17 @@ class AuthControllers {
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  static String manageLogin() {
+    switch (FirebaseAuth.instance.currentUser?.email) {
+      case null:
+        return AppRoutes.onboarding;
+      case "swarup@duck.com":
+        return AppRoutes.adminHome;
+      default:
+        AppRoutes.home;
+    }
+    return AppRoutes.onboarding;
   }
 }

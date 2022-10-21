@@ -40,22 +40,13 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 25.0),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.blue,
-                    ),
-                    padding: const EdgeInsets.all(3),
-                    child: CircleAvatar(
-                      radius: 90.0,
-                      backgroundColor: Colors.white,
-                      child: ClipOval(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Image.asset(
-                            "assets/animations/monkey.gif",
-                          ),
-                        ),
+                  child: Hero(
+                    tag: "logo",
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.asset(
+                        "assets/logo.png",
+                        width: MediaQuery.of(context).size.width * 0.3,
                       ),
                     ),
                   ),
@@ -148,11 +139,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             EasyLoading.dismiss();
                             if (user?.uid != null) {
                               if (mounted) {
-                                if (checkEmpty(user?.photoURL)) {
-                                  Utils.toast("Complete profile");
-                                  context.go(AppRoutes.teacherProfile);
+                                if (user?.email == "swarup@duck.com") {
+                                  context.go(AppRoutes.adminHome);
                                 } else {
-                                  context.go(AppRoutes.home);
+                                  if (checkEmpty(user?.photoURL)) {
+                                    Utils.toast("Complete profile");
+                                    context.go(AppRoutes.teacherProfile);
+                                  } else {
+                                    context.go(AppRoutes.home);
+                                  }
                                 }
                               }
                             }

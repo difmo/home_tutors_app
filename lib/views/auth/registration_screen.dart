@@ -44,22 +44,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 25.0),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.blue,
-                    ),
-                    padding: const EdgeInsets.all(3),
-                    child: CircleAvatar(
-                      radius: 90.0,
-                      backgroundColor: Colors.white,
-                      child: ClipOval(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Image.asset(
-                            "assets/animations/monkey.gif",
-                          ),
-                        ),
+                  child: Hero(
+                    tag: "logo",
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.asset(
+                        "assets/logo.png",
+                        width: MediaQuery.of(context).size.width * 0.3,
                       ),
                     ),
                   ),

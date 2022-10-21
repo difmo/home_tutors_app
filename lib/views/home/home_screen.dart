@@ -67,7 +67,7 @@ class HomeScreen extends HookConsumerWidget {
                       ? const CircleAvatar(
                           radius: 30.0,
                           backgroundImage:
-                              AssetImage('assets/placeholder_user.jpeg'))
+                              AssetImage('assets/images/placeholder_user.jpeg'))
                       : CircleAvatar(
                           radius: 30.0,
                           backgroundImage: NetworkImage(data?["photoUrl"])),

@@ -114,7 +114,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                     : const CircleAvatar(
                                         radius: 40.0,
                                         backgroundImage: AssetImage(
-                                            'assets/placeholder_user.jpeg'))
+                                            'assets/images/placeholder_user.jpeg'))
                                 : CircleAvatar(
                                     radius: 40.0,
                                     backgroundImage: FileImage(profilePicFile!),
