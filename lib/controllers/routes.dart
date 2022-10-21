@@ -60,7 +60,7 @@ class AppRoutes {
       GoRoute(
         path: addNewLead,
         builder: (BuildContext context, GoRouterState state) {
-          return const AddLeadScreen();
+          return AddLeadScreen();
         },
       ),
     ],
