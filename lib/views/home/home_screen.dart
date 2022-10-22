@@ -1,5 +1,6 @@
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
+import 'package:app/views/posts/posts_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -27,22 +28,7 @@ class HomeScreen extends HookConsumerWidget {
       );
     }, data: (data) {
       return Scaffold(
-        body: SafeArea(
-            // ignore: sort_child_properties_last
-            child: ListView.separated(
-                itemCount: 30,
-                separatorBuilder: (context, index) {
-                  return const Divider();
-                },
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Text("${index + 1}."),
-                    title: const Text('History home tutor needed'),
-                    subtitle: const Text(
-                        'Chapman 711-2880 Nulla St. Mankato Mississippi 96522'),
-                    trailing: const Icon(Icons.navigate_next_outlined),
-                  );
-                })),
+        body: const SafeArea(child: PostListScreen()),
         appBar: AppBar(
           title: const Text("Home"),
           centerTitle: false,

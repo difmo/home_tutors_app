@@ -1,21 +1,20 @@
+import 'package:app/views/posts/posts_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/routes.dart';
 
-class AdminHomeScreen extends StatelessWidget {
+class AdminHomeScreen extends HookConsumerWidget {
   const AdminHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: SafeArea(
-          child: Column(
-        children: const [],
-      )),
+      body: const SafeArea(child: PostListScreen()),
       appBar: AppBar(
-        title: const Text('Leads'),
+        title: const Text('Posts'),
         centerTitle: false,
         actions: [
           TextButton.icon(
@@ -27,7 +26,7 @@ class AdminHomeScreen extends StatelessWidget {
                 color: Colors.white,
               ),
               label: const Text(
-                'New lead',
+                'New post',
                 style: TextStyle(color: Colors.white),
               ))
         ],
@@ -82,7 +81,9 @@ class AdminHomeScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.supervised_user_circle_sharp),
               title: const Text('Users'),
-              onTap: () {},
+              onTap: () {
+                context.push(AppRoutes.allUsersList);
+              },
             ),
             ListTile(
               leading: const Icon(Icons.balance),

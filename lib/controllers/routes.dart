@@ -1,6 +1,7 @@
 import 'package:app/controllers/auth_controllers.dart';
-import 'package:app/views/admin/add_lead_screen.dart';
+import 'package:app/views/admin/add_post_screen.dart';
 import 'package:app/views/admin/admin_home_screen.dart';
+import 'package:app/views/admin/users_list.dart';
 import 'package:app/views/auth/login_screen.dart';
 import 'package:app/views/auth/registration_screen.dart';
 import 'package:app/views/home/home_screen.dart';
@@ -17,6 +18,7 @@ class AppRoutes {
   static const String teacherProfile = '/teacher_profile';
   static const String adminHome = '/admin_home';
   static const String addNewLead = '/add_new_lead';
+  static const String allUsersList = '/all_users_list';
 
   static final GoRouter router = GoRouter(
     initialLocation: AuthControllers.manageLogin(),
@@ -61,6 +63,12 @@ class AppRoutes {
         path: addNewLead,
         builder: (BuildContext context, GoRouterState state) {
           return AddLeadScreen();
+        },
+      ),
+      GoRoute(
+        path: allUsersList,
+        builder: (BuildContext context, GoRouterState state) {
+          return const UsersListScreen();
         },
       ),
     ],

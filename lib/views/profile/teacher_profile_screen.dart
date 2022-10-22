@@ -4,6 +4,7 @@ import 'package:app/controllers/profile_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:app/providers/profile_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -582,7 +583,9 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                       'qualification': qualiController.text,
                                       'idType': selectedIdType.value,
                                       'idUrlFront': idFrontPicUrl.value,
-                                      'idUrlBack': idBackPicUrl.value
+                                      'idUrlBack': idBackPicUrl.value,
+                                      'active': true,
+                                      'createdOn': FieldValue.serverTimestamp()
                                     };
                                     await ProfileController.updateProfile(
                                         profileBody: profilData);

@@ -2,6 +2,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:intl/intl.dart';
 
 class Utils {
   static void toast(String text) {
@@ -74,3 +75,5 @@ bool checkEmpty(mixedVar) {
   }
   return false;
 }
+
+DateFormat formatWithMonthName = DateFormat.yMMMd();
