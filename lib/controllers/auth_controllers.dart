@@ -1,5 +1,6 @@
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -29,7 +30,9 @@ class AuthControllers {
         'qualification': "",
         'idType': "",
         'idUrlFront': "",
-        'idUrlBack': ""
+        'idUrlBack': "",
+        'active': true,
+        'createdOn': FieldValue.serverTimestamp()
       };
       await ProfileController.createProfile(profileBody: profilData);
       return credential.user;
@@ -93,8 +96,7 @@ class AuthControllers {
       case "swarup@duck.com":
         return AppRoutes.adminHome;
       default:
-        AppRoutes.home;
+        return AppRoutes.home;
     }
-    return AppRoutes.onboarding;
   }
 }

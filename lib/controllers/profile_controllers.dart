@@ -49,6 +49,19 @@ class ProfileController {
     }
   }
 
+  static Future createTransaction({
+    required Map<String, dynamic> postBody,
+  }) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('transaction')
+          .doc()
+          .set(postBody);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future updateProfile({
     required Map<String, dynamic> profileBody,
   }) async {
@@ -86,6 +99,27 @@ class ProfileController {
       return data;
     } else {
       return null;
+    }
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>?>
+      fetchAllTransactions() async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+
+      var collection = FirebaseFirestore.instance
+          .collection('transaction')
+          .where("uid", isEqualTo: auth.currentUser?.uid);
+      var docSnapshot = await collection.get();
+      if (docSnapshot.docs.isNotEmpty) {
+        List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
+            docSnapshot.docs;
+        return data.reversed.toList();
+      } else {
+        return null;
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

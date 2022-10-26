@@ -12,3 +12,8 @@ final profileDataProvider = FutureProvider.autoDispose((Ref ref) async {
   final apiService = ref.read(profileApiProviders);
   return apiService.fetchProfileData();
 });
+
+final alTransactionsProvider = FutureProvider.autoDispose((Ref ref) async {
+  final apiService = ref.read(profileApiProviders);
+  return apiService.fetchAllTransactions();
+});

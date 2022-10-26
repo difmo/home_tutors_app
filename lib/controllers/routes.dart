@@ -7,6 +7,7 @@ import 'package:app/views/auth/registration_screen.dart';
 import 'package:app/views/home/home_screen.dart';
 import 'package:app/views/onboarding_screen.dart';
 import 'package:app/views/profile/teacher_profile_screen.dart';
+import 'package:app/views/wallet/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,6 +20,7 @@ class AppRoutes {
   static const String adminHome = '/admin_home';
   static const String addNewLead = '/add_new_lead';
   static const String allUsersList = '/all_users_list';
+  static const String walletScreen = '/wallet_screen';
 
   static final GoRouter router = GoRouter(
     initialLocation: AuthControllers.manageLogin(),
@@ -45,6 +47,12 @@ class AppRoutes {
         path: home,
         builder: (BuildContext context, GoRouterState state) {
           return const HomeScreen();
+        },
+      ),
+      GoRoute(
+        path: walletScreen,
+        builder: (BuildContext context, GoRouterState state) {
+          return WalletScreen();
         },
       ),
       GoRoute(
