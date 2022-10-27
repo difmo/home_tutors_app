@@ -1,19 +1,20 @@
+import 'package:app/controllers/admin/admin_controllers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/utils.dart';
-import '../../providers/admin_providers.dart';
 
 class PostListScreen extends HookConsumerWidget {
   const PostListScreen({super.key});
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final allPosts = ref.watch(allPostsDataProvider);
-
-    return Scaffold(
-      body: allPosts.when(data: (data) {
-        return ListView.separated(
+  Widget postListWidget(BuildContext context,
+      List<QueryDocumentSnapshot<Map<String, dynamic>>>? data) {
+    return checkEmpty(data)
+        ? const Center(
+            child: Text("No post available"),
+          )
+        : ListView.separated(
             separatorBuilder: (context, index) {
               return const Divider();
             },
@@ -29,23 +30,35 @@ class PostListScreen extends HookConsumerWidget {
                 title: Text(item?["title"] ?? "Title"),
                 subtitle: Text(
                     formatWithMonthName.format(item!["createdOn"].toDate())),
-                trailing:
-                    const Icon(Icons.keyboard_double_arrow_right_outlined),
+                trailing: Text(
+                  "0/${item["max_hits"]}",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.blue.shade900),
+                ),
               );
             });
-      }, error: (error, stackTrace) {
-        return Center(
-          child: Text(error.toString()),
-        );
-      }, loading: () {
-        return const Center(child: CircularProgressIndicator());
-      }),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.refresh),
-        onPressed: () {
-          ref.refresh(allPostsDataProvider);
-        },
-      ),
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: StreamBuilder(
+          stream: AdminControllers.fetchAllPosts(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                return const Center(child: Text('No data'));
+              case ConnectionState.waiting:
+                return const Center(child: Text('Awaiting...'));
+              case ConnectionState.active:
+                return postListWidget(context, snapshot.data?.docs);
+
+              case ConnectionState.done:
+                return postListWidget(context, snapshot.data?.docs);
+            }
+          }),
     );
   }
 }

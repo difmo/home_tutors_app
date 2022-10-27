@@ -12,7 +12,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/statics.dart';
-import '../../providers/admin_providers.dart';
 
 class AddLeadScreen extends HookConsumerWidget {
   AddLeadScreen({super.key});
@@ -403,7 +402,6 @@ class AddLeadScreen extends HookConsumerWidget {
                                       await AdminControllers.createLeads(
                                           postBody: postBody);
                                       EasyLoading.dismiss();
-                                      ref.refresh(allPostsDataProvider);
                                       Future.delayed(Duration.zero)
                                           .then((value) {
                                         context.go(AppRoutes.adminHome);

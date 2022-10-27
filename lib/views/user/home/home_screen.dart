@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../providers/profile_provider.dart';
+import '../../../providers/profile_provider.dart';
 
 class HomeScreen extends HookConsumerWidget {
   const HomeScreen({super.key});

@@ -6,18 +6,11 @@ final adminApiProviders = Provider<AdminControllers>((ref) {
 });
 
 class AdminControllers {
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>?>
-      fetchAllPosts() async {
+ static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllPosts() {
     try {
-      var collection = FirebaseFirestore.instance.collection('posts');
-      var docSnapshot = await collection.get();
-      if (docSnapshot.docs.isNotEmpty) {
-        List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
-            docSnapshot.docs;
-        return data.reversed.toList();
-      } else {
-        return null;
-      }
+      var collection =
+          FirebaseFirestore.instance.collection('posts').snapshots();
+      return collection;
     } catch (e) {
       rethrow;
     }

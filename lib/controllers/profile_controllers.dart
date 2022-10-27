@@ -103,13 +103,15 @@ class ProfileController {
   }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>?>
-      fetchAllTransactions() async {
+      fetchAllTransactions(bool isAdmin) async {
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
 
-      var collection = FirebaseFirestore.instance
-          .collection('transaction')
-          .where("uid", isEqualTo: auth.currentUser?.uid);
+      var collection = isAdmin
+          ? FirebaseFirestore.instance.collection('transaction')
+          : FirebaseFirestore.instance
+              .collection('transaction')
+              .where("uid", isEqualTo: auth.currentUser?.uid);
       var docSnapshot = await collection.get();
       if (docSnapshot.docs.isNotEmpty) {
         List<QueryDocumentSnapshot<Map<String, dynamic>>> data =

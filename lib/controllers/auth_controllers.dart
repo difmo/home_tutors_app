@@ -32,6 +32,7 @@ class AuthControllers {
         'idUrlFront': "",
         'idUrlBack': "",
         'active': true,
+        'wallet_balance': 0,
         'createdOn': FieldValue.serverTimestamp()
       };
       await ProfileController.createProfile(profileBody: profilData);

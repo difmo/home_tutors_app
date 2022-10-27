@@ -77,3 +77,4 @@ bool checkEmpty(mixedVar) {
 }
 
 DateFormat formatWithMonthName = DateFormat.yMMMd();
+DateFormat formatWithMonthNameTime = DateFormat.yMMMd().add_jm();

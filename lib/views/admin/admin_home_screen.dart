@@ -88,7 +88,9 @@ class AdminHomeScreen extends HookConsumerWidget {
             ListTile(
               leading: const Icon(Icons.balance),
               title: const Text('Transaction'),
-              onTap: () {},
+              onTap: () {
+                context.push(AppRoutes.allTransactions);
+              },
             ),
             ListTile(
               leading: const Icon(Icons.logout),

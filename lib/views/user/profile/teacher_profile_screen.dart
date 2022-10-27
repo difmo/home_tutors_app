@@ -4,7 +4,6 @@ import 'package:app/controllers/profile_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:app/providers/profile_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../controllers/statics.dart';
+import '../../../controllers/statics.dart';
 
 // ignore: must_be_immutable
 class TeacherProfileScreen extends HookConsumerWidget {
@@ -566,10 +565,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                         ?.updatePhotoURL(profilePicUrl.value);
                                     await user?.reload();
                                     Map<String, dynamic> profilData = {
-                                      'uid': user?.uid,
                                       'name': nameController.text,
-                                      'email': user?.email,
-                                      'isEmailVerified': user?.emailVerified,
                                       'phone': numberController.text.trim(),
                                       'photoUrl': profilePicUrl.value,
                                       'locality': localityController.text,
@@ -584,8 +580,6 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                       'idType': selectedIdType.value,
                                       'idUrlFront': idFrontPicUrl.value,
                                       'idUrlBack': idBackPicUrl.value,
-                                      'active': true,
-                                      'createdOn': FieldValue.serverTimestamp()
                                     };
                                     await ProfileController.updateProfile(
                                         profileBody: profilData);

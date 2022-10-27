@@ -1,13 +1,14 @@
 import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/views/admin/add_post_screen.dart';
 import 'package:app/views/admin/admin_home_screen.dart';
+import 'package:app/views/admin/all_transactions_screen.dart';
 import 'package:app/views/admin/users_list.dart';
 import 'package:app/views/auth/login_screen.dart';
 import 'package:app/views/auth/registration_screen.dart';
-import 'package:app/views/home/home_screen.dart';
+import 'package:app/views/user/home/home_screen.dart';
 import 'package:app/views/onboarding_screen.dart';
-import 'package:app/views/profile/teacher_profile_screen.dart';
-import 'package:app/views/wallet/wallet_screen.dart';
+import 'package:app/views/user/profile/teacher_profile_screen.dart';
+import 'package:app/views/user/wallet/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -21,6 +22,7 @@ class AppRoutes {
   static const String addNewLead = '/add_new_lead';
   static const String allUsersList = '/all_users_list';
   static const String walletScreen = '/wallet_screen';
+  static const String allTransactions = '/all_transactions';
 
   static final GoRouter router = GoRouter(
     initialLocation: AuthControllers.manageLogin(),
@@ -77,6 +79,12 @@ class AppRoutes {
         path: allUsersList,
         builder: (BuildContext context, GoRouterState state) {
           return const UsersListScreen();
+        },
+      ),
+      GoRoute(
+        path: allTransactions,
+        builder: (BuildContext context, GoRouterState state) {
+          return const AllTransactionsScreen();
         },
       ),
     ],

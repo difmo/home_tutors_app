@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:app/controllers/profile_controllers.dart';
-import 'package:app/controllers/utils.dart';
 import 'package:app/views/constants.dart';
+import 'package:app/views/user/wallet/transactions_list_screen.dart';
 import 'package:app/views/widgets/error_widget_screen.dart';
 import 'package:app/views/widgets/loading_widget_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,7 +13,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-import '../../providers/profile_provider.dart';
+import '../../../providers/profile_provider.dart';
 
 // ignore: must_be_immutable
 class WalletScreen extends HookConsumerWidget {
@@ -31,7 +31,7 @@ class WalletScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileProvider = ref.watch(profileDataProvider);
-    final transactionsProvider = ref.watch(alTransactionsProvider);
+    final transactionsProvider = ref.watch(alTransactionsProvider(false));
 
     final handlePaymentSuccess =
         useCallback((PaymentSuccessResponse response) async {
@@ -46,9 +46,9 @@ class WalletScreen extends HookConsumerWidget {
         "previous_balance": walletBalance,
         "email": auth.currentUser?.email,
         "status": true,
-        "order_id": response.orderId,
-        "payment_id": response.paymentId,
-        "payment_signature": response.signature,
+        "order_id": response.orderId ?? "",
+        "payment_id": response.paymentId ?? "",
+        "payment_signature": response.signature ?? "",
         'createdOn': FieldValue.serverTimestamp()
       };
       await ProfileController.createTransaction(postBody: postData);
@@ -56,9 +56,9 @@ class WalletScreen extends HookConsumerWidget {
       await ProfileController.updateProfile(
           profileBody: {"wallet_balance": (walletBalance + selectedAmount)});
       EasyLoading.dismiss();
-      EasyLoading.showError("${response.orderId} Payment successfull");
+      EasyLoading.showSuccess("Payment successfull");
       ref.refresh(profileDataProvider);
-      ref.refresh(alTransactionsProvider);
+      ref.refresh(alTransactionsProvider(false));
     }, []);
     //error
     final handlePaymentError =
@@ -82,7 +82,7 @@ class WalletScreen extends HookConsumerWidget {
       EasyLoading.dismiss();
       EasyLoading.showError(response.message ?? "Something went wrong");
 
-      ref.refresh(alTransactionsProvider);
+      ref.refresh(alTransactionsProvider(false));
       log("payment error ${response.message}");
     }, []);
     // wallet
@@ -147,21 +147,21 @@ class WalletScreen extends HookConsumerWidget {
                             ),
                             child: Column(
                               children: [
+                                Text("₹${item.amount} for"),
+                                const SizedBox(height: 5.0),
                                 Text(
-                                  "₹${item.amount}",
+                                  "${item.coins} Coins",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16.0),
+                                      fontSize: 14.0),
                                 ),
-                                const SizedBox(height: 5.0),
-                                Text("${item.coins} Coins"),
                               ],
                             ),
                           ),
                         ))
                     .toList(),
               ),
-              const SizedBox(height: 50.0),
+              const SizedBox(height: 25.0),
               const Text(
                 "Transactions :",
                 style: pageSubTitleStyle,
@@ -188,24 +188,7 @@ class WalletScreen extends HookConsumerWidget {
               transactionsProvider.when(
                 data: (listData) {
                   return Expanded(
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: listData?.length,
-                        itemBuilder: (context, index) {
-                          var item = listData?[index];
-                          return ListTile(
-                            leading: Text((index + 1).toString()),
-                            title: Text("₹ ${item?["amount"]}"),
-                            trailing: item?["status"]
-                                ? const Icon(Icons.check_circle_rounded,
-                                    color: Colors.green)
-                                : const Icon(Icons.error_outlined,
-                                    color: Colors.red),
-                            subtitle: Text(formatWithMonthName.format(
-                                item?["createdOn"].toDate() ?? DateTime.now())),
-                          );
-                        }),
-                  );
+                      child: TransactionsListScreen(data: listData));
                 },
                 error: (error, stackTrace) {
                   return const Center(
