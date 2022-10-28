@@ -1,6 +1,8 @@
 import 'package:app/controllers/admin/admin_controllers.dart';
+import 'package:app/controllers/routes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/utils.dart';
@@ -22,7 +24,9 @@ class PostListScreen extends HookConsumerWidget {
             itemBuilder: (context, index) {
               var item = data?[index];
               return ListTile(
-                onTap: () {},
+                onTap: () {
+                  context.push(AppRoutes.postDetails, extra: item);
+                },
                 leading: Text(
                   "${index + 1}.",
                   style: const TextStyle(fontWeight: FontWeight.bold),

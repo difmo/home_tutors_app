@@ -29,7 +29,9 @@ class UserDrawerWidget extends StatelessWidget {
                       backgroundImage: NetworkImage(profileData?["photoUrl"])),
               const SizedBox(height: 10.0),
               Text(
-                profileData?["name"].isEmpty ? 'User Name' : profileData?["name"],
+                profileData?["name"].isEmpty
+                    ? 'User Name'
+                    : profileData?["name"],
                 style: TextStyle(
                   fontSize: 20.0,
                   color: Colors.blue.shade900,
@@ -56,7 +58,9 @@ class UserDrawerWidget extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.wallet),
             title: const Text("Wallet & History"),
-            onTap: () async {},
+            onTap: () {
+              context.push(AppRoutes.walletScreen);
+            },
           ),
           ListTile(
             leading: const Icon(Icons.email),

@@ -21,6 +21,7 @@ class AddLeadScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final titleController = useTextEditingController();
     final descController = useTextEditingController();
+    final feeController = useTextEditingController();
 
     final localityController = useTextEditingController();
     final qualiController = useTextEditingController();
@@ -78,6 +79,22 @@ class AddLeadScreen extends HookConsumerWidget {
                           decoration: const InputDecoration(
                             hintText: "More detials",
                             label: Text('Description'),
+                          ),
+                        ),
+                        TextFormField(
+                          validator: (value) {
+                            if (value!.length < 2) {
+                              return "enter a valid fee";
+                            } else {
+                              return null;
+                            }
+                          },
+                          controller: feeController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          decoration: const InputDecoration(
+                            hintText: "Fee in INR",
+                            label: Text('Fee per hour'),
                           ),
                         ),
                         const SizedBox(height: 30.0),
@@ -384,11 +401,13 @@ class AddLeadScreen extends HookConsumerWidget {
                                       Map<String, dynamic> postBody = {
                                         "title": titleController.text,
                                         "desc": descController.text,
+                                        "fee": feeController.text,
                                         "class": selectedClass.value,
                                         "mode": selectedMode.value,
                                         "subject": selectedSubject.value,
                                         "locality": localityController.text,
                                         "state": selectedState.value,
+                                        "city": selectedCity.value,
                                         "req_exp": selectedExp.value,
                                         "qualify": qualiController.text,
                                         "gender": selectedGender.value,

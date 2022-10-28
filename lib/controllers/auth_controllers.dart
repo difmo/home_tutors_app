@@ -1,4 +1,5 @@
 import 'package:app/controllers/routes.dart';
+import 'package:app/controllers/statics.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -94,10 +95,18 @@ class AuthControllers {
     switch (FirebaseAuth.instance.currentUser?.email) {
       case null:
         return AppRoutes.onboarding;
-      case "swarup@duck.com":
+      case adminEmail:
         return AppRoutes.adminHome;
       default:
         return AppRoutes.home;
+    }
+  }
+
+  static bool isAdmin() {
+    if (FirebaseAuth.instance.currentUser?.email == adminEmail) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

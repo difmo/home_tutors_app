@@ -1,3 +1,5 @@
+const String adminEmail = "swarup@duck.com";
+
 const List<String> stateList = [
   "Andaman and Nicobar Islands",
   "Andhra Pradesh",
