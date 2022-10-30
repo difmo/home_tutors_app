@@ -48,28 +48,39 @@ class ProfileController {
       rethrow;
     }
   }
-
-  static Future createTransaction({
-    required Map<String, dynamic> postBody,
-  }) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('transaction')
-          .doc()
-          .set(postBody);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   static Future updateProfile({
     required Map<String, dynamic> profileBody,
   }) async {
     try {
       final CollectionReference users =
-          FirebaseFirestore.instance.collection("users");
+      FirebaseFirestore.instance.collection("users");
       final String uid = FirebaseAuth.instance.currentUser!.uid;
       await users.doc(uid).update(profileBody);
+    } catch (e) {
+      rethrow;
+    }
+  }
+  static Future<String?> createTransaction({
+    required Map<String, dynamic> postBody,
+  }) async {
+    try {
+      DocumentReference docRef =  await FirebaseFirestore.instance
+          .collection('transaction')
+          .add(postBody);
+      return docRef.id;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future updateTransaction({
+    required String docId,
+    required Map<String, dynamic> postBody,
+  }) async {
+    try {
+      final CollectionReference users =
+      FirebaseFirestore.instance.collection("transaction");
+      await users.doc(docId).update(postBody);
     } catch (e) {
       rethrow;
     }

@@ -27,6 +27,7 @@ class WalletScreen extends HookConsumerWidget {
   final Razorpay _razorpay = Razorpay();
   int walletBalance = 0;
   int selectedAmount = 0;
+  String? paymentDocId = "";
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,52 +36,43 @@ class WalletScreen extends HookConsumerWidget {
 
     final handlePaymentSuccess =
         useCallback((PaymentSuccessResponse response) async {
+          if(paymentDocId!= null){
       EasyLoading.show(
           status: "Please wait", maskType: EasyLoadingMaskType.clear);
 
-      // create transaction
-      FirebaseAuth auth = FirebaseAuth.instance;
+      // update transaction
       Map<String, dynamic> postData = {
-        "uid": auth.currentUser?.uid,
-        "amount": selectedAmount,
-        "previous_balance": walletBalance,
-        "email": auth.currentUser?.email,
         "status": true,
         "order_id": response.orderId ?? "",
         "payment_id": response.paymentId ?? "",
         "payment_signature": response.signature ?? "",
-        'createdOn': FieldValue.serverTimestamp()
+        "message": "success"
       };
-      await ProfileController.createTransaction(postBody: postData);
+
+      await ProfileController.updateTransaction(postBody: postData, docId: paymentDocId!);
       // update wallet
       await ProfileController.updateProfile(
           profileBody: {"wallet_balance": (walletBalance + selectedAmount)});
       EasyLoading.dismiss();
-      EasyLoading.showSuccess("Payment successfull");
+      EasyLoading.showSuccess("Payment successful");
       ref.refresh(profileDataProvider);
-      ref.refresh(alTransactionsProvider(false));
+      ref.refresh(alTransactionsProvider(false));}
     }, []);
     //error
     final handlePaymentError =
         useCallback((PaymentFailureResponse response) async {
-      EasyLoading.show(
-          status: "Please wait", maskType: EasyLoadingMaskType.clear);
+          if(paymentDocId!= null){
+            EasyLoading.show(
+                status: "Please wait", maskType: EasyLoadingMaskType.clear);
 
-      FirebaseAuth auth = FirebaseAuth.instance;
-      Map<String, dynamic> postData = {
-        "uid": auth.currentUser?.uid,
-        "amount": selectedAmount,
-        "previous_balance": walletBalance,
-        "email": auth.currentUser?.email,
-        "status": false,
-        "order_id": "",
-        "payment_id": "",
-        "payment_signature": "",
-        'createdOn': FieldValue.serverTimestamp()
-      };
-      await ProfileController.createTransaction(postBody: postData);
-      EasyLoading.dismiss();
-      EasyLoading.showError(response.message ?? "Something went wrong");
+            // update transaction
+            Map<String, dynamic> postData = {
+              "message":response.message ?? "success"
+            };
+            await ProfileController.updateTransaction(postBody: postData, docId: paymentDocId!);
+            EasyLoading.dismiss();
+            EasyLoading.showError(response.message ?? "Something went wrong");
+            ref.refresh(alTransactionsProvider(false));}
 
       ref.refresh(alTransactionsProvider(false));
       log("payment error ${response.message}");
@@ -118,8 +110,29 @@ class WalletScreen extends HookConsumerWidget {
               Wrap(
                 children: _walletRechargeOptionsList
                     .map((item) => InkWell(
-                          onTap: () {
+                          onTap: () async {
                             selectedAmount = item.amount;
+                            FirebaseAuth auth = FirebaseAuth.instance;
+                            Map<String, dynamic> postData = {
+                              "uid": auth.currentUser?.uid,
+                              "amount": selectedAmount,
+                              "previous_balance": walletBalance,
+                              "email": auth.currentUser?.email,
+                              "status": false,
+                              "order_id": "",
+                              "payment_id": "",
+                              "payment_signature": "",
+                              "message": "",
+                              'createdOn': FieldValue.serverTimestamp()
+                            };
+                            EasyLoading.show(
+                                status: "Please wait",
+                                maskType: EasyLoadingMaskType.clear);
+
+                            paymentDocId =   await ProfileController.createTransaction(
+                                postBody: postData);
+                            EasyLoading.dismiss();
+
                             var options = {
                               'key': 'rzp_test_8d1I1Tu9gRbJcH',
                               'amount': item.amount * 100,

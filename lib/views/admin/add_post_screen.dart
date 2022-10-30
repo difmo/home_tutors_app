@@ -27,6 +27,9 @@ class AddLeadScreen extends HookConsumerWidget {
     final qualiController = useTextEditingController();
     final maxHitsController = useTextEditingController();
     final coinReqController = useTextEditingController();
+    final nameController = useTextEditingController();
+    final emailController = useTextEditingController();
+    final phoneController = useTextEditingController();
 
     final selectedState = useState("");
     final selectedCity = useState("");
@@ -388,6 +391,57 @@ class AddLeadScreen extends HookConsumerWidget {
                             label: Text('Required coins'),
                           ),
                         ),
+                        const SizedBox(height: 30.0),
+                        Text(
+                          'Contact details:',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.blue.shade900,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                        TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Enter valid name";
+                            } else {
+                              return null;
+                            }
+                          },
+                          maxLength: 50,
+                          controller: nameController,
+                          keyboardType: TextInputType.name,
+                          decoration: const InputDecoration(
+                            hintText: "Full name",
+                            label: Text('Name'),
+                          ),
+                        ),
+                        TextFormField(
+                          validator: (value) {
+                            if (value!.length != 10) {
+                              return "Enter 10 digit valid phone number";
+                            } else {
+                              return null;
+                            }
+                          },
+                          controller: phoneController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 10,
+                          decoration: const InputDecoration(
+                            hintText: "10 digit number",
+                            label: Text('Contact number'),
+                          ),
+                        ),
+                        TextFormField(
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          maxLength: 50,
+                          decoration: const InputDecoration(
+                            hintText: "contact@mail.com",
+                            label: Text('Email address'),
+                          ),
+                        ),
                         const SizedBox(height: 50.0),
                         Align(
                           alignment: Alignment.centerRight,
@@ -416,7 +470,10 @@ class AddLeadScreen extends HookConsumerWidget {
                                         "req_coins":
                                             coinReqController.text.trim(),
                                         'createdOn':
-                                            FieldValue.serverTimestamp()
+                                            FieldValue.serverTimestamp(),
+                                        "name": nameController.text,
+                                        "phone": phoneController.text,
+                                        "email": emailController.text
                                       };
                                       await AdminControllers.createLeads(
                                           postBody: postBody);
