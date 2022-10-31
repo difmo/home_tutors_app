@@ -473,7 +473,8 @@ class AddLeadScreen extends HookConsumerWidget {
                                             FieldValue.serverTimestamp(),
                                         "name": nameController.text,
                                         "phone": phoneController.text,
-                                        "email": emailController.text
+                                        "email": emailController.text,
+                                        'uid': FieldValue.arrayUnion([""]),
                                       };
                                       await AdminControllers.createLeads(
                                           postBody: postBody);

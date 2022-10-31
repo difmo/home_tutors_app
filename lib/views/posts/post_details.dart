@@ -1,15 +1,35 @@
+import 'package:app/controllers/admin/admin_controllers.dart';
 import 'package:app/controllers/auth_controllers.dart';
+import 'package:app/controllers/profile_controllers.dart';
+import 'package:app/controllers/user_controllers.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:app/views/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class PostDetailsScreen extends StatelessWidget {
+class PostDetailsScreen extends HookConsumerWidget {
   final QueryDocumentSnapshot<Map<String, dynamic>>? postData;
   const PostDetailsScreen({super.key, required this.postData});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ifPurchased = useState(false);
+
+    useEffect(
+      () {
+        for (var i = 0; i < postData?["uid"].length; i++) {
+          if (postData?["uid"][i] == UserControllers.uid) {
+            ifPurchased.value = true;
+          }
+        }
+        return () {};
+      },
+      [],
+    );
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -54,6 +74,17 @@ class PostDetailsScreen extends StatelessWidget {
               _DetailsTile(
                   icon: Icons.school,
                   title: "Prefered Qualification: ${postData?["qualify"]}"),
+              if (ifPurchased.value) ...[
+                _DetailsTile(
+                    icon: Icons.person,
+                    title: "Contact name: ${postData?["name"]}"),
+                _DetailsTile(
+                    icon: Icons.phone,
+                    title: "Contact number: ${postData?["phone"]}"),
+                _DetailsTile(
+                    icon: Icons.email,
+                    title: "Contact email: ${postData?["email"]}"),
+              ]
             ],
           ),
         ),
@@ -65,7 +96,7 @@ class PostDetailsScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(right: 15.0),
               child: Text(
-                "0/${postData?["max_hits"]}",
+                "${(postData?["uid"].length) - 1}/${postData?["max_hits"]}",
                 style: const TextStyle(
                     fontWeight: FontWeight.bold, fontSize: 20.0),
               ),
@@ -74,11 +105,43 @@ class PostDetailsScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: AuthControllers.isAdmin()
-          ? null
-          : FloatingActionButton(
+          ? FloatingActionButton(
               backgroundColor: Colors.green,
-              child: const Text("Grab"),
-              onPressed: () {}),
+              child: const Icon(Icons.delete),
+              onPressed: () async {
+                Utils.loading();
+                await AdminControllers.deleteLead(postId: postData!.id);
+                EasyLoading.dismiss();
+                Future.delayed(Duration.zero).then((value) {
+                  context.pop();
+                });
+              })
+          : ifPurchased.value
+              ? null
+              : (postData?["uid"].length - 1) >=
+                      int.parse(postData?["max_hits"])
+                  ? null
+                  : FloatingActionButton(
+                      backgroundColor: Colors.green,
+                      child: const Text("Grab"),
+                      onPressed: () async {
+                        if ((postData?["uid"].length - 1) <
+                            int.parse(postData?["max_hits"])) {
+                          Utils.loading();
+                          var profileData =
+                              await ProfileController().fetchProfileData();
+                          if (profileData?["wallet_balance"] >=
+                              int.parse(postData?["req_coins"])) {
+                            UserControllers.addUidIntoPost(
+                                postId: postData!.id);
+                            EasyLoading.dismiss();
+                            ifPurchased.value = true;
+                          } else {
+                            EasyLoading.showError("Please upgrade your wallet");
+                            EasyLoading.dismiss();
+                          }
+                        }
+                      }),
     );
   }
 }

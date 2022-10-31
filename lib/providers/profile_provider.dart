@@ -18,3 +18,5 @@ final alTransactionsProvider =
   final apiService = ref.read(profileApiProviders);
   return apiService.fetchAllTransactions(isAdmin);
 });
+
+final cityNameProvider = StateProvider<String>((ref) => "");

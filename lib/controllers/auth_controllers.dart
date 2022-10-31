@@ -3,6 +3,7 @@ import 'package:app/controllers/statics.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 import 'profile_controllers.dart';
@@ -13,6 +14,8 @@ class AuthControllers {
     try {
       final credential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
+      String? token = await FirebaseMessaging.instance.getToken();
+
       Map<String, dynamic> profilData = {
         'uid': credential.user?.uid,
         'name': "",
@@ -34,7 +37,8 @@ class AuthControllers {
         'idUrlBack': "",
         'active': true,
         'wallet_balance': 0,
-        'createdOn': FieldValue.serverTimestamp()
+        'createdOn': FieldValue.serverTimestamp(),
+        "fcm_token": token
       };
       await ProfileController.createProfile(profileBody: profilData);
       return credential.user;
@@ -60,6 +64,9 @@ class AuthControllers {
     try {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      String? token = await FirebaseMessaging.instance.getToken();
+      var updateUser = await ProfileController.updateProfile(
+          profileBody: {"fcm_token": token});
       return credential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

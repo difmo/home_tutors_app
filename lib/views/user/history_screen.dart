@@ -1,17 +1,13 @@
-import 'package:app/controllers/admin/admin_controllers.dart';
-import 'package:app/controllers/auth_controllers.dart';
-import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
-import 'package:app/providers/profile_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../controllers/routes.dart';
 import '../../controllers/utils.dart';
 
-class PostListScreen extends HookConsumerWidget {
-  const PostListScreen({super.key});
+class HistoryScreen extends StatelessWidget {
+  const HistoryScreen({super.key});
 
   Widget postListWidget(BuildContext context,
       List<QueryDocumentSnapshot<Map<String, dynamic>>>? data) {
@@ -38,7 +34,7 @@ class PostListScreen extends HookConsumerWidget {
                 subtitle: Text(
                     formatWithMonthName.format(item!["createdOn"].toDate())),
                 trailing: Text(
-                  "${(item["uid"].length) - 1}/${item["max_hits"]}",
+                  "0/${item["max_hits"]}",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.blue.shade900),
                 ),
@@ -47,13 +43,10 @@ class PostListScreen extends HookConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cityName = ref.watch(cityNameProvider);
+  Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
-          stream: AuthControllers.isAdmin()
-              ? AdminControllers.fetchAllPosts()
-              : UserControllers.fetchAllPosts(cityName),
+          stream: UserControllers.fetchPurchasedPost(),
           builder: (context, snapshot) {
             if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 

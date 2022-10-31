@@ -6,7 +6,7 @@ final adminApiProviders = Provider<AdminControllers>((ref) {
 });
 
 class AdminControllers {
- static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllPosts() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllPosts() {
     try {
       var collection =
           FirebaseFirestore.instance.collection('posts').snapshots();
@@ -38,6 +38,16 @@ class AdminControllers {
   }) async {
     try {
       await FirebaseFirestore.instance.collection('posts').doc().set(postBody);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future deleteLead({
+    required String postId,
+  }) async {
+    try {
+      await FirebaseFirestore.instance.collection('posts').doc(postId).delete();
     } catch (e) {
       rethrow;
     }

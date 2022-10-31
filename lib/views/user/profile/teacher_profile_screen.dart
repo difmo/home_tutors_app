@@ -31,6 +31,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final reBuild = useState(false);
     final firstLoad = useState(false);
+    final cityNameStateProvider = ref.watch(cityNameProvider.state);
 
     final nameController = useTextEditingController();
     final numberController = useTextEditingController();
@@ -585,6 +586,10 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                         profileBody: profilData);
                                     ref.refresh(profileDataProvider);
                                     EasyLoading.dismiss();
+                                    if (data?["city"] != selectedCity.value) {
+                                      cityNameStateProvider.state =
+                                          selectedCity.value;
+                                    }
                                     Future.delayed(Duration.zero).then((value) {
                                       context.go(AppRoutes.home);
                                     });
