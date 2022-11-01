@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserControllers {
-  static String? uid = FirebaseAuth.instance.currentUser?.uid;
+  static User? currentUser = FirebaseAuth.instance.currentUser;
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllPosts(
       String cityName) {
@@ -26,7 +26,7 @@ class UserControllers {
   }) async {
     try {
       await FirebaseFirestore.instance.collection('posts').doc(postId).update({
-        'uid': FieldValue.arrayUnion([uid]),
+        'users': FieldValue.arrayUnion([currentUser!.email]),
       });
     } catch (e) {
       rethrow;
@@ -37,7 +37,7 @@ class UserControllers {
     try {
       var collection = FirebaseFirestore.instance
           .collection('posts')
-          .where("uid", arrayContains: uid)
+          .where("users", arrayContains: currentUser!.email)
           .snapshots();
 
       return collection;

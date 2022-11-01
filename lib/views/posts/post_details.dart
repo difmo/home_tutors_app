@@ -11,6 +11,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../providers/profile_provider.dart';
+
 class PostDetailsScreen extends HookConsumerWidget {
   final QueryDocumentSnapshot<Map<String, dynamic>>? postData;
   const PostDetailsScreen({super.key, required this.postData});
@@ -21,9 +23,11 @@ class PostDetailsScreen extends HookConsumerWidget {
 
     useEffect(
       () {
-        for (var i = 0; i < postData?["uid"].length; i++) {
-          if (postData?["uid"][i] == UserControllers.uid) {
-            ifPurchased.value = true;
+        for (var i = 0; i < postData?["users"].length; i++) {
+          if (postData?["users"][i] != {}) {
+            if (postData?["users"][i] == UserControllers.currentUser!.email) {
+              ifPurchased.value = true;
+            }
           }
         }
         return () {};
@@ -38,9 +42,6 @@ class PostDetailsScreen extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(postData?["title"], style: pagetitleStyle),
-              const SizedBox(height: 15.0),
-              Text(postData?["desc"]),
               const SizedBox(height: 15.0),
               Align(
                   alignment: Alignment.centerRight,
@@ -49,60 +50,88 @@ class PostDetailsScreen extends HookConsumerWidget {
                           .format(postData?["createdOn"].toDate()),
                       style:
                           const TextStyle(color: Colors.grey, fontSize: 12.0))),
-              _DetailsTile(
+              DetailsTileWidget(
+                  icon: Icons.edit_note_sharp,
+                  title: "Class: ${postData?["class"]}"),
+              DetailsTileWidget(icon: Icons.book, title: postData?["subject"]),
+
+              DetailsTileWidget(
                   icon: Icons.location_on,
                   title: postData?["city"] + " - " + postData?["state"],
                   subTitle: postData?["locality"]),
-              _DetailsTile(
-                  icon: Icons.wallet,
-                  title: "Coins needed: ${postData?["req_coins"]}"),
-              _DetailsTile(icon: Icons.book, title: postData?["subject"]),
-              _DetailsTile(
-                  icon: Icons.edit_note_sharp,
-                  title: "Class: ${postData?["class"]}"),
-              _DetailsTile(
+
+              DetailsTileWidget(
                   icon: Icons.monetization_on,
                   title: "Fee: ₹${postData?["fee"]} per hour"),
-              _DetailsTile(
-                  icon: Icons.female, title: "Gender: ${postData?["gender"]}"),
-              _DetailsTile(
+              DetailsTileWidget(
                   icon: Icons.switch_video_outlined,
                   title: "Mode: ${postData?["mode"]}"),
-              _DetailsTile(
-                  icon: Icons.work,
-                  title: "Prefered Experience: ${postData?["req_exp"]} years"),
-              _DetailsTile(
-                  icon: Icons.school,
-                  title: "Prefered Qualification: ${postData?["qualify"]}"),
+              DetailsTileWidget(
+                  icon:
+                      postData?["gender"] == "Male" ? Icons.male : Icons.female,
+                  title: " Tutor Gender: ${postData?["gender"]}"),
+
+              const SizedBox(height: 15.0),
+
+              const Text("Note: ", style: pageSubTitleStyle),
+              const SizedBox(height: 10.0),
+
+              Text(postData?["desc"]),
+              const SizedBox(height: 15.0),
+
+              // DetailsTileWidget(
+              //     icon: Icons.work,
+              //     title: "Prefered Experience: ${postData?["req_exp"]} years"),
+              // DetailsTileWidget(
+              //     icon: Icons.school,
+              //     title: "Prefered Qualification: ${postData?["qualify"]}"),
+
               if (ifPurchased.value) ...[
-                _DetailsTile(
+                DetailsTileWidget(
                     icon: Icons.person,
                     title: "Contact name: ${postData?["name"]}"),
-                _DetailsTile(
+                DetailsTileWidget(
                     icon: Icons.phone,
                     title: "Contact number: ${postData?["phone"]}"),
-                _DetailsTile(
+                DetailsTileWidget(
                     icon: Icons.email,
                     title: "Contact email: ${postData?["email"]}"),
+              ] else ...[
+                DetailsTileWidget(
+                    icon: Icons.wallet,
+                    title: "Coins needed: ${postData?["req_coins"]}"),
+                DetailsTileWidget(
+                    icon: Icons.people,
+                    title:
+                        "${(postData?["users"].length) - 1} out of ${postData?["max_hits"]} Responded"),
+              ],
+              if (AuthControllers.isAdmin()) ...[
+                const SizedBox(height: 25.0),
+                const Text("Collected users", style: pagetitleStyle),
+                ListView.builder(
+                    primary: false,
+                    shrinkWrap: true,
+                    itemCount: postData?["users"].length,
+                    itemBuilder: (context, index) {
+                      return postData?["users"][index].isEmpty
+                          ? const SizedBox.shrink()
+                          : ListTile(
+                              onTap: () {},
+                              leading: Text(index.toString()),
+                              title: Text(postData?["users"][index]),
+                            );
+                    }),
+                const SizedBox(height: 50.0),
               ]
             ],
           ),
         ),
       )),
       appBar: AppBar(
-        title: Text(postData?["title"]),
-        actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 15.0),
-              child: Text(
-                "${(postData?["uid"].length) - 1}/${postData?["max_hits"]}",
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontSize: 20.0),
-              ),
-            ),
-          ),
-        ],
+        title: Text(
+          "Lead No: ${postData?["id"]}",
+          style: pagetitleStyle,
+        ),
       ),
       floatingActionButton: AuthControllers.isAdmin()
           ? FloatingActionButton(
@@ -118,14 +147,12 @@ class PostDetailsScreen extends HookConsumerWidget {
               })
           : ifPurchased.value
               ? null
-              : (postData?["uid"].length - 1) >=
+              : (postData?["users"].length - 1) >=
                       int.parse(postData?["max_hits"])
                   ? null
-                  : FloatingActionButton(
-                      backgroundColor: Colors.green,
-                      child: const Text("Grab"),
-                      onPressed: () async {
-                        if ((postData?["uid"].length - 1) <
+                  : InkWell(
+                      onTap: () async {
+                        if ((postData?["users"].length - 1) <
                             int.parse(postData?["max_hits"])) {
                           Utils.loading();
                           var profileData =
@@ -135,23 +162,43 @@ class PostDetailsScreen extends HookConsumerWidget {
                             UserControllers.addUidIntoPost(
                                 postId: postData!.id);
                             EasyLoading.dismiss();
+                            ProfileController.updateProfile(profileBody: {
+                              "wallet_balance":
+                                  (profileData?["wallet_balance"] -
+                                      int.parse(postData?["req_coins"]))
+                            });
+                            ref.refresh(profileDataProvider);
                             ifPurchased.value = true;
                           } else {
                             EasyLoading.showError("Please upgrade your wallet");
                             EasyLoading.dismiss();
                           }
                         }
-                      }),
+                      },
+                      child: Container(
+                          padding: const EdgeInsets.all(10.0),
+                          decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Text(
+                            "Grab Lead",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0),
+                          )),
+                    ),
     );
   }
 }
 
-class _DetailsTile extends StatelessWidget {
+class DetailsTileWidget extends StatelessWidget {
   final IconData icon;
   final String? title;
   final String? subTitle;
 
-  const _DetailsTile({required this.icon, required this.title, this.subTitle});
+  const DetailsTileWidget(
+      {super.key, required this.icon, required this.title, this.subTitle});
 
   @override
   Widget build(BuildContext context) {

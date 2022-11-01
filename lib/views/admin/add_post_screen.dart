@@ -19,12 +19,12 @@ class AddLeadScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final titleController = useTextEditingController();
+    // final titleController = useTextEditingController();
     final descController = useTextEditingController();
     final feeController = useTextEditingController();
 
     final localityController = useTextEditingController();
-    final qualiController = useTextEditingController();
+    // final qualiController = useTextEditingController();
     final maxHitsController = useTextEditingController();
     final coinReqController = useTextEditingController();
     final nameController = useTextEditingController();
@@ -36,7 +36,7 @@ class AddLeadScreen extends HookConsumerWidget {
     final selectedClass = useState("");
     final selectedSubject = useState("");
 
-    final selectedExp = useState("");
+    // final selectedExp = useState("");
 
     final selectedMode = useState("");
     final selectedGender = useState("");
@@ -51,22 +51,22 @@ class AddLeadScreen extends HookConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextFormField(
-                          validator: (value) {
-                            if (value!.length < 3) {
-                              return "Enter a valid title";
-                            } else {
-                              return null;
-                            }
-                          },
-                          controller: titleController,
-                          keyboardType: TextInputType.name,
-                          maxLength: 50,
-                          decoration: const InputDecoration(
-                            hintText: "Ex: English teacher",
-                            label: Text('Title'),
-                          ),
-                        ),
+                        // TextFormField(
+                        //   validator: (value) {
+                        //     if (value!.length < 3) {
+                        //       return "Enter a valid title";
+                        //     } else {
+                        //       return null;
+                        //     }
+                        //   },
+                        //   controller: titleController,
+                        //   keyboardType: TextInputType.name,
+                        //   maxLength: 50,
+                        //   decoration: const InputDecoration(
+                        //     hintText: "Ex: English teacher",
+                        //     label: Text('Title'),
+                        //   ),
+                        // ),
                         TextFormField(
                           validator: (value) {
                             if (value!.length < 3) {
@@ -282,48 +282,48 @@ class AddLeadScreen extends HookConsumerWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 10.0),
-                        DropdownSearch<String>(
-                          validator: (value) {
-                            if (checkEmpty(value)) {
-                              return "Select total experience ";
-                            } else {
-                              return null;
-                            }
-                          },
-                          selectedItem: selectedExp.value.isEmpty
-                              ? null
-                              : selectedExp.value,
-                          popupProps:
-                              const PopupProps.menu(showSelectedItems: true),
-                          items: List<String>.generate(
-                              30, (i) => (i + 1).toString()),
-                          dropdownDecoratorProps: const DropDownDecoratorProps(
-                            dropdownSearchDecoration: InputDecoration(
-                              labelText: "Total Experience",
-                              hintText: "10 years or any other",
-                            ),
-                          ),
-                          onChanged: (value) {
-                            selectedExp.value = value!;
-                          },
-                        ),
-                        TextFormField(
-                          validator: (value) {
-                            if (value!.length < 2) {
-                              return "Enter valid Qualification";
-                            } else {
-                              return null;
-                            }
-                          },
-                          controller: qualiController,
-                          keyboardType: TextInputType.text,
-                          maxLength: 50,
-                          decoration: const InputDecoration(
-                            hintText: "B.A/ M-TECH",
-                            label: Text('Qualification'),
-                          ),
-                        ),
+                        // const SizedBox(height: 10.0),
+                        // DropdownSearch<String>(
+                        //   validator: (value) {
+                        //     if (checkEmpty(value)) {
+                        //       return "Select total experience ";
+                        //     } else {
+                        //       return null;
+                        //     }
+                        //   },
+                        //   selectedItem: selectedExp.value.isEmpty
+                        //       ? null
+                        //       : selectedExp.value,
+                        //   popupProps:
+                        //       const PopupProps.menu(showSelectedItems: true),
+                        //   items: List<String>.generate(
+                        //       30, (i) => (i + 1).toString()),
+                        //   dropdownDecoratorProps: const DropDownDecoratorProps(
+                        //     dropdownSearchDecoration: InputDecoration(
+                        //       labelText: "Total Experience",
+                        //       hintText: "10 years or any other",
+                        //     ),
+                        //   ),
+                        //   onChanged: (value) {
+                        //     selectedExp.value = value!;
+                        //   },
+                        // ),
+                        // TextFormField(
+                        //   validator: (value) {
+                        //     if (value!.length < 2) {
+                        //       return "Enter valid Qualification";
+                        //     } else {
+                        //       return null;
+                        //     }
+                        //   },
+                        //   controller: qualiController,
+                        //   keyboardType: TextInputType.text,
+                        //   maxLength: 50,
+                        //   decoration: const InputDecoration(
+                        //     hintText: "B.A/ M-TECH",
+                        //     label: Text('Qualification'),
+                        //   ),
+                        // ),
                         const SizedBox(height: 30.0),
                         Text(
                           'Other preferences:',
@@ -347,7 +347,7 @@ class AddLeadScreen extends HookConsumerWidget {
                               : selectedGender.value,
                           popupProps:
                               const PopupProps.menu(showSelectedItems: true),
-                          items: const ["Male", "Female", "Others"],
+                          items: const ["Male", "Female", "Any"],
                           dropdownDecoratorProps: const DropDownDecoratorProps(
                             dropdownSearchDecoration: InputDecoration(
                               labelText: "Gender preference",
@@ -453,7 +453,7 @@ class AddLeadScreen extends HookConsumerWidget {
                                       Utils.loading(
                                           msg: "Creating new lead...");
                                       Map<String, dynamic> postBody = {
-                                        "title": titleController.text,
+                                        // "title": titleController.text,
                                         "desc": descController.text,
                                         "fee": feeController.text,
                                         "class": selectedClass.value,
@@ -462,8 +462,8 @@ class AddLeadScreen extends HookConsumerWidget {
                                         "locality": localityController.text,
                                         "state": selectedState.value,
                                         "city": selectedCity.value,
-                                        "req_exp": selectedExp.value,
-                                        "qualify": qualiController.text,
+                                        // "req_exp": selectedExp.value,
+                                        // "qualify": qualiController.text,
                                         "gender": selectedGender.value,
                                         "max_hits":
                                             maxHitsController.text.trim(),

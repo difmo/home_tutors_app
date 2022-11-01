@@ -48,23 +48,24 @@ class ProfileController {
       rethrow;
     }
   }
-  static Future updateProfile({
-    required Map<String, dynamic> profileBody,
-  }) async {
+
+  static Future updateProfile(
+      {required Map<String, dynamic> profileBody, String? uidFromAdmin}) async {
     try {
       final CollectionReference users =
-      FirebaseFirestore.instance.collection("users");
+          FirebaseFirestore.instance.collection("users");
       final String uid = FirebaseAuth.instance.currentUser!.uid;
-      await users.doc(uid).update(profileBody);
+      await users.doc(uidFromAdmin ?? uid).update(profileBody);
     } catch (e) {
       rethrow;
     }
   }
+
   static Future<String?> createTransaction({
     required Map<String, dynamic> postBody,
   }) async {
     try {
-      DocumentReference docRef =  await FirebaseFirestore.instance
+      DocumentReference docRef = await FirebaseFirestore.instance
           .collection('transaction')
           .add(postBody);
       return docRef.id;
@@ -79,7 +80,7 @@ class ProfileController {
   }) async {
     try {
       final CollectionReference users =
-      FirebaseFirestore.instance.collection("transaction");
+          FirebaseFirestore.instance.collection("transaction");
       await users.doc(docId).update(postBody);
     } catch (e) {
       rethrow;

@@ -1,4 +1,6 @@
+import 'package:app/controllers/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/utils.dart';
@@ -21,7 +23,9 @@ class UsersListScreen extends HookConsumerWidget {
             itemBuilder: (context, index) {
               var item = data?[index];
               return ListTile(
-                onTap: () {},
+                onTap: () {
+                  context.push(AppRoutes.userDetails, extra: item);
+                },
                 leading: Text(
                   "${index + 1}.",
                   style: const TextStyle(fontWeight: FontWeight.bold),
@@ -29,7 +33,11 @@ class UsersListScreen extends HookConsumerWidget {
                 title: Text(item?["name"] ?? "Name"),
                 subtitle: Text(formatWithMonthName
                     .format(item?["createdOn"].toDate() ?? DateTime.now())),
-                trailing: const Icon(Icons.verified, color: Colors.blue),
+                trailing: item?["status"] == 1
+                    ? const Icon(Icons.verified, color: Colors.blue)
+                    : item?["status"] == 0
+                        ? const Icon(Icons.access_time, color: Colors.grey)
+                        : const Icon(Icons.close, color: Colors.red),
               );
             });
       }, error: (error, stackTrace) {

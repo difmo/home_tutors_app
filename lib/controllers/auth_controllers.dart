@@ -1,3 +1,4 @@
+import 'package:app/controllers/admin/admin_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/statics.dart';
 import 'package:app/controllers/utils.dart';
@@ -20,7 +21,7 @@ class AuthControllers {
         'uid': credential.user?.uid,
         'name': "",
         'email': credential.user?.email,
-        'isEmailVerified': false,
+        'status': 0,
         'phone': "",
         'photoUrl': "",
         'locality': "",
@@ -35,12 +36,16 @@ class AuthControllers {
         'idType': "",
         'idUrlFront': "",
         'idUrlBack': "",
-        'active': true,
         'wallet_balance': 0,
         'createdOn': FieldValue.serverTimestamp(),
         "fcm_token": token
       };
       await ProfileController.createProfile(profileBody: profilData);
+      String? adminToken = await AdminControllers.getAdminToken();
+      await AdminControllers.sendNotification(
+          deviceToken: adminToken,
+          title: "New registration",
+          body: "check new registrations");
       return credential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -65,8 +70,7 @@ class AuthControllers {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       String? token = await FirebaseMessaging.instance.getToken();
-      var updateUser = await ProfileController.updateProfile(
-          profileBody: {"fcm_token": token});
+      await ProfileController.updateProfile(profileBody: {"fcm_token": token});
       return credential.user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -105,7 +109,12 @@ class AuthControllers {
       case adminEmail:
         return AppRoutes.adminHome;
       default:
-        return AppRoutes.home;
+        switch (FirebaseAuth.instance.currentUser?.emailVerified) {
+          case true:
+            return AppRoutes.home;
+          default:
+            return AppRoutes.emailVerification;
+        }
     }
   }
 

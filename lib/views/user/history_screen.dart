@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../controllers/routes.dart';
 import '../../controllers/utils.dart';
+import '../constants.dart';
 
 class HistoryScreen extends StatelessWidget {
   const HistoryScreen({super.key});
@@ -30,14 +31,20 @@ class HistoryScreen extends StatelessWidget {
                   "${index + 1}.",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                title: Text(item?["title"] ?? "Title"),
+                title: Row(
+                  children: [
+                    const Text(
+                      "Lead No: ",
+                      style: pageSubTitleStyle,
+                    ),
+                    Text(
+                      "${item?["id"]}",
+                      style: pageSubTitleStyle.copyWith(color: Colors.red),
+                    ),
+                  ],
+                ),
                 subtitle: Text(
                     formatWithMonthName.format(item!["createdOn"].toDate())),
-                trailing: Text(
-                  "0/${item["max_hits"]}",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.blue.shade900),
-                ),
               );
             });
   }

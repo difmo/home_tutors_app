@@ -34,11 +34,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(17.0),
-        child: Form(
-          key: _formKey,
           child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(17.0),
+          child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -151,13 +151,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 password: passwordController.text.trim());
                             EasyLoading.dismiss();
                             if (user?.uid != null) {
+                              user!.sendEmailVerification();
                               if (mounted) {
-                                context.go(AppRoutes.teacherProfile);
+                                context.go(AppRoutes.emailVerification);
                               }
                             }
                           });
                     },
-                    child: const Text('Proceed'))
+                    child: const Text('Proceed')),
               ],
             ),
           ),

@@ -30,11 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(17.0),
-        child: Form(
-          key: _formKey,
           child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(17.0),
+          child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -142,11 +142,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 if (user?.email == "swarup@duck.com") {
                                   context.go(AppRoutes.adminHome);
                                 } else {
-                                  if (checkEmpty(user?.photoURL)) {
-                                    Utils.toast("Complete profile");
-                                    context.go(AppRoutes.teacherProfile);
+                                  if (!user!.emailVerified) {
+                                    user.sendEmailVerification();
+                                    context.go(AppRoutes.emailVerification);
                                   } else {
-                                    context.go(AppRoutes.home);
+                                    if (checkEmpty(user.photoURL)) {
+                                      Utils.toast("Complete profile");
+                                      context.go(AppRoutes.teacherProfile);
+                                    } else {
+                                      context.go(AppRoutes.home);
+                                    }
                                   }
                                 }
                               }

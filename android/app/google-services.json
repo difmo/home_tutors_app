@@ -29,6 +29,13 @@
             {
               "client_id": "989662773201-uuoulb06j47d33pjh95ik1g26h4qh7s5.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "989662773201-0l0lqcpp1a02k788fomif1h5uceoeqee.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.viphometutors.app"
+              }
             }
           ]
         }

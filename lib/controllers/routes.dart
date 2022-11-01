@@ -2,7 +2,9 @@ import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/views/admin/add_post_screen.dart';
 import 'package:app/views/admin/admin_home_screen.dart';
 import 'package:app/views/admin/all_transactions_screen.dart';
+import 'package:app/views/admin/user_details_screen.dart';
 import 'package:app/views/admin/users_list.dart';
+import 'package:app/views/auth/email_verification_screen.dart';
 import 'package:app/views/auth/login_screen.dart';
 import 'package:app/views/auth/registration_screen.dart';
 import 'package:app/views/user/home/home_screen.dart';
@@ -18,6 +20,9 @@ class AppRoutes {
   static const String onboarding = '/';
   static const String login = '/login';
   static const String register = '/register';
+  static const String emailVerification = '/email_verification';
+  static const String userDetails = '/user_details';
+
   static const String home = '/home';
   static const String teacherProfile = '/teacher_profile';
   static const String adminHome = '/admin_home';
@@ -46,6 +51,20 @@ class AppRoutes {
         path: register,
         builder: (BuildContext context, GoRouterState state) {
           return const RegistrationScreen();
+        },
+      ),
+      GoRoute(
+        path: emailVerification,
+        builder: (BuildContext context, GoRouterState state) {
+          return const EmailVerificationScreen();
+        },
+      ),
+      GoRoute(
+        path: userDetails,
+        builder: (BuildContext context, GoRouterState state) {
+          return UserDetailsScreen(
+            item: state.extra as QueryDocumentSnapshot<Map<String, dynamic>>?,
+          );
         },
       ),
       GoRoute(

@@ -19,10 +19,9 @@ import '../../../providers/profile_provider.dart';
 class WalletScreen extends HookConsumerWidget {
   WalletScreen({super.key});
   final List<WalletRechargeOptionsModel> _walletRechargeOptionsList = [
-    WalletRechargeOptionsModel(coins: 10, amount: 1),
     WalletRechargeOptionsModel(coins: 250, amount: 500),
     WalletRechargeOptionsModel(coins: 500, amount: 1000),
-    // WalletRechargeOptionsModel(coins: 1500, amount: 3000),
+    WalletRechargeOptionsModel(coins: 1500, amount: 3000),
   ];
   final Razorpay _razorpay = Razorpay();
   int walletBalance = 0;
@@ -36,43 +35,47 @@ class WalletScreen extends HookConsumerWidget {
 
     final handlePaymentSuccess =
         useCallback((PaymentSuccessResponse response) async {
-          if(paymentDocId!= null){
-      EasyLoading.show(
-          status: "Please wait", maskType: EasyLoadingMaskType.clear);
+      if (paymentDocId != null) {
+        EasyLoading.show(
+            status: "Please wait", maskType: EasyLoadingMaskType.clear);
 
-      // update transaction
-      Map<String, dynamic> postData = {
-        "status": true,
-        "order_id": response.orderId ?? "",
-        "payment_id": response.paymentId ?? "",
-        "payment_signature": response.signature ?? "",
-        "message": "success"
-      };
+        // update transaction
+        Map<String, dynamic> postData = {
+          "status": true,
+          "order_id": response.orderId ?? "",
+          "payment_id": response.paymentId ?? "",
+          "payment_signature": response.signature ?? "",
+          "message": "success"
+        };
 
-      await ProfileController.updateTransaction(postBody: postData, docId: paymentDocId!);
-      // update wallet
-      await ProfileController.updateProfile(
-          profileBody: {"wallet_balance": (walletBalance + selectedAmount)});
-      EasyLoading.dismiss();
-      EasyLoading.showSuccess("Payment successful");
-      ref.refresh(profileDataProvider);
-      ref.refresh(alTransactionsProvider(false));}
+        await ProfileController.updateTransaction(
+            postBody: postData, docId: paymentDocId!);
+        // update wallet
+        await ProfileController.updateProfile(
+            profileBody: {"wallet_balance": (walletBalance + selectedAmount)});
+        EasyLoading.dismiss();
+        EasyLoading.showSuccess("Payment successful");
+        ref.refresh(profileDataProvider);
+        ref.refresh(alTransactionsProvider(false));
+      }
     }, []);
     //error
     final handlePaymentError =
         useCallback((PaymentFailureResponse response) async {
-          if(paymentDocId!= null){
-            EasyLoading.show(
-                status: "Please wait", maskType: EasyLoadingMaskType.clear);
+      if (paymentDocId != null) {
+        EasyLoading.show(
+            status: "Please wait", maskType: EasyLoadingMaskType.clear);
 
-            // update transaction
-            Map<String, dynamic> postData = {
-              "message":response.message ?? "success"
-            };
-            await ProfileController.updateTransaction(postBody: postData, docId: paymentDocId!);
-            EasyLoading.dismiss();
-            EasyLoading.showError(response.message ?? "Something went wrong");
-            ref.refresh(alTransactionsProvider(false));}
+        // update transaction
+        Map<String, dynamic> postData = {
+          "message": response.message ?? "success"
+        };
+        await ProfileController.updateTransaction(
+            postBody: postData, docId: paymentDocId!);
+        EasyLoading.dismiss();
+        EasyLoading.showError(response.message ?? "Something went wrong");
+        ref.refresh(alTransactionsProvider(false));
+      }
 
       ref.refresh(alTransactionsProvider(false));
       log("payment error ${response.message}");
@@ -129,8 +132,9 @@ class WalletScreen extends HookConsumerWidget {
                                 status: "Please wait",
                                 maskType: EasyLoadingMaskType.clear);
 
-                            paymentDocId =   await ProfileController.createTransaction(
-                                postBody: postData);
+                            paymentDocId =
+                                await ProfileController.createTransaction(
+                                    postBody: postData);
                             EasyLoading.dismiss();
 
                             var options = {
