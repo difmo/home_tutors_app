@@ -57,30 +57,3 @@ const List<String> preferredClassList = [
   "xi",
   "xii",
 ];
-
-const List<String> subjectList = [
-  "English",
-  "Hindi",
-  "Math",
-  "Chemistry",
-  "Physics",
-  "Biology",
-  "Geography",
-  "History",
-  "Education",
-  "General Knowledge",
-  "Political Science",
-  "Computer",
-  "ACCOUNTANCY",
-  "ECONOMICS",
-  "BUSINESS STUDIES",
-  "Sociology",
-  "Philosophy",
-  "Psychology",
-  "Regional Language",
-  "Geology",
-  "Electronics",
-  "Nursing",
-  "Biotechnology",
-  "Microbiology"
-];

@@ -119,21 +119,31 @@ class PostDetailsScreen extends HookConsumerWidget {
               //     icon: Icons.school,
               //     title: "Prefered Qualification: ${postData?["qualify"]}"),
 
-              if (ifPurchased.value) ...[
+              if (ifPurchased.value || AuthControllers.isAdmin()) ...[
                 DetailsColorTileWidget(
                   icon: Icons.person,
                   title: "Contact name: ",
                   value: "${postData?["name"]}",
                 ),
-                DetailsColorTileWidget(
-                  icon: Icons.phone,
-                  title: "Contact number: ",
-                  value: "${postData?["phone"]}",
+                InkWell(
+                  onTap: () {
+                    openUrl("tel:${postData?["phone"]}");
+                  },
+                  child: DetailsColorTileWidget(
+                    icon: Icons.phone,
+                    title: "Contact number: ",
+                    value: "${postData?["phone"]}",
+                  ),
                 ),
-                DetailsColorTileWidget(
-                  icon: Icons.email,
-                  title: "Contact email: ",
-                  value: "${postData?["email"]}",
+                InkWell(
+                  onTap: () {
+                    openUrl("mailto:${postData?["email"]}");
+                  },
+                  child: DetailsColorTileWidget(
+                    icon: Icons.email,
+                    title: "Contact email: ",
+                    value: "${postData?["email"]}",
+                  ),
                 ),
               ] else ...[
                 DetailsColorTileWidget(

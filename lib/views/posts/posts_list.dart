@@ -32,7 +32,6 @@ class PostListScreen extends HookConsumerWidget {
                         context.push(AppRoutes.postDetails, extra: item);
                       },
                       child: Container(
-                        height: 200,
                         padding: const EdgeInsets.all(10),
                         margin: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 15.0),
@@ -127,7 +126,7 @@ class PostListScreen extends HookConsumerWidget {
                               children: [
                                 Text(formatWithMonthName
                                     .format(item["createdOn"].toDate())),
-                                const SizedBox(height: 25.0),
+                                const SizedBox(height: 65.0),
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(

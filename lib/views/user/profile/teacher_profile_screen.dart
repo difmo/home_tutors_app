@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:app/controllers/profile_controllers.dart';
@@ -10,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,6 +39,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
 
     final localityController = useTextEditingController();
     final qualiController = useTextEditingController();
+    final classController = useTextEditingController();
 
     final profilePicUrl = useState("");
     final idFrontPicUrl = useState("");
@@ -46,8 +47,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
 
     final selectedState = useState("");
     final selectedCity = useState("");
-    final selectedClass = useState("");
-    final selectedSubject = useState("");
+    final subjectController = useTextEditingController();
 
     final selectedExp = useState("");
     final selectedIdType = useState("");
@@ -80,8 +80,8 @@ class TeacherProfileScreen extends HookConsumerWidget {
             selectedGender.value = data["gender"];
             selectedState.value = data["state"];
             selectedCity.value = data["city"];
-            selectedClass.value = data["preferedClass"];
-            selectedSubject.value = data["preferedSubject"];
+            classController.text = data["preferedClass"];
+            subjectController.text = data["preferedSubject"];
             selectedExp.value = data["totalExp"];
             selectedIdType.value = data["idType"];
             selectedMode.value = data["preferedMode"];
@@ -286,29 +286,20 @@ class TeacherProfileScreen extends HookConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 10.0),
-                    DropdownSearch<String>(
+                    TextFormField(
                       validator: (value) {
-                        if (checkEmpty(value)) {
-                          return "Choose prefered class";
+                        if (value!.length < 2) {
+                          return "enter valid class";
                         } else {
                           return null;
                         }
                       },
-                      selectedItem: selectedClass.value.isEmpty
-                          ? null
-                          : selectedClass.value,
-                      popupProps:
-                          const PopupProps.menu(showSelectedItems: true),
-                      items: preferredClassList,
-                      dropdownDecoratorProps: const DropDownDecoratorProps(
-                        dropdownSearchDecoration: InputDecoration(
-                          labelText: "Prefered class",
-                          hintText: "Ex: xi/xii",
-                        ),
+                      controller: classController,
+                      maxLength: 70,
+                      decoration: const InputDecoration(
+                        hintText: "Separate by comma ','",
+                        label: Text('Class'),
                       ),
-                      onChanged: (value) {
-                        selectedClass.value = value!;
-                      },
                     ),
                     const SizedBox(height: 10.0),
                     DropdownSearch<String>(
@@ -324,11 +315,11 @@ class TeacherProfileScreen extends HookConsumerWidget {
                           : selectedMode.value,
                       popupProps:
                           const PopupProps.menu(showSelectedItems: true),
-                      items: const ["Online", "Offline", "Any"],
+                      items: const ["Online", "Offline", "Both"],
                       dropdownDecoratorProps: const DropDownDecoratorProps(
                         dropdownSearchDecoration: InputDecoration(
                           labelText: "Prefered Mode",
-                          hintText: "Online/offline/Any",
+                          hintText: "Online/offline/Both",
                         ),
                       ),
                       onChanged: (value) {
@@ -336,29 +327,21 @@ class TeacherProfileScreen extends HookConsumerWidget {
                       },
                     ),
                     const SizedBox(height: 10.0),
-                    DropdownSearch<String>(
+                    TextFormField(
+                      maxLength: 20,
                       validator: (value) {
-                        if (checkEmpty(value)) {
-                          return "Choose prefered subject";
+                        if (value!.length < 2) {
+                          return "Enter a valid subject";
                         } else {
                           return null;
                         }
                       },
-                      selectedItem: selectedSubject.value.isEmpty
-                          ? null
-                          : selectedSubject.value,
-                      popupProps: const PopupProps.menu(
-                          showSelectedItems: true, showSearchBox: true),
-                      items: subjectList,
-                      dropdownDecoratorProps: const DropDownDecoratorProps(
-                        dropdownSearchDecoration: InputDecoration(
-                          labelText: "Prefered Subject",
-                          hintText: "Arts/Science/Commerce",
-                        ),
+                      controller: subjectController,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                        hintText: "Provide subject",
+                        label: Text('Subject'),
                       ),
-                      onChanged: (value) {
-                        selectedSubject.value = value!;
-                      },
                     ),
                     const SizedBox(height: 30.0),
                     Text(
@@ -533,15 +516,21 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                 submitFunction: () async {
                                   if (checkEmpty(profilePicUrl.value) &&
                                       profilePicFile == null) {
-                                    Utils.toast("Provide profile picture");
+                                    Fluttertoast.showToast(
+                                        msg: "Provide profile picture",
+                                        backgroundColor: Colors.red);
                                     return;
                                   } else if (checkEmpty(idFrontPicUrl.value) &&
                                       idFront == null) {
-                                    Utils.toast("Provide ID front page");
+                                    Fluttertoast.showToast(
+                                        msg: "Provide ID front page",
+                                        backgroundColor: Colors.red);
                                     return;
                                   } else if (checkEmpty(idBackPicUrl.value) &&
                                       idBack == null) {
-                                    Utils.toast("Provide ID back page");
+                                    Fluttertoast.showToast(
+                                        msg: "Provide ID back page",
+                                        backgroundColor: Colors.red);
                                     return;
                                   } else {
                                     Utils.loading(
@@ -577,8 +566,8 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                       'locality': localityController.text,
                                       'city': selectedCity.value,
                                       'state': selectedState.value,
-                                      'preferedClass': selectedClass.value,
-                                      'preferedSubject': selectedSubject.value,
+                                      'preferedClass': classController.text,
+                                      'preferedSubject': subjectController.text,
                                       'preferedMode': selectedMode.value,
                                       'gender': selectedGender.value,
                                       'totalExp': selectedExp.value,

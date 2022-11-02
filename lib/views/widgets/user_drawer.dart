@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../controllers/routes.dart';
+import '../../controllers/utils.dart';
 
 class UserDrawerWidget extends StatelessWidget {
   final Map<dynamic, dynamic>? profileData;
@@ -62,8 +63,10 @@ class UserDrawerWidget extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.email),
-            title: const Text("Contact support"),
-            onTap: () {},
+            title: const Text("Report mail"),
+            onTap: () {
+              openUrl("mailto:$adminContactMail");
+            },
           ),
           ListTile(
             leading: const Icon(Icons.file_copy),

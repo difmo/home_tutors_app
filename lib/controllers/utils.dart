@@ -3,6 +3,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Utils {
   static void toast(String text) {
@@ -78,3 +79,11 @@ bool checkEmpty(mixedVar) {
 
 DateFormat formatWithMonthName = DateFormat.yMMMd();
 DateFormat formatWithMonthNameTime = DateFormat.yMMMd().add_jm();
+
+Future<void> openUrl(String url) async {
+  if (!await launchUrl(Uri.parse(url))) {
+    throw 'Could not launch $url';
+  }
+}
+
+const String adminContactMail = "tlr@viptutors.in";

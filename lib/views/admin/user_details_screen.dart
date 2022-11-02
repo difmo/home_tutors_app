@@ -71,13 +71,23 @@ class UserDetailsScreen extends HookConsumerWidget {
                   icon: item?["gender"] == "Male" ? Icons.male : Icons.female,
                   title: item?["gender"],
                 ),
-                DetailsTileWidget(
-                  icon: Icons.email,
-                  title: item?["email"],
+                InkWell(
+                  onTap: () {
+                    openUrl("mailto:${item?["email"]}");
+                  },
+                  child: DetailsTileWidget(
+                    icon: Icons.email,
+                    title: item?["email"],
+                  ),
                 ),
-                DetailsTileWidget(
-                  icon: Icons.phone,
-                  title: item?["phone"],
+                InkWell(
+                  onTap: () {
+                    openUrl("tel:${item?["phone"]}");
+                  },
+                  child: DetailsTileWidget(
+                    icon: Icons.phone,
+                    title: item?["phone"],
+                  ),
                 ),
                 DetailsTileWidget(
                   icon: Icons.location_city,

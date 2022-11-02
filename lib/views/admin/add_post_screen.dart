@@ -26,16 +26,16 @@ class AddLeadScreen extends HookConsumerWidget {
 
     final localityController = useTextEditingController();
     // final qualiController = useTextEditingController();
+    final subjectController = useTextEditingController();
+
     final maxHitsController = useTextEditingController();
     final coinReqController = useTextEditingController();
     final nameController = useTextEditingController();
-    final emailController = useTextEditingController();
     final phoneController = useTextEditingController();
     final classController = useTextEditingController();
 
     final selectedState = useState("");
     final selectedCity = useState("");
-    final selectedSubject = useState("");
 
     // final selectedExp = useState("");
 
@@ -111,6 +111,7 @@ class AddLeadScreen extends HookConsumerWidget {
                           ),
                         ),
                         TextFormField(
+                          maxLength: 20,
                           validator: (value) {
                             if (value!.trim().isEmpty) {
                               return "Enter a valid class";
@@ -139,11 +140,11 @@ class AddLeadScreen extends HookConsumerWidget {
                               : selectedMode.value,
                           popupProps:
                               const PopupProps.menu(showSelectedItems: true),
-                          items: const ["Online", "Offline", "Any"],
+                          items: const ["Online", "Offline", "Both"],
                           dropdownDecoratorProps: const DropDownDecoratorProps(
                             dropdownSearchDecoration: InputDecoration(
                               labelText: "Teaching Mode",
-                              hintText: "Online/offline/Any",
+                              hintText: "Online/Offline/Both",
                             ),
                           ),
                           onChanged: (value) {
@@ -151,30 +152,23 @@ class AddLeadScreen extends HookConsumerWidget {
                           },
                         ),
                         const SizedBox(height: 10.0),
-                        DropdownSearch<String>(
+                        TextFormField(
+                          maxLength: 20,
                           validator: (value) {
-                            if (checkEmpty(value)) {
-                              return "Subject";
+                            if (value!.length < 2) {
+                              return "Enter a valid subject";
                             } else {
                               return null;
                             }
                           },
-                          selectedItem: selectedSubject.value.isEmpty
-                              ? null
-                              : selectedSubject.value,
-                          popupProps: const PopupProps.menu(
-                              showSelectedItems: true, showSearchBox: true),
-                          items: subjectList,
-                          dropdownDecoratorProps: const DropDownDecoratorProps(
-                            dropdownSearchDecoration: InputDecoration(
-                              labelText: "Subject",
-                              hintText: "Arts/Science/Commerce",
-                            ),
+                          controller: subjectController,
+                          keyboardType: TextInputType.text,
+                          decoration: const InputDecoration(
+                            hintText: "Provide subject",
+                            label: Text('Subject'),
                           ),
-                          onChanged: (value) {
-                            selectedSubject.value = value!;
-                          },
                         ),
+
                         const SizedBox(height: 30.0),
                         Text(
                           'Location preferences:',
@@ -341,7 +335,7 @@ class AddLeadScreen extends HookConsumerWidget {
                               : selectedGender.value,
                           popupProps:
                               const PopupProps.menu(showSelectedItems: true),
-                          items: const ["Male", "Female", "Any"],
+                          items: const ["Male", "Female", "Both"],
                           dropdownDecoratorProps: const DropDownDecoratorProps(
                             dropdownSearchDecoration: InputDecoration(
                               labelText: "Gender preference",
@@ -427,15 +421,7 @@ class AddLeadScreen extends HookConsumerWidget {
                             label: Text('Contact number'),
                           ),
                         ),
-                        TextFormField(
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          maxLength: 50,
-                          decoration: const InputDecoration(
-                            hintText: "contact@mail.com",
-                            label: Text('Email address'),
-                          ),
-                        ),
+
                         const SizedBox(height: 50.0),
                         Align(
                           alignment: Alignment.centerRight,
@@ -452,7 +438,7 @@ class AddLeadScreen extends HookConsumerWidget {
                                         "fee": feeController.text,
                                         "class": classController.text,
                                         "mode": selectedMode.value,
-                                        "subject": selectedSubject.value,
+                                        "subject": subjectController.text,
                                         "locality": localityController.text,
                                         "state": selectedState.value,
                                         "city": selectedCity.value,
@@ -467,7 +453,7 @@ class AddLeadScreen extends HookConsumerWidget {
                                             FieldValue.serverTimestamp(),
                                         "name": nameController.text,
                                         "phone": phoneController.text,
-                                        "email": emailController.text,
+                                        "email": adminContactMail,
                                         'users': FieldValue.arrayUnion([""]),
                                         "id": totalPostCount + 1,
                                       };
