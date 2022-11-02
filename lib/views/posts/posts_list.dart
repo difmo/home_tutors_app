@@ -32,6 +32,7 @@ class PostListScreen extends HookConsumerWidget {
                         context.push(AppRoutes.postDetails, extra: item);
                       },
                       child: Container(
+                        height: 200,
                         padding: const EdgeInsets.all(10),
                         margin: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 15.0),
@@ -82,19 +83,26 @@ class PostListScreen extends HookConsumerWidget {
                                       color: Colors.green,
                                     ),
                                     const SizedBox(width: 5.0),
-                                    Text("Subject: ₹${item["subject"]}"),
+                                    Text("Subject: ${item["subject"]}"),
                                   ],
                                 ),
                                 const SizedBox(height: 5.0),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      color: Colors.green,
-                                    ),
-                                    const SizedBox(width: 5.0),
-                                    Text(item["locality"]),
-                                  ],
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.6,
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on,
+                                        color: Colors.green,
+                                      ),
+                                      const SizedBox(width: 5.0),
+                                      Expanded(
+                                        child: Text(
+                                            "Location: ${item["locality"]}, ${item["city"]}"),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 const SizedBox(height: 5.0),
                                 Row(
@@ -145,12 +153,12 @@ class PostListScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cityName = ref.watch(cityNameProvider);
+    final stateName = ref.watch(stateNameProvider);
     return Scaffold(
       body: StreamBuilder(
           stream: AuthControllers.isAdmin()
               ? AdminControllers.fetchAllPosts()
-              : UserControllers.fetchAllPosts(cityName),
+              : UserControllers.fetchAllPosts(stateName),
           builder: (context, snapshot) {
             if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 

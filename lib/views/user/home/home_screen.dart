@@ -31,7 +31,7 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileProvider = ref.watch(profileDataProvider);
-    final cityName = ref.watch(cityNameProvider.state);
+    final stateName = ref.watch(stateNameProvider.state);
     return profileProvider.when(loading: () {
       return const LoadingWidgetScreen();
     }, error: (error, stackTrace) {
@@ -39,7 +39,7 @@ class HomeScreen extends HookConsumerWidget {
     }, data: (data) {
       if (data != null) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          cityName.state = data["city"];
+          stateName.state = data["state"];
         });
       }
 

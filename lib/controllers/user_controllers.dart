@@ -5,14 +5,14 @@ class UserControllers {
   static User? currentUser = FirebaseAuth.instance.currentUser;
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllPosts(
-      String cityName) {
+      String stateName) {
     try {
       var collection = FirebaseFirestore.instance
           .collection('posts')
           .where('createdOn',
               isGreaterThanOrEqualTo: Timestamp.fromDate(
                   DateTime.now().subtract(const Duration(days: 10))))
-          .where("city", isEqualTo: cityName)
+          .where("state", isEqualTo: stateName)
           .snapshots();
 
       return collection;

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:app/controllers/profile_controllers.dart';
@@ -31,7 +32,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final reBuild = useState(false);
     final firstLoad = useState(false);
-    final cityNameStateProvider = ref.watch(cityNameProvider.state);
+    final stateNameStateProvider = ref.watch(stateNameProvider.state);
 
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
@@ -530,13 +531,16 @@ class TeacherProfileScreen extends HookConsumerWidget {
                             formSubmitFunction(
                                 formKey: _formKey,
                                 submitFunction: () async {
-                                  if (checkEmpty(idFrontPicUrl)) {
+                                  if (checkEmpty(profilePicUrl.value) &&
+                                      profilePicFile == null) {
                                     Utils.toast("Provide profile picture");
                                     return;
-                                  } else if (checkEmpty(idFrontPicUrl)) {
+                                  } else if (checkEmpty(idFrontPicUrl.value) &&
+                                      idFront == null) {
                                     Utils.toast("Provide ID front page");
                                     return;
-                                  } else if (checkEmpty(idBackPicUrl)) {
+                                  } else if (checkEmpty(idBackPicUrl.value) &&
+                                      idBack == null) {
                                     Utils.toast("Provide ID back page");
                                     return;
                                   } else {
@@ -587,9 +591,9 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                         profileBody: profilData);
                                     ref.refresh(profileDataProvider);
                                     EasyLoading.dismiss();
-                                    if (data?["city"] != selectedCity.value) {
-                                      cityNameStateProvider.state =
-                                          selectedCity.value;
+                                    if (data?["state"] != selectedState.value) {
+                                      stateNameStateProvider.state =
+                                          selectedState.value;
                                     }
                                     Future.delayed(Duration.zero).then((value) {
                                       context.go(AppRoutes.home);
