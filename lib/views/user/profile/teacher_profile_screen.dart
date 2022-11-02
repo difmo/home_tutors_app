@@ -34,7 +34,8 @@ class TeacherProfileScreen extends HookConsumerWidget {
     final cityNameStateProvider = ref.watch(cityNameProvider.state);
 
     final nameController = useTextEditingController();
-    final numberController = useTextEditingController();
+    final emailController = useTextEditingController();
+
     final localityController = useTextEditingController();
     final qualiController = useTextEditingController();
 
@@ -67,22 +68,22 @@ class TeacherProfileScreen extends HookConsumerWidget {
           );
         },
         data: (data) {
-          if (!firstLoad.value) {
-            nameController.text = data?["name"];
-            profilePicUrl.value = data?["photoUrl"];
-            idFrontPicUrl.value = data?["idUrlFront"];
-            idBackPicUrl.value = data?["idUrlBack"];
-            numberController.text = data?["phone"];
-            localityController.text = data?["locality"];
-            qualiController.text = data?["qualification"];
-            selectedGender.value = data?["gender"];
-            selectedState.value = data?["state"];
-            selectedCity.value = data?["city"];
-            selectedClass.value = data?["preferedClass"];
-            selectedSubject.value = data?["preferedSubject"];
-            selectedExp.value = data?["totalExp"];
-            selectedIdType.value = data?["idType"];
-            selectedMode.value = data?["preferedMode"];
+          if (!firstLoad.value && data != null) {
+            nameController.text = data["name"];
+            profilePicUrl.value = data["photoUrl"];
+            idFrontPicUrl.value = data["idUrlFront"];
+            idBackPicUrl.value = data["idUrlBack"];
+            emailController.text = data["email"];
+            localityController.text = data["locality"];
+            qualiController.text = data["qualification"];
+            selectedGender.value = data["gender"];
+            selectedState.value = data["state"];
+            selectedCity.value = data["city"];
+            selectedClass.value = data["preferedClass"];
+            selectedSubject.value = data["preferedSubject"];
+            selectedExp.value = data["totalExp"];
+            selectedIdType.value = data["idType"];
+            selectedMode.value = data["preferedMode"];
             firstLoad.value = true;
           }
           return SingleChildScrollView(
@@ -180,18 +181,18 @@ class TeacherProfileScreen extends HookConsumerWidget {
                     const SizedBox(height: 10.0),
                     TextFormField(
                       validator: (value) {
-                        if (value!.length < 10) {
-                          return "Enter valid number";
+                        if (!value!.isValidEmail()) {
+                          return "Enter valid email";
                         } else {
                           return null;
                         }
                       },
-                      controller: numberController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 10,
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      maxLength: 50,
                       decoration: const InputDecoration(
-                        hintText: "10 digit mobile number",
-                        label: Text('Phone number'),
+                        hintText: "user@mail.com",
+                        label: Text('Email'),
                       ),
                     ),
                     TextFormField(
@@ -567,7 +568,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                     await user?.reload();
                                     Map<String, dynamic> profilData = {
                                       'name': nameController.text,
-                                      'phone': numberController.text.trim(),
+                                      'email': emailController.text.trim(),
                                       'photoUrl': profilePicUrl.value,
                                       'locality': localityController.text,
                                       'city': selectedCity.value,

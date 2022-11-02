@@ -104,7 +104,7 @@ class AdminControllers {
   static Future<String> getAdminToken() async {
     var adminData = await FirebaseFirestore.instance
         .collection('users')
-        .where('email', isEqualTo: adminEmail)
+        .where('phone', isEqualTo: adminPhone)
         .get();
     return adminData.docs.first["fcm_token"];
   }

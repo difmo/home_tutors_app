@@ -1,10 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../controllers/routes.dart';
-import '../../controllers/utils.dart';
 
 class UserDrawerWidget extends StatelessWidget {
   final Map<dynamic, dynamic>? profileData;
@@ -72,18 +70,18 @@ class UserDrawerWidget extends StatelessWidget {
             title: const Text("Terms & Conditions"),
             onTap: () {},
           ),
-          ListTile(
-            leading: const Icon(Icons.lock),
-            title: const Text("Change password"),
-            onTap: () async {
-              Utils.loading();
-              await FirebaseAuth.instance
-                  .sendPasswordResetEmail(email: profileData?["email"]);
-              EasyLoading.dismiss();
-              EasyLoading.showInfo(
-                  "Password change link has been sent to your email ID");
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.lock),
+          //   title: const Text("Change password"),
+          //   onTap: () async {
+          //     Utils.loading();
+          //     await FirebaseAuth.instance
+          //         .sendPasswordResetEmail(email: profileData?["email"]);
+          //     EasyLoading.dismiss();
+          //     EasyLoading.showInfo(
+          //         "Password change link has been sent to your email ID");
+          //   },
+          // ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text("Logout"),

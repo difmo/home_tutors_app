@@ -26,7 +26,7 @@ class UserControllers {
   }) async {
     try {
       await FirebaseFirestore.instance.collection('posts').doc(postId).update({
-        'users': FieldValue.arrayUnion([currentUser!.email]),
+        'users': FieldValue.arrayUnion([currentUser!.phoneNumber]),
       });
     } catch (e) {
       rethrow;
@@ -37,7 +37,7 @@ class UserControllers {
     try {
       var collection = FirebaseFirestore.instance
           .collection('posts')
-          .where("users", arrayContains: currentUser!.email)
+          .where("users", arrayContains: currentUser!.phoneNumber)
           .snapshots();
 
       return collection;

@@ -104,6 +104,55 @@ class UserDetailsScreen extends HookConsumerWidget {
                     icon: Icons.school,
                     title: "Qualification: ${item?["qualification"]}"),
                 const SizedBox(height: 10.0),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            margin: const EdgeInsets.all(5.0),
+                            height: 100,
+                            child: !checkEmpty(item)
+                                ? Image.network(
+                                    item?["idUrlFront"],
+                                    fit: BoxFit.cover,
+                                  )
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Text('Front side'),
+                                      SizedBox(height: 5.0),
+                                      Icon(Icons.image, size: 50.0),
+                                    ],
+                                  ))),
+                    Expanded(
+                        child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(10.0)),
+                            margin: const EdgeInsets.all(5.0),
+                            height: 100,
+                            child: !checkEmpty(item)
+                                ? Image.network(
+                                    item?["idUrlBack"],
+                                    fit: BoxFit.cover,
+                                  )
+                                : Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Text('Back side'),
+                                      SizedBox(height: 5.0),
+                                      Icon(Icons.image, size: 50.0),
+                                    ],
+                                  ))),
+                  ],
+                ),
+                const SizedBox(height: 10.0),
                 DropdownSearch<ProfileStatusModel>(
                   validator: (value) {
                     if (checkEmpty(value)) {

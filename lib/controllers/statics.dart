@@ -1,4 +1,4 @@
-const String adminEmail = "swarup@duck.com";
+const String adminPhone = "+917865943802";
 
 const List<String> stateList = [
   "Andaman and Nicobar Islands",

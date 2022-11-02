@@ -25,7 +25,8 @@ class PostDetailsScreen extends HookConsumerWidget {
       () {
         for (var i = 0; i < postData?["users"].length; i++) {
           if (postData?["users"][i] != {}) {
-            if (postData?["users"][i] == UserControllers.currentUser!.email) {
+            if (postData?["users"][i] ==
+                UserControllers.currentUser!.phoneNumber) {
               ifPurchased.value = true;
             }
           }
@@ -43,40 +44,72 @@ class PostDetailsScreen extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 15.0),
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                      formatWithMonthNameTime
-                          .format(postData?["createdOn"].toDate()),
-                      style:
-                          const TextStyle(color: Colors.grey, fontSize: 12.0))),
-              DetailsTileWidget(
-                  icon: Icons.edit_note_sharp,
-                  title: "Class: ${postData?["class"]}"),
-              DetailsTileWidget(icon: Icons.book, title: postData?["subject"]),
-
-              DetailsTileWidget(
-                  icon: Icons.location_on,
-                  title: postData?["city"] + " - " + postData?["state"],
-                  subTitle: postData?["locality"]),
-
-              DetailsTileWidget(
-                  icon: Icons.monetization_on,
-                  title: "Fee: ₹${postData?["fee"]} per hour"),
-              DetailsTileWidget(
-                  icon: Icons.switch_video_outlined,
-                  title: "Mode: ${postData?["mode"]}"),
-              DetailsTileWidget(
-                  icon:
-                      postData?["gender"] == "Male" ? Icons.male : Icons.female,
-                  title: " Tutor Gender: ${postData?["gender"]}"),
+              Row(
+                children: [
+                  const Text(
+                    "Lead No: ",
+                    style: pageSubTitleStyle,
+                  ),
+                  Text(
+                    "${postData?["id"]}",
+                    style: pageSubTitleStyle.copyWith(color: Colors.red),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10.0),
+              DetailsColorTileWidget(
+                icon: Icons.class_,
+                title: "Class: ",
+                value: "${postData?["class"]}",
+              ),
+              DetailsColorTileWidget(
+                icon: Icons.school,
+                title: "Subject: ",
+                value: "${postData?["subject"]}",
+              ),
+              DetailsColorTileWidget(
+                icon: Icons.location_on,
+                title: "",
+                value: postData?["city"] + " - " + postData?["state"],
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Locality: ",
+                  ),
+                  const SizedBox(width: 5.0),
+                  Text(
+                    "${postData?["locality"]}",
+                    style: const TextStyle(color: Colors.blue),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10.0),
+              DetailsColorTileWidget(
+                icon: Icons.monetization_on,
+                title: "Fee: ",
+                value: "₹${postData?["fee"]} per hour",
+              ),
+              DetailsColorTileWidget(
+                icon: Icons.switch_video_outlined,
+                title: "Mode: ",
+                value: "${postData?["mode"]}",
+              ),
+              DetailsColorTileWidget(
+                icon: postData?["gender"] == "Male" ? Icons.male : Icons.female,
+                title: "Tutor Gender: ",
+                value: "${postData?["gender"]}",
+              ),
 
               const SizedBox(height: 15.0),
 
               const Text("Note: ", style: pageSubTitleStyle),
               const SizedBox(height: 10.0),
 
-              Text(postData?["desc"]),
+              Text(
+                postData?["desc"],
+                style: const TextStyle(color: Colors.blue),
+              ),
               const SizedBox(height: 15.0),
 
               // DetailsTileWidget(
@@ -87,23 +120,49 @@ class PostDetailsScreen extends HookConsumerWidget {
               //     title: "Prefered Qualification: ${postData?["qualify"]}"),
 
               if (ifPurchased.value) ...[
-                DetailsTileWidget(
-                    icon: Icons.person,
-                    title: "Contact name: ${postData?["name"]}"),
-                DetailsTileWidget(
-                    icon: Icons.phone,
-                    title: "Contact number: ${postData?["phone"]}"),
-                DetailsTileWidget(
-                    icon: Icons.email,
-                    title: "Contact email: ${postData?["email"]}"),
+                DetailsColorTileWidget(
+                  icon: Icons.person,
+                  title: "Contact name: ",
+                  value: "${postData?["name"]}",
+                ),
+                DetailsColorTileWidget(
+                  icon: Icons.phone,
+                  title: "Contact number: ",
+                  value: "${postData?["phone"]}",
+                ),
+                DetailsColorTileWidget(
+                  icon: Icons.email,
+                  title: "Contact email: ",
+                  value: "${postData?["email"]}",
+                ),
               ] else ...[
-                DetailsTileWidget(
-                    icon: Icons.wallet,
-                    title: "Coins needed: ${postData?["req_coins"]}"),
-                DetailsTileWidget(
-                    icon: Icons.people,
-                    title:
-                        "${(postData?["users"].length) - 1} out of ${postData?["max_hits"]} Responded"),
+                DetailsColorTileWidget(
+                  icon: Icons.wallet,
+                  title: "Coins needed: ",
+                  value: "${postData?["req_coins"]}",
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.people),
+                    const SizedBox(width: 5.0),
+                    Text(
+                      "${(postData?["users"].length) - 1} ",
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                    const Text(
+                      "out of ",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    Text(
+                      "${postData?["max_hits"]}",
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                    const Text(
+                      " Responded",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ],
+                )
               ],
               if (AuthControllers.isAdmin()) ...[
                 const SizedBox(height: 25.0),
@@ -129,8 +188,7 @@ class PostDetailsScreen extends HookConsumerWidget {
       )),
       appBar: AppBar(
         title: Text(
-          "Lead No: ${postData?["id"]}",
-          style: pagetitleStyle,
+          formatWithMonthNameTime.format(postData?["createdOn"].toDate()),
         ),
       ),
       floatingActionButton: AuthControllers.isAdmin()
@@ -208,6 +266,39 @@ class DetailsTileWidget extends StatelessWidget {
       leading: Icon(icon),
       title: Text(title ?? ""),
       subtitle: subTitle == null ? null : Text(subTitle ?? ""),
+    );
+  }
+}
+
+class DetailsColorTileWidget extends StatelessWidget {
+  final IconData icon;
+  final String? title;
+  final String? value;
+
+  const DetailsColorTileWidget(
+      {super.key,
+      required this.icon,
+      required this.title,
+      required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: Colors.grey.shade700,
+          ),
+          const SizedBox(width: 5.0),
+          Text(title ?? ""),
+          Text(
+            value ?? "",
+            style: const TextStyle(color: Colors.blue),
+          ),
+        ],
+      ),
     );
   }
 }

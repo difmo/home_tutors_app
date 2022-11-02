@@ -37,9 +37,12 @@ class HomeScreen extends HookConsumerWidget {
     }, error: (error, stackTrace) {
       return const ErrorWidgetScreen();
     }, data: (data) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        cityName.state = data?["city"];
-      });
+      if (data != null) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          cityName.state = data["city"];
+        });
+      }
+
       return data?["status"] == 1
           ? DefaultTabController(
               length: 2,
@@ -53,8 +56,11 @@ class HomeScreen extends HookConsumerWidget {
                 ),
                 appBar: AppBar(
                   titleTextStyle: const TextStyle(fontSize: 14.0),
-                  leading: const CircleAvatar(
-                      backgroundImage: AssetImage("assets/logo.png")),
+                  leading: const Padding(
+                    padding: EdgeInsets.all(5.0),
+                    child: CircleAvatar(
+                        backgroundImage: AssetImage("assets/logo.png")),
+                  ),
                   centerTitle: true,
                   title: Row(
                     children: [
@@ -85,7 +91,9 @@ class HomeScreen extends HookConsumerWidget {
                 ),
               ),
             )
-          : const ProfileVerificationScreen();
+          : ProfileVerificationScreen(
+              email: data?['email'],
+            );
     });
   }
 }

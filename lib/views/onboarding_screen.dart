@@ -1,12 +1,15 @@
 import 'package:app/controllers/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class OnboardingScreen extends StatelessWidget {
+import '../providers/profile_provider.dart';
+
+class OnboardingScreen extends HookConsumerWidget {
   const OnboardingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -34,7 +37,8 @@ class OnboardingScreen extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton(
                           onPressed: () {
-                            context.go(AppRoutes.register);
+                            ref.read(isRegisterProvider.state).state = true;
+                            context.go(AppRoutes.login);
                           },
                           child: const Text('Register')),
                     ),

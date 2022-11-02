@@ -1,33 +1,57 @@
 import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
-import 'package:flutter/gestures.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class LoginScreen extends StatefulWidget {
+import '../../providers/profile_provider.dart';
+
+final _formKey = GlobalKey<FormState>();
+
+class LoginScreen extends HookConsumerWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isRegister = ref.read(isRegisterProvider);
+    final phoneController = useTextEditingController();
+    final sendOtp = useCallback((String mobile) async {
+      try {
+        SendOtpResponseModel response = SendOtpResponseModel();
+        await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: mobile,
+          timeout: const Duration(seconds: 120),
+          verificationCompleted: (PhoneAuthCredential credential) async {},
+          verificationFailed: (FirebaseAuthException e) {
+            EasyLoading.dismiss();
+            response.error = e.message;
+          },
+          codeSent: (String verificationId, int? resendToken) async {
+            EasyLoading.dismiss();
 
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey = GlobalKey<FormState>();
+            response.id = verificationId;
+            response.token = resendToken;
+            if (response.id != null) {
+              context.push(AppRoutes.otpScreen, extra: response);
+            }
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            EasyLoading.dismiss();
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+            response.id = verificationId;
+          },
+        );
+        return response;
+      } catch (e) {
+        EasyLoading.dismiss();
 
-  @override
-  void dispose() {
-    super.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+        rethrow;
+      }
+    }, []);
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -51,114 +75,46 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                const Text(
-                  'Login',
-                  style: TextStyle(
+                Text(
+                  isRegister ? 'Register' : 'Login',
+                  style: const TextStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 50.0),
+                const SizedBox(height: 30.0),
                 TextFormField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  maxLength: 50,
+                  autofocus: true,
+                  controller: phoneController,
+                  keyboardType: TextInputType.number,
+                  maxLength: 10,
                   decoration: const InputDecoration(
-                      label: Text('Registered email'),
-                      hintText: "mail@example.com"),
+                      label: Text('Phone number'),
+                      hintText: "10 digit valid mobile number"),
                   validator: (value) {
-                    if (!emailController.text.trim().isValidEmail()) {
-                      return "Invalid email";
+                    if (phoneController.text.length != 10) {
+                      return "Invalid number";
                     } else {
                       return null;
                     }
                   },
                 ),
-                TextFormField(
-                  controller: passwordController,
-                  keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
-                  maxLength: 16,
-                  decoration: const InputDecoration(
-                      label: Text('Password'), hintText: "********"),
-                  validator: (value) {
-                    if (passwordController.text.trim().length < 8) {
-                      return "Invalid password";
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      const TextSpan(
-                        text: 'New here? ',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      TextSpan(
-                        text: 'Register ',
-                        style: const TextStyle(color: Colors.blue),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            context.go(AppRoutes.register);
-                          },
-                      ),
-                      const TextSpan(
-                        text: 'or ',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      TextSpan(
-                        text: 'Forgot password?',
-                        style: const TextStyle(color: Colors.blue),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            if (emailController.text.isNotEmpty) {
+                const SizedBox(height: 30.0),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        formSubmitFunction(
+                            formKey: _formKey,
+                            submitFunction: () async {
                               Utils.loading();
-                              await AuthControllers.changePassword(
-                                  email: emailController.text.trim());
-                              EasyLoading.dismiss();
-                            } else {
-                              Utils.toast("Enter registered email");
-                            }
-                          },
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 50.0),
-                ElevatedButton(
-                    onPressed: () {
-                      formSubmitFunction(
-                          formKey: _formKey,
-                          submitFunction: () async {
-                            Utils.loading();
-                            var user = await AuthControllers.login(
-                                email: emailController.text.trim(),
-                                password: passwordController.text.trim());
-                            EasyLoading.dismiss();
-                            if (user?.uid != null) {
-                              if (mounted) {
-                                if (user?.email == "swarup@duck.com") {
-                                  context.go(AppRoutes.adminHome);
-                                } else {
-                                  if (!user!.emailVerified) {
-                                    user.sendEmailVerification();
-                                    context.go(AppRoutes.emailVerification);
-                                  } else {
-                                    if (checkEmpty(user.photoURL)) {
-                                      Utils.toast("Complete profile");
-                                      context.go(AppRoutes.teacherProfile);
-                                    } else {
-                                      context.go(AppRoutes.home);
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          });
-                    },
-                    child: const Text('Proceed'))
+                              await sendOtp(
+                                "+91${phoneController.text.trim()}",
+                              );
+                            });
+                      },
+                      child: const Text('GET OTP')),
+                )
               ],
             ),
           ),

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:app/models/city_list_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -36,14 +37,38 @@ class ProfileController {
     }
   }
 
-  static Future createProfile({
-    required Map<String, dynamic> profileBody,
-  }) async {
+  static Future createProfile() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    var user = FirebaseAuth.instance.currentUser;
+    Map<String, dynamic> profilData = {
+      'uid': user?.uid,
+      'is_admin': false,
+      'name': "",
+      'email': "",
+      'status': 0,
+      'phone': user?.phoneNumber,
+      'photoUrl': "",
+      'locality': "",
+      'city': "",
+      'state': "",
+      'preferedClass': "",
+      'preferedSubject': "",
+      'preferedMode': "",
+      'gender': "",
+      'totalExp': "",
+      'qualification': "",
+      'idType': "",
+      'idUrlFront': "",
+      'idUrlBack': "",
+      'wallet_balance': 0,
+      'createdOn': FieldValue.serverTimestamp(),
+      "fcm_token": token
+    };
     try {
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(profileBody["uid"])
-          .set(profileBody);
+          .doc(profilData["uid"])
+          .set(profilData);
     } catch (e) {
       rethrow;
     }
@@ -104,13 +129,17 @@ class ProfileController {
 
   Future<Map<dynamic, dynamic>?> fetchProfileData() async {
     FirebaseAuth auth = FirebaseAuth.instance;
-    var collection = FirebaseFirestore.instance.collection('users');
-    var docSnapshot = await collection.doc(auth.currentUser!.uid).get();
-    if (docSnapshot.exists) {
-      Map<String, dynamic>? data = docSnapshot.data();
-      return data;
-    } else {
+    if (auth.currentUser == null) {
       return null;
+    } else {
+      var collection = FirebaseFirestore.instance.collection('users');
+      var docSnapshot = await collection.doc(auth.currentUser!.uid).get();
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data();
+        return data;
+      } else {
+        return null;
+      }
     }
   }
 

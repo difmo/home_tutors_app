@@ -20,3 +20,5 @@ final alTransactionsProvider =
 });
 
 final cityNameProvider = StateProvider<String>((ref) => "");
+
+final isRegisterProvider = StateProvider<bool>((ref) => false);

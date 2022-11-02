@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/statics.dart';
+import '../../providers/admin_providers.dart';
 
 class AddLeadScreen extends HookConsumerWidget {
   AddLeadScreen({super.key});
@@ -30,10 +31,10 @@ class AddLeadScreen extends HookConsumerWidget {
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
     final phoneController = useTextEditingController();
+    final classController = useTextEditingController();
 
     final selectedState = useState("");
     final selectedCity = useState("");
-    final selectedClass = useState("");
     final selectedSubject = useState("");
 
     // final selectedExp = useState("");
@@ -109,29 +110,20 @@ class AddLeadScreen extends HookConsumerWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        DropdownSearch<String>(
+                        TextFormField(
                           validator: (value) {
-                            if (checkEmpty(value)) {
-                              return "Choose prefered class";
+                            if (value!.trim().isEmpty) {
+                              return "Enter a valid class";
                             } else {
                               return null;
                             }
                           },
-                          selectedItem: selectedClass.value.isEmpty
-                              ? null
-                              : selectedClass.value,
-                          popupProps:
-                              const PopupProps.menu(showSelectedItems: true),
-                          items: preferredClassList,
-                          dropdownDecoratorProps: const DropDownDecoratorProps(
-                            dropdownSearchDecoration: InputDecoration(
-                              labelText: "Class",
-                              hintText: "Ex: xi/xii",
-                            ),
+                          controller: classController,
+                          keyboardType: TextInputType.text,
+                          decoration: const InputDecoration(
+                            hintText: "10th / 12th",
+                            label: Text('Class'),
                           ),
-                          onChanged: (value) {
-                            selectedClass.value = value!;
-                          },
                         ),
                         const SizedBox(height: 10.0),
                         DropdownSearch<String>(
@@ -208,6 +200,33 @@ class AddLeadScreen extends HookConsumerWidget {
                             label: Text('Locality'),
                           ),
                         ),
+
+                        DropdownSearch<String>(
+                          validator: (value) {
+                            if (checkEmpty(value)) {
+                              return "Choose state";
+                            } else {
+                              return null;
+                            }
+                          },
+                          selectedItem: selectedState.value.isEmpty
+                              ? null
+                              : selectedState.value,
+                          popupProps: const PopupProps.menu(
+                              showSelectedItems: true, showSearchBox: true),
+                          items: stateList,
+                          dropdownDecoratorProps: const DropDownDecoratorProps(
+                            dropdownSearchDecoration: InputDecoration(
+                              labelText: "Select state",
+                              hintText: "choose state or search",
+                            ),
+                          ),
+                          onChanged: (value) {
+                            selectedState.value = value!;
+                          },
+                        ),
+                        const SizedBox(height: 10.0),
+
                         if (selectedState.value.isNotEmpty)
                           ref.watch(cityListProvider(selectedState.value)).when(
                             data: (data) {
@@ -248,40 +267,15 @@ class AddLeadScreen extends HookConsumerWidget {
                               return Text(error.toString());
                             },
                           ),
-                        const SizedBox(height: 10.0),
-                        DropdownSearch<String>(
-                          validator: (value) {
-                            if (checkEmpty(value)) {
-                              return "Choose state";
-                            } else {
-                              return null;
-                            }
-                          },
-                          selectedItem: selectedState.value.isEmpty
-                              ? null
-                              : selectedState.value,
-                          popupProps: const PopupProps.menu(
-                              showSelectedItems: true, showSearchBox: true),
-                          items: stateList,
-                          dropdownDecoratorProps: const DropDownDecoratorProps(
-                            dropdownSearchDecoration: InputDecoration(
-                              labelText: "Select state",
-                              hintText: "choose state or search",
-                            ),
-                          ),
-                          onChanged: (value) {
-                            selectedState.value = value!;
-                          },
-                        ),
                         const SizedBox(height: 30.0),
-                        Text(
-                          'Qualification preferences:',
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.blue.shade900,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        // Text(
+                        //   'Qualification preferences:',
+                        //   style: TextStyle(
+                        //     fontSize: 20.0,
+                        //     color: Colors.blue.shade900,
+                        //     fontWeight: FontWeight.bold,
+                        //   ),
+                        // ),
                         // const SizedBox(height: 10.0),
                         // DropdownSearch<String>(
                         //   validator: (value) {
@@ -324,7 +318,7 @@ class AddLeadScreen extends HookConsumerWidget {
                         //     label: Text('Qualification'),
                         //   ),
                         // ),
-                        const SizedBox(height: 30.0),
+                        // const SizedBox(height: 30.0),
                         Text(
                           'Other preferences:',
                           style: TextStyle(
@@ -456,7 +450,7 @@ class AddLeadScreen extends HookConsumerWidget {
                                         // "title": titleController.text,
                                         "desc": descController.text,
                                         "fee": feeController.text,
-                                        "class": selectedClass.value,
+                                        "class": classController.text,
                                         "mode": selectedMode.value,
                                         "subject": selectedSubject.value,
                                         "locality": localityController.text,
@@ -474,7 +468,8 @@ class AddLeadScreen extends HookConsumerWidget {
                                         "name": nameController.text,
                                         "phone": phoneController.text,
                                         "email": emailController.text,
-                                        'uid': FieldValue.arrayUnion([""]),
+                                        'users': FieldValue.arrayUnion([""]),
+                                        "id": totalPostCount + 1,
                                       };
                                       await AdminControllers.createLeads(
                                           postBody: postBody);
