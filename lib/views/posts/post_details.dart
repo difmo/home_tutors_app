@@ -1,6 +1,7 @@
 import 'package:app/controllers/admin/admin_controllers.dart';
 import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/controllers/profile_controllers.dart';
+import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:app/views/constants.dart';
@@ -185,7 +186,19 @@ class PostDetailsScreen extends HookConsumerWidget {
                       return postData?["users"][index].isEmpty
                           ? const SizedBox.shrink()
                           : ListTile(
-                              onTap: () {},
+                              onTap: () async {
+                                if (!checkEmpty(postData?["users"][index])) {
+                                  Utils.loading();
+                                  var data =
+                                      await AdminControllers.fetchProfileData(
+                                          postData?["users"][index]);
+                                  EasyLoading.dismiss();
+                                  Future.delayed(Duration.zero).then((value) {
+                                    context.push(AppRoutes.userDetails,
+                                        extra: data);
+                                  });
+                                }
+                              },
                               leading: Text(index.toString()),
                               title: Text(postData?["users"][index]),
                             );

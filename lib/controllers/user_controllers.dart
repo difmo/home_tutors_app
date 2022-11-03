@@ -11,7 +11,7 @@ class UserControllers {
           .collection('posts')
           .where('createdOn',
               isGreaterThanOrEqualTo: Timestamp.fromDate(
-                  DateTime.now().subtract(const Duration(days: 10))))
+                  DateTime.now().subtract(const Duration(days: 7))))
           .where("state", isEqualTo: stateName)
           .snapshots();
 

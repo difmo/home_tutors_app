@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../controllers/routes.dart';
 import '../../controllers/utils.dart';
@@ -71,7 +72,17 @@ class UserDrawerWidget extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.file_copy),
             title: const Text("Terms & Conditions"),
-            onTap: () {},
+            onTap: () {
+              openUrl("https://www.viptutors.in/terms.php");
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.file_copy),
+            title: const Text("Share app"),
+            onTap: () {
+              Share.share(
+                  'check out VIP home tutors https://play.google.com/store/apps/details?id=com.viptutors.app');
+            },
           ),
           // ListTile(
           //   leading: const Icon(Icons.lock),

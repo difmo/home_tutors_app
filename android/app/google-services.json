@@ -14,6 +14,58 @@
       },
       "oauth_client": [
         {
+          "client_id": "989662773201-rso3t176g0s4inkvn9p0daiju3svlgd5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.viphometutors.app",
+            "certificate_hash": "cb2c082fb53d8dc35ec85799e126ba64eb4b169e"
+          }
+        },
+        {
+          "client_id": "989662773201-uuoulb06j47d33pjh95ik1g26h4qh7s5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWlGTtBFb3ZRm36JtXgQTqDZPBZMyRjjk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "989662773201-uuoulb06j47d33pjh95ik1g26h4qh7s5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "989662773201-0l0lqcpp1a02k788fomif1h5uceoeqee.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.viphometutors.app"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989662773201:android:1351d8b9ce4b308b932af0",
+        "android_client_info": {
+          "package_name": "com.viptutors.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "989662773201-j79emupijd7f7h0peucb6hrbm0l3ukma.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.viptutors.app",
+            "certificate_hash": "cb2c082fb53d8dc35ec85799e126ba64eb4b169e"
+          }
+        },
+        {
           "client_id": "989662773201-uuoulb06j47d33pjh95ik1g26h4qh7s5.apps.googleusercontent.com",
           "client_type": 3
         }

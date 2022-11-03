@@ -108,4 +108,18 @@ class AdminControllers {
         .get();
     return adminData.docs.first["fcm_token"];
   }
+
+ static Future<QueryDocumentSnapshot<Map<String, dynamic>>?> fetchProfileData(
+      String mobile) async {
+    var collection = await FirebaseFirestore.instance
+        .collection('users')
+        .where('phone', isEqualTo: mobile)
+        .get();
+    if (collection.docs.isNotEmpty) {
+      QueryDocumentSnapshot<Map<String, dynamic>> data = collection.docs.first;
+      return data;
+    } else {
+      return null;
+    }
+  }
 }
