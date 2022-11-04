@@ -138,7 +138,7 @@ class WalletScreen extends HookConsumerWidget {
                             EasyLoading.dismiss();
 
                             var options = {
-                              'key': 'rzp_test_8d1I1Tu9gRbJcH',
+                              'key': 'rzp_live_5HtAsZL4CVxxEn',
                               'amount': item.amount * 100,
                               'name': 'VIPTUTORS @ SYBRA CORPORATION',
                               'description': 'Wallet recharge',
