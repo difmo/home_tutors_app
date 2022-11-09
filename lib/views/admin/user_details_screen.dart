@@ -1,11 +1,13 @@
 import 'package:app/controllers/admin/admin_controllers.dart';
 import 'package:app/controllers/profile_controllers.dart';
+import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../providers/admin_providers.dart';
@@ -116,50 +118,70 @@ class UserDetailsScreen extends HookConsumerWidget {
                 const SizedBox(height: 10.0),
                 Row(
                   children: [
-                    Expanded(
-                        child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            margin: const EdgeInsets.all(5.0),
-                            height: 100,
-                            child: !checkEmpty(item)
-                                ? Image.network(
-                                    item?["idUrlFront"],
-                                    fit: BoxFit.cover,
-                                  )
-                                : Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text('Front side'),
-                                      SizedBox(height: 5.0),
-                                      Icon(Icons.image, size: 50.0),
-                                    ],
-                                  ))),
-                    Expanded(
-                        child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            margin: const EdgeInsets.all(5.0),
-                            height: 100,
-                            child: !checkEmpty(item)
-                                ? Image.network(
-                                    item?["idUrlBack"],
-                                    fit: BoxFit.cover,
-                                  )
-                                : Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text('Back side'),
-                                      SizedBox(height: 5.0),
-                                      Icon(Icons.image, size: 50.0),
-                                    ],
-                                  ))),
+                    InkWell(
+                      onTap: () {
+                        if (checkEmpty(item?["idUrlFront"])) {
+                          return;
+                        }
+                        context.push(AppRoutes.imageView,
+                            extra: item?["idUrlFront"]);
+                      },
+                      child: Expanded(
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.all(5.0),
+                              height: 100,
+                              child: !checkEmpty(item)
+                                  ? Image.network(
+                                      item?["idUrlFront"],
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        Text('Front side'),
+                                        SizedBox(height: 5.0),
+                                        Icon(Icons.image, size: 50.0),
+                                      ],
+                                    ))),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if (checkEmpty(item?["idUrlBack"])) {
+                          return;
+                        }
+                        context.push(AppRoutes.imageView,
+                            extra: item?["idUrlBack"]);
+                      },
+                      child: Expanded(
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.all(5.0),
+                              height: 100,
+                              child: !checkEmpty(item)
+                                  ? Image.network(
+                                      item?["idUrlBack"],
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: const [
+                                        Text('Back side'),
+                                        SizedBox(height: 5.0),
+                                        Icon(Icons.image, size: 50.0),
+                                      ],
+                                    ))),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10.0),

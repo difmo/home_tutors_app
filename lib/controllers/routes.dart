@@ -11,6 +11,7 @@ import 'package:app/views/onboarding_screen.dart';
 import 'package:app/views/posts/post_details.dart';
 import 'package:app/views/user/profile/teacher_profile_screen.dart';
 import 'package:app/views/user/wallet/wallet_screen.dart';
+import 'package:app/views/widgets/image_full_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +31,7 @@ class AppRoutes {
   static const String walletScreen = '/wallet_screen';
   static const String allTransactions = '/all_transactions';
   static const String postDetails = '/post_details';
+  static const String imageView = '/image_view';
 
   static final GoRouter router = GoRouter(
     initialLocation: AuthControllers.manageLogin(),
@@ -54,7 +56,6 @@ class AppRoutes {
           );
         },
       ),
-     
       GoRoute(
         path: userDetails,
         builder: (BuildContext context, GoRouterState state) {
@@ -111,6 +112,14 @@ class AppRoutes {
           return PostDetailsScreen(
             postData:
                 state.extra as QueryDocumentSnapshot<Map<String, dynamic>>?,
+          );
+        },
+      ),
+      GoRoute(
+        path: imageView,
+        builder: (BuildContext context, GoRouterState state) {
+          return ImageFullView(
+            imageurl: state.extra as String,
           );
         },
       ),

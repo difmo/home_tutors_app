@@ -31,7 +31,7 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileProvider = ref.watch(profileDataProvider);
-    final stateName = ref.watch(stateNameProvider.state);
+    final stateName = ref.watch(stateNameProvider.notifier);
     return profileProvider.when(loading: () {
       return const LoadingWidgetScreen();
     }, error: (error, stackTrace) {

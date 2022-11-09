@@ -32,7 +32,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final reBuild = useState(false);
     final firstLoad = useState(false);
-    final stateNameStateProvider = ref.watch(stateNameProvider.state);
+    final stateNameStateProvider = ref.watch(stateNameProvider.notifier);
 
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();

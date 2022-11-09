@@ -1,4 +1,4 @@
-const String adminPhone = "+917865943802";
+const String adminPhone = "+918427373281";
 
 const List<String> stateList = [
   "Andaman and Nicobar Islands",

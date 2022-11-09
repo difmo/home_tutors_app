@@ -37,7 +37,7 @@ class OnboardingScreen extends HookConsumerWidget {
                     Expanded(
                       child: ElevatedButton(
                           onPressed: () {
-                            ref.read(isRegisterProvider.state).state = true;
+                            ref.read(isRegisterProvider.notifier).state = true;
                             context.go(AppRoutes.login);
                           },
                           child: const Text('Register')),
