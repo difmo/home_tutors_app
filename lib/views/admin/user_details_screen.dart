@@ -48,15 +48,16 @@ class UserDetailsScreen extends HookConsumerWidget {
               children: [
                 Row(
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: checkEmpty(item?["photoUrl"])
-                          ? null
-                          : NetworkImage(item?["photoUrl"]),
-                      child: checkEmpty(item?["photoUrl"])
-                          ? const Icon(Icons.person)
-                          : null,
-                    ),
+                    if (!checkEmpty(item?["photoUrl"]))
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: checkEmpty(item?["photoUrl"])
+                            ? null
+                            : NetworkImage(item?["photoUrl"]),
+                        child: checkEmpty(item?["photoUrl"])
+                            ? const Icon(Icons.person)
+                            : null,
+                      ),
                     const SizedBox(width: 25.0),
                     Expanded(child: Text(item?["name"], style: pagetitleStyle)),
                   ],
@@ -118,15 +119,13 @@ class UserDetailsScreen extends HookConsumerWidget {
                 const SizedBox(height: 10.0),
                 Row(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        if (checkEmpty(item?["idUrlFront"])) {
-                          return;
-                        }
-                        context.push(AppRoutes.imageView,
-                            extra: item?["idUrlFront"]);
-                      },
-                      child: Expanded(
+                    if (!checkEmpty(item?["idUrlFront"]))
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            context.push(AppRoutes.imageView,
+                                extra: item?["idUrlFront"]);
+                          },
                           child: Container(
                               decoration: BoxDecoration(
                                   border: Border.all(),
@@ -148,17 +147,16 @@ class UserDetailsScreen extends HookConsumerWidget {
                                         SizedBox(height: 5.0),
                                         Icon(Icons.image, size: 50.0),
                                       ],
-                                    ))),
-                    ),
-                    InkWell(
-                      onTap: () {
-                        if (checkEmpty(item?["idUrlBack"])) {
-                          return;
-                        }
-                        context.push(AppRoutes.imageView,
-                            extra: item?["idUrlBack"]);
-                      },
-                      child: Expanded(
+                                    )),
+                        ),
+                      ),
+                    if (!checkEmpty(item?["idUrlBack"]))
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            context.push(AppRoutes.imageView,
+                                extra: item?["idUrlBack"]);
+                          },
                           child: Container(
                               decoration: BoxDecoration(
                                   border: Border.all(),
@@ -180,8 +178,9 @@ class UserDetailsScreen extends HookConsumerWidget {
                                         SizedBox(height: 5.0),
                                         Icon(Icons.image, size: 50.0),
                                       ],
-                                    ))),
-                    ),
+                                    )),
+                        ),
+                      ),
                   ],
                 ),
                 const SizedBox(height: 10.0),
