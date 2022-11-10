@@ -54,6 +54,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
 
     final selectedMode = useState("");
     final selectedGender = useState("");
+    final profileStatus = useState(0);
 
     return Scaffold(
       body: SafeArea(
@@ -85,6 +86,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
             selectedExp.value = data["totalExp"];
             selectedIdType.value = data["idType"];
             selectedMode.value = data["preferedMode"];
+            profileStatus.value = data["status"];
             firstLoad.value = true;
           }
           return SingleChildScrollView(
@@ -394,118 +396,120 @@ class TeacherProfileScreen extends HookConsumerWidget {
                         label: Text('Qualification'),
                       ),
                     ),
-                    const SizedBox(height: 30.0),
-                    Text(
-                      'Documents:',
-                      style: TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.blue.shade900,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 10.0),
-                    DropdownSearch<String>(
-                      validator: (value) {
-                        if (checkEmpty(value)) {
-                          return "Select ID type";
-                        } else {
-                          return null;
-                        }
-                      },
-                      selectedItem: selectedIdType.value.isEmpty
-                          ? null
-                          : selectedIdType.value,
-                      popupProps:
-                          const PopupProps.menu(showSelectedItems: true),
-                      items: const ["Aadhar Card", "Voter Card", "Passport"],
-                      dropdownDecoratorProps: const DropDownDecoratorProps(
-                        dropdownSearchDecoration: InputDecoration(
-                          labelText: "ID proof type",
-                          hintText: "10 years or any other",
+                    if (profileStatus.value == 0) ...[
+                      const SizedBox(height: 30.0),
+                      Text(
+                        'Documents:',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.blue.shade900,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      onChanged: (value) {
-                        selectedIdType.value = value!;
-                      },
-                    ),
-                    const SizedBox(height: 10.0),
-                    Row(
-                      children: [
-                        Expanded(
-                            child: InkWell(
-                          onTap: () async {
-                            final XFile? idFrontPic = await _picker.pickImage(
-                                source: ImageSource.camera, imageQuality: 10);
-                            if (idFrontPic != null) {
-                              idFront = File(idFrontPic.path);
-                              reBuild.value = !reBuild.value;
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            margin: const EdgeInsets.all(5.0),
-                            height: 100,
-                            child: idFront == null
-                                ? profilePicUrl.value.isNotEmpty
-                                    ? Image.network(idFrontPicUrl.value,
-                                        fit: BoxFit.cover)
-                                    : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Text('Front side'),
-                                          SizedBox(height: 5.0),
-                                          Icon(Icons.image, size: 50.0),
-                                        ],
-                                      )
-                                : Image.file(
-                                    idFront!,
-                                    fit: BoxFit.cover,
-                                  ),
+                      const SizedBox(height: 10.0),
+                      DropdownSearch<String>(
+                        validator: (value) {
+                          if (checkEmpty(value)) {
+                            return "Select ID type";
+                          } else {
+                            return null;
+                          }
+                        },
+                        selectedItem: selectedIdType.value.isEmpty
+                            ? null
+                            : selectedIdType.value,
+                        popupProps:
+                            const PopupProps.menu(showSelectedItems: true),
+                        items: const ["Aadhar Card", "Voter Card", "Passport"],
+                        dropdownDecoratorProps: const DropDownDecoratorProps(
+                          dropdownSearchDecoration: InputDecoration(
+                            labelText: "ID proof type",
+                            hintText: "10 years or any other",
                           ),
-                        )),
-                        Expanded(
-                            child: InkWell(
-                          onTap: () async {
-                            final XFile? idBackPic = await _picker.pickImage(
-                                source: ImageSource.camera, imageQuality: 10);
-                            if (idBackPic != null) {
-                              idBack = File(idBackPic.path);
-                              reBuild.value = !reBuild.value;
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(),
-                                borderRadius: BorderRadius.circular(10.0)),
-                            margin: const EdgeInsets.all(5.0),
-                            height: 100,
-                            child: idBack == null
-                                ? profilePicUrl.value.isNotEmpty
-                                    ? Image.network(
-                                        idBackPicUrl.value,
-                                        fit: BoxFit.cover,
-                                      )
-                                    : Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: const [
-                                          Text('Back side'),
-                                          SizedBox(height: 5.0),
-                                          Icon(Icons.image, size: 50.0),
-                                        ],
-                                      )
-                                : Image.file(idBack!, fit: BoxFit.cover),
-                          ),
-                        )),
-                      ],
-                    ),
+                        ),
+                        onChanged: (value) {
+                          selectedIdType.value = value!;
+                        },
+                      ),
+                      const SizedBox(height: 10.0),
+                      Row(
+                        children: [
+                          Expanded(
+                              child: InkWell(
+                            onTap: () async {
+                              final XFile? idFrontPic = await _picker.pickImage(
+                                  source: ImageSource.camera, imageQuality: 10);
+                              if (idFrontPic != null) {
+                                idFront = File(idFrontPic.path);
+                                reBuild.value = !reBuild.value;
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.all(5.0),
+                              height: 100,
+                              child: idFront == null
+                                  ? profilePicUrl.value.isNotEmpty
+                                      ? Image.network(idFrontPicUrl.value,
+                                          fit: BoxFit.cover)
+                                      : Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Text('Front side'),
+                                            SizedBox(height: 5.0),
+                                            Icon(Icons.image, size: 50.0),
+                                          ],
+                                        )
+                                  : Image.file(
+                                      idFront!,
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          )),
+                          Expanded(
+                              child: InkWell(
+                            onTap: () async {
+                              final XFile? idBackPic = await _picker.pickImage(
+                                  source: ImageSource.camera, imageQuality: 10);
+                              if (idBackPic != null) {
+                                idBack = File(idBackPic.path);
+                                reBuild.value = !reBuild.value;
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(),
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              margin: const EdgeInsets.all(5.0),
+                              height: 100,
+                              child: idBack == null
+                                  ? profilePicUrl.value.isNotEmpty
+                                      ? Image.network(
+                                          idBackPicUrl.value,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: const [
+                                            Text('Back side'),
+                                            SizedBox(height: 5.0),
+                                            Icon(Icons.image, size: 50.0),
+                                          ],
+                                        )
+                                  : Image.file(idBack!, fit: BoxFit.cover),
+                            ),
+                          )),
+                        ],
+                      ),
+                    ],
                     const SizedBox(height: 50.0),
                     Align(
                       alignment: Alignment.centerRight,

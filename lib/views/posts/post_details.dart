@@ -89,7 +89,7 @@ class PostDetailsScreen extends HookConsumerWidget {
               DetailsColorTileWidget(
                 icon: Icons.monetization_on,
                 title: "Fee: ",
-                value: "₹${postData?["fee"]} per hour",
+                value: "₹${postData?["fee"]}",
               ),
               DetailsColorTileWidget(
                 icon: Icons.switch_video_outlined,

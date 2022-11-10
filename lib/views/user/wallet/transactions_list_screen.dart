@@ -28,7 +28,7 @@ class TransactionsListScreen extends StatelessWidget {
                         ? const Icon(Icons.check_circle_rounded,
                             color: Colors.green)
                         : const Icon(Icons.error_outlined, color: Colors.red),
-                    subtitle: Text("${item?["email"]}"),
+                    subtitle: Text("${item?["phone"]}"),
                   );
                 })
             : ListView.builder(

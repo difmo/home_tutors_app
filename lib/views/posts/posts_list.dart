@@ -23,6 +23,8 @@ class PostListScreen extends HookConsumerWidget {
             child: Text("No post available"),
           )
         : ListView.builder(
+            reverse: true,
+            shrinkWrap: true,
             itemCount: data?.length ?? 0,
             itemBuilder: (context, index) {
               var item = data?[index];

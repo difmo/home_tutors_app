@@ -13,8 +13,10 @@ final adminApiProviders = Provider<AdminControllers>((ref) {
 class AdminControllers {
   static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllPosts() {
     try {
-      var collection =
-          FirebaseFirestore.instance.collection('posts').snapshots();
+      var collection = FirebaseFirestore.instance
+          .collection('posts')
+          .orderBy('createdOn')
+          .snapshots();
       return collection;
     } catch (e) {
       rethrow;
@@ -57,6 +59,16 @@ class AdminControllers {
   }) async {
     try {
       await FirebaseFirestore.instance.collection('posts').doc(postId).delete();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future deletePost({
+    required String userId,
+  }) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(userId).delete();
     } catch (e) {
       rethrow;
     }
@@ -109,7 +121,7 @@ class AdminControllers {
     return adminData.docs.first["fcm_token"];
   }
 
- static Future<QueryDocumentSnapshot<Map<String, dynamic>>?> fetchProfileData(
+  static Future<QueryDocumentSnapshot<Map<String, dynamic>>?> fetchProfileData(
       String mobile) async {
     var collection = await FirebaseFirestore.instance
         .collection('users')

@@ -94,11 +94,10 @@ class AddLeadScreen extends HookConsumerWidget {
                             }
                           },
                           controller: feeController,
-                          keyboardType: TextInputType.number,
-                          maxLength: 4,
+                          keyboardType: TextInputType.text,
                           decoration: const InputDecoration(
                             hintText: "Fee in INR",
-                            label: Text('Fee per hour'),
+                            label: Text('Fee'),
                           ),
                         ),
                         const SizedBox(height: 30.0),
@@ -140,11 +139,11 @@ class AddLeadScreen extends HookConsumerWidget {
                               : selectedMode.value,
                           popupProps:
                               const PopupProps.menu(showSelectedItems: true),
-                          items: const ["Online", "Offline", "Both"],
+                          items: const ["Online", "Offline", "Any"],
                           dropdownDecoratorProps: const DropDownDecoratorProps(
                             dropdownSearchDecoration: InputDecoration(
                               labelText: "Teaching Mode",
-                              hintText: "Online/Offline/Both",
+                              hintText: "Online/Offline/Any",
                             ),
                           ),
                           onChanged: (value) {
@@ -335,7 +334,7 @@ class AddLeadScreen extends HookConsumerWidget {
                               : selectedGender.value,
                           popupProps:
                               const PopupProps.menu(showSelectedItems: true),
-                          items: const ["Male", "Female", "Both"],
+                          items: const ["Male", "Female", "Any"],
                           dropdownDecoratorProps: const DropDownDecoratorProps(
                             dropdownSearchDecoration: InputDecoration(
                               labelText: "Gender preference",

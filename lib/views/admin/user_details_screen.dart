@@ -227,6 +227,18 @@ class UserDetailsScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: Text(item?["name"]),
       ),
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.green,
+          child: const Icon(Icons.delete),
+          onPressed: () async {
+            Utils.loading();
+            await AdminControllers.deletePost(userId: item!.id);
+            EasyLoading.dismiss();
+            ref.refresh(allUsersDataProvider);
+            Future.delayed(Duration.zero).then((value) {
+              context.pop();
+            });
+          }),
     );
   }
 }

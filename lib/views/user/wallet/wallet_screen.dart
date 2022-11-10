@@ -51,8 +51,9 @@ class WalletScreen extends HookConsumerWidget {
         await ProfileController.updateTransaction(
             postBody: postData, docId: paymentDocId!);
         // update wallet
-        await ProfileController.updateProfile(
-            profileBody: {"wallet_balance": (walletBalance + selectedAmount)});
+        await ProfileController.updateProfile(profileBody: {
+          "wallet_balance": (walletBalance + (selectedAmount / 2))
+        });
         EasyLoading.dismiss();
         EasyLoading.showSuccess("Payment successful");
         ref.refresh(profileDataProvider);
@@ -97,7 +98,7 @@ class WalletScreen extends HookConsumerWidget {
     );
 
     return profileProvider.when(data: (data) {
-      walletBalance = data?["wallet_balance"];
+      walletBalance = data?["wallet_balance"].toInt();
       return Scaffold(
         body: SafeArea(
             child: Padding(
@@ -120,7 +121,7 @@ class WalletScreen extends HookConsumerWidget {
                               "uid": auth.currentUser?.uid,
                               "amount": selectedAmount,
                               "previous_balance": walletBalance,
-                              "email": auth.currentUser?.email,
+                              "phone": auth.currentUser?.phoneNumber,
                               "status": false,
                               "order_id": "",
                               "payment_id": "",

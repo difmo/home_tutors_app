@@ -12,7 +12,7 @@ class UserControllers {
           .where('createdOn',
               isGreaterThanOrEqualTo: Timestamp.fromDate(
                   DateTime.now().subtract(const Duration(days: 7))))
-          .where("state", isEqualTo: stateName)
+          .where("state", isEqualTo: stateName).orderBy('createdOn')
           .snapshots();
 
       return collection;

@@ -45,7 +45,7 @@ class OtpVerifyScreen extends HookConsumerWidget {
                   ),
                 ),
                 const Text(
-                  'Verify OTP',
+                  'ENTER OTP',
                   style: TextStyle(
                     fontSize: 40.0,
                     fontWeight: FontWeight.bold,
@@ -99,7 +99,7 @@ class OtpVerifyScreen extends HookConsumerWidget {
                             }
                           });
                     },
-                    child: const Text('GET OTP'))
+                    child: const Text('LOGIN'))
               ],
             ),
           ),
