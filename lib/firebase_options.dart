@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -54,9 +51,20 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDWlGTtBFb3ZRm36JtXgQTqDZPBZMyRjjk',
-    appId: '1:989662773201:android:18de2fe5af1739e7932af0',
+    appId: '1:989662773201:android:1351d8b9ce4b308b932af0',
     messagingSenderId: '989662773201',
     projectId: 'vip-home-tutors',
     storageBucket: 'vip-home-tutors.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDnAv1-8aCgO9YqywaolOZLwJwUiJWY2Do',
+    appId: '1:989662773201:ios:728539324107edc1932af0',
+    messagingSenderId: '989662773201',
+    projectId: 'vip-home-tutors',
+    storageBucket: 'vip-home-tutors.appspot.com',
+    androidClientId: '989662773201-16dhbu5i1g052ohpai25jk0kvobvmgp2.apps.googleusercontent.com',
+    iosClientId: '989662773201-0l0lqcpp1a02k788fomif1h5uceoeqee.apps.googleusercontent.com',
+    iosBundleId: 'com.viphometutors.app',
   );
 }

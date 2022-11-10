@@ -46,8 +46,9 @@ class LoginScreen extends HookConsumerWidget {
           },
         );
         return response;
-      } catch (e) {
+      } on FirebaseAuthException catch (error) {
         EasyLoading.dismiss();
+        EasyLoading.showError(error.code);
 
         rethrow;
       }

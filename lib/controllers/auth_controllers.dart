@@ -1,11 +1,7 @@
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/statics.dart';
-import 'package:app/controllers/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
-
-import 'profile_controllers.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class AuthControllers {
   // static Future<SendOtpResponseModel> sendOtp(String mobile) async {
@@ -40,7 +36,9 @@ class AuthControllers {
       final UserCredential response =
           await FirebaseAuth.instance.signInWithCredential(credential);
       return response.user;
-    } catch (e) {
+    } on FirebaseAuthException catch (error) {
+      EasyLoading.dismiss();
+      EasyLoading.showError(error.code);
       rethrow;
     }
   }
@@ -98,28 +96,6 @@ class AuthControllers {
   //   }
   //   return null;
   // }
-
-  static Future<User?> login(
-      {required String email, required String password}) async {
-    try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      String? token = await FirebaseMessaging.instance.getToken();
-      await ProfileController.updateProfile(profileBody: {"fcm_token": token});
-      return credential.user;
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        Utils.toast("User not found");
-        debugPrint('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        Utils.toast("Incorrect password");
-        debugPrint('Wrong password provided for that user.');
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-    return null;
-  }
 
   // static Future changePassword({required String email}) async {
   //   try {
