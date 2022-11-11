@@ -185,6 +185,7 @@ class UserDetailsScreen extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 10.0),
                 DropdownSearch<ProfileStatusModel>(
+                  popupProps: const PopupProps.modalBottomSheet(),
                   validator: (value) {
                     if (checkEmpty(value)) {
                       return "Choose status";
@@ -197,12 +198,6 @@ class UserDetailsScreen extends HookConsumerWidget {
                   itemAsString: (item) {
                     return item.title;
                   },
-                  dropdownDecoratorProps: const DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(
-                      labelText: "Profile status",
-                      hintText: "Approved/Denied",
-                    ),
-                  ),
                   onChanged: (value) async {
                     selectedStatus.value = value!;
                     Utils.loading();
@@ -217,7 +212,7 @@ class UserDetailsScreen extends HookConsumerWidget {
                     ref.refresh(allUsersDataProvider);
                   },
                 ),
-                const SizedBox(height: 10.0),
+                const SizedBox(height: 100.0),
               ],
             ),
           ),

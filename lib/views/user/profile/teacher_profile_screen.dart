@@ -104,7 +104,9 @@ class TeacherProfileScreen extends HookConsumerWidget {
                         InkWell(
                             onTap: () async {
                               final XFile? profilePic = await _picker.pickImage(
-                                  source: ImageSource.camera, imageQuality: 10);
+                                  source: ImageSource.camera,
+                                  imageQuality: 10,
+                                  preferredCameraDevice: CameraDevice.front);
                               if (profilePic != null) {
                                 profilePicFile = File(profilePic.path);
                                 reBuild.value = !reBuild.value;
@@ -438,7 +440,9 @@ class TeacherProfileScreen extends HookConsumerWidget {
                               child: InkWell(
                             onTap: () async {
                               final XFile? idFrontPic = await _picker.pickImage(
-                                  source: ImageSource.camera, imageQuality: 10);
+                                  source: ImageSource.camera,
+                                  imageQuality: 10,
+                                  preferredCameraDevice: CameraDevice.rear);
                               if (idFrontPic != null) {
                                 idFront = File(idFrontPic.path);
                                 reBuild.value = !reBuild.value;
@@ -475,7 +479,9 @@ class TeacherProfileScreen extends HookConsumerWidget {
                               child: InkWell(
                             onTap: () async {
                               final XFile? idBackPic = await _picker.pickImage(
-                                  source: ImageSource.camera, imageQuality: 10);
+                                  source: ImageSource.camera,
+                                  imageQuality: 10,
+                                  preferredCameraDevice: CameraDevice.rear);
                               if (idBackPic != null) {
                                 idBack = File(idBackPic.path);
                                 reBuild.value = !reBuild.value;

@@ -231,43 +231,67 @@ class PostDetailsScreen extends HookConsumerWidget {
               : (postData?["users"].length - 1) >=
                       int.parse(postData?["max_hits"])
                   ? null
-                  : InkWell(
-                      onTap: () async {
-                        if ((postData?["users"].length - 1) <
-                            int.parse(postData?["max_hits"])) {
-                          Utils.loading();
-                          var profileData =
-                              await ProfileController().fetchProfileData();
-                          if (profileData?["wallet_balance"] >=
-                              int.parse(postData?["req_coins"])) {
-                            UserControllers.addUidIntoPost(
-                                postId: postData!.id);
-                            EasyLoading.dismiss();
-                            ProfileController.updateProfile(profileBody: {
-                              "wallet_balance":
-                                  (profileData?["wallet_balance"] -
-                                      int.parse(postData?["req_coins"]))
-                            });
-                            ref.refresh(profileDataProvider);
-                            ifPurchased.value = true;
-                          } else {
-                            EasyLoading.showError("Please upgrade your wallet");
-                            EasyLoading.dismiss();
-                          }
-                        }
-                      },
-                      child: Container(
-                          padding: const EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: const Text(
-                            "Grab Lead",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0),
-                          )),
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            context.push(AppRoutes.walletScreen);
+                          },
+                          child: Container(
+                              padding: const EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: const Text(
+                                "Upgrade",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0),
+                              )),
+                        ),
+                        const SizedBox(width: 15.0),
+                        InkWell(
+                          onTap: () async {
+                            if ((postData?["users"].length - 1) <
+                                int.parse(postData?["max_hits"])) {
+                              Utils.loading();
+                              var profileData =
+                                  await ProfileController().fetchProfileData();
+                              if (profileData?["wallet_balance"] >=
+                                  int.parse(postData?["req_coins"])) {
+                                UserControllers.addUidIntoPost(
+                                    postId: postData!.id);
+                                EasyLoading.dismiss();
+                                ProfileController.updateProfile(profileBody: {
+                                  "wallet_balance":
+                                      (profileData?["wallet_balance"] -
+                                          int.parse(postData?["req_coins"]))
+                                });
+                                ref.refresh(profileDataProvider);
+                                ifPurchased.value = true;
+                              } else {
+                                EasyLoading.showError(
+                                    "Please upgrade your wallet");
+                                EasyLoading.dismiss();
+                              }
+                            }
+                          },
+                          child: Container(
+                              padding: const EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: const Text(
+                                "Show Contact",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0),
+                              )),
+                        ),
+                      ],
                     ),
     );
   }

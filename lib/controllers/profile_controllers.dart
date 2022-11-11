@@ -10,7 +10,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -178,7 +177,7 @@ class ProfileController {
     await FirebaseFirestore.instance.clearPersistence();
     EasyLoading.dismiss();
     Future.delayed(Duration.zero).then((value) {
-      Phoenix.rebirth(context);
+      context.go(AppRoutes.onboarding);
     });
   }
 }

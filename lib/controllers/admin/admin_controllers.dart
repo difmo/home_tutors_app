@@ -15,7 +15,7 @@ class AdminControllers {
     try {
       var collection = FirebaseFirestore.instance
           .collection('posts')
-          .orderBy('createdOn')
+          .orderBy('createdOn', descending: true)
           .snapshots();
       return collection;
     } catch (e) {
@@ -47,8 +47,8 @@ class AdminControllers {
       await FirebaseFirestore.instance.collection('posts').doc().set(postBody);
       await AdminControllers.sendNotification(
           deviceToken: "/topics/all",
-          title: "New lead added",
-          body: "checkout new lead in your city");
+          title: "New lead added for ${postBody["state"]}",
+          body: "checkout new lead in ${postBody["city"]} city");
     } catch (e) {
       rethrow;
     }

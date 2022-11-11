@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/statics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -114,7 +116,11 @@ class AuthControllers {
   // }
 
   static String manageLogin() {
-    switch (FirebaseAuth.instance.currentUser?.phoneNumber) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      currentUser.reload();
+    }
+    switch (currentUser?.phoneNumber) {
       case null:
         return AppRoutes.onboarding;
       case adminPhone:

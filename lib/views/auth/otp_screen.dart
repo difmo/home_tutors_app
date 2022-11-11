@@ -1,5 +1,6 @@
 import 'package:app/controllers/profile_controllers.dart';
 import 'package:app/controllers/routes.dart';
+import 'package:app/controllers/statics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -77,25 +78,26 @@ class OtpVerifyScreen extends HookConsumerWidget {
                               id: data.id!,
                               code: otpController.text.trim(),
                             );
-                            EasyLoading.dismiss();
                             if (user != null) {
+                              if (user.phoneNumber == adminPhone) {
+                                EasyLoading.dismiss();
+                                context.go(AppRoutes.adminHome);
+                                return;
+                              }
                               var profileData =
                                   await ProfileController().fetchProfileData();
-                              if (profileData?["email"] == null) {
-                                await ProfileController.createProfile();
-                                Future.delayed(Duration.zero).then((value) {
-                                  context.go(AppRoutes.teacherProfile);
-                                });
-                              } else {
-                                Future.delayed(Duration.zero)
-                                    .then((value) async {
-                                  if (profileData?["is_admin"]) {
-                                    context.go(AppRoutes.adminHome);
-                                  } else {
-                                    context.go(AppRoutes.home);
-                                  }
-                                });
-                              }
+                              EasyLoading.dismiss();
+                              Future.delayed(Duration.zero).then((value) async {
+                                if (profileData?["email"] == null) {
+                                  await ProfileController.createProfile();
+                                  Future.delayed(Duration.zero)
+                                      .then((value) async {
+                                    context.go(AppRoutes.teacherProfile);
+                                  });
+                                } else {
+                                  context.go(AppRoutes.home);
+                                }
+                              });
                             }
                           });
                     },

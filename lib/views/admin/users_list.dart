@@ -16,6 +16,7 @@ class UsersListScreen extends HookConsumerWidget {
     return Scaffold(
       body: allPosts.when(data: (data) {
         return ListView.separated(
+            padding: const EdgeInsets.only(bottom: 100.0),
             separatorBuilder: (context, index) {
               return const Divider();
             },

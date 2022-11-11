@@ -441,8 +441,6 @@ class AddLeadScreen extends HookConsumerWidget {
                                         "locality": localityController.text,
                                         "state": selectedState.value,
                                         "city": selectedCity.value,
-                                        // "req_exp": selectedExp.value,
-                                        // "qualify": qualiController.text,
                                         "gender": selectedGender.value,
                                         "max_hits":
                                             maxHitsController.text.trim(),

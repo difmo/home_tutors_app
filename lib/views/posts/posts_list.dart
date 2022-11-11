@@ -23,7 +23,6 @@ class PostListScreen extends HookConsumerWidget {
             child: Text("No post available"),
           )
         : ListView.builder(
-            reverse: true,
             shrinkWrap: true,
             itemCount: data?.length ?? 0,
             itemBuilder: (context, index) {
@@ -129,8 +128,10 @@ class PostListScreen extends HookConsumerWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text(formatWithMonthName
-                                        .format(item["createdOn"].toDate())),
+                                    Text(formatWithMonthName.format(
+                                        item["createdOn"] == null
+                                            ? DateTime.now()
+                                            : item["createdOn"].toDate())),
                                     const SizedBox(height: 65.0),
                                     Container(
                                       padding: const EdgeInsets.all(10),
@@ -173,11 +174,11 @@ class PostListScreen extends HookConsumerWidget {
               case ConnectionState.waiting:
                 return const Center(child: Text('Awaiting...'));
               case ConnectionState.active:
-                totalPostCount = snapshot.data?.docs.length ?? 0;
+                totalPostCount = snapshot.data?.docs.first["id"];
                 return postListWidget(context, snapshot.data?.docs);
 
               case ConnectionState.done:
-                totalPostCount = snapshot.data?.docs.length ?? 0;
+                totalPostCount = snapshot.data?.docs.first["id"];
                 return postListWidget(context, snapshot.data?.docs);
             }
           }),
