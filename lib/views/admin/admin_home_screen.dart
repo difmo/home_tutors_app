@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../controllers/profile_controllers.dart';
 import '../../controllers/routes.dart';
 
 class AdminHomeScreen extends HookConsumerWidget {
@@ -95,9 +96,8 @@ class AdminHomeScreen extends HookConsumerWidget {
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
-              onTap: () {
-                FirebaseAuth.instance.signOut();
-                context.go(AppRoutes.login);
+              onTap: () async {
+                await ProfileController.logout(context);
               },
             )
           ],

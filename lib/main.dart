@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'controllers/push_notification/firebase_messaging.dart';
@@ -17,7 +18,7 @@ void main() async {
   PushNotificationService.initialize();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(Phoenix(child: const ProviderScope(child: MyApp())));
 }
 
 class MyApp extends StatefulWidget {

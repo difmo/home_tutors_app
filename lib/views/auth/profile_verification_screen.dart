@@ -1,9 +1,9 @@
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../controllers/profile_controllers.dart';
 import '../constants.dart';
 
 class ProfileVerificationScreen extends StatelessWidget {
@@ -63,9 +63,8 @@ class ProfileVerificationScreen extends StatelessWidget {
                 const SizedBox(width: 25.0),
                 Expanded(
                   child: ElevatedButton(
-                      onPressed: () {
-                        FirebaseAuth.instance.signOut();
-                        context.go(AppRoutes.login);
+                      onPressed: () async {
+                        await ProfileController.logout(context);
                       },
                       child: const Text("Logout")),
                 ),

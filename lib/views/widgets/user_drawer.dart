@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app/controllers/profile_controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
@@ -109,9 +109,8 @@ class UserDrawerWidget extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text("Logout"),
-            onTap: () {
-              FirebaseAuth.instance.signOut();
-              context.go(AppRoutes.login);
+            onTap: () async {
+              await ProfileController.logout(context);
             },
           ),
           const SizedBox(height: 10.0),
