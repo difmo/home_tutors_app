@@ -110,9 +110,8 @@ class AppRoutes {
         path: postDetails,
         builder: (BuildContext context, GoRouterState state) {
           return PostDetailsScreen(
-            postData:
-                state.extra as QueryDocumentSnapshot<Map<String, dynamic>>?,
-          );
+              postData:
+                  state.extra as QueryDocumentSnapshot<Map<String, dynamic>>?);
         },
       ),
       GoRoute(

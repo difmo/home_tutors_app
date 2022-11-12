@@ -5,43 +5,144 @@ import 'package:app/views/widgets/error_widget_screen.dart';
 import 'package:app/views/widgets/loading_widget_screen.dart';
 import 'package:app/views/widgets/user_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../controllers/statics.dart';
 import '../../../providers/profile_provider.dart';
 import '../history_screen.dart';
 
-class HomeScreen extends HookConsumerWidget {
+class HomeScreen extends StatefulHookConsumerWidget {
   const HomeScreen({super.key});
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  TabBar get tabBarList => const TabBar(
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  TabBar get tabBarList => TabBar(
         labelColor: Colors.black,
         tabs: [
           Tab(
-            text: "ENQUIRY",
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: ListView.separated(
+                                      shrinkWrap: true,
+                                      separatorBuilder: (context, index) {
+                                        return const Divider();
+                                      },
+                                      itemCount: stateList.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          title: Text(stateList[index]),
+                                          trailing: ref
+                                                      .watch(
+                                                          selectedStateProvider
+                                                              .notifier)
+                                                      .state ==
+                                                  stateList[index]
+                                              ? const Icon(Icons.check)
+                                              : null,
+                                          onTap: () {
+                                            ref
+                                                .watch(selectedStateProvider
+                                                    .notifier)
+                                                .state = stateList[index];
+                                            Navigator.pop(context);
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      ref
+                                          .watch(selectedStateProvider.notifier)
+                                          .state = 'All';
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 50.0,
+                                      padding: const EdgeInsets.all(10),
+                                      margin: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: Colors.blue),
+                                      child: Center(
+                                          child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Text(
+                                            'All',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 25.0,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          if (ref
+                                                  .watch(selectedStateProvider
+                                                      .notifier)
+                                                  .state ==
+                                              "All") ...[
+                                            const SizedBox(width: 10.0),
+                                            const Icon(Icons.check,
+                                                color: Colors.white),
+                                          ]
+                                        ],
+                                      )),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          });
+                    },
+                    icon: const Icon(
+                      Icons.filter_alt,
+                      color: Colors.green,
+                    )),
+                const SizedBox(width: 5.0),
+                const Text("ENQUIRY"),
+              ],
+            ),
           ),
-          Tab(
+          const Tab(
             text: "CONTACTED",
           ),
         ],
       );
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final profileProvider = ref.watch(profileDataProvider);
-    final stateName = ref.watch(stateNameProvider.notifier);
+    // final stateName = ref.watch(stateNameProvider.notifier);
+    // final selectedState = ref.watch(selectedStateProvider.notifier);
+
     return profileProvider.when(loading: () {
       return const LoadingWidgetScreen();
     }, error: (error, stackTrace) {
       return const ErrorWidgetScreen();
     }, data: (data) {
-      if (data != null) {
-        SchedulerBinding.instance.addPostFrameCallback((_) {
-          stateName.state = data["state"];
-        });
-      }
+      // if (data != null) {
+      // SchedulerBinding.instance.addPostFrameCallback((_) {
+      //   stateName.state = data["state"];
+      // });
+      // }
 
       return data?["status"] == 1
           ? DefaultTabController(

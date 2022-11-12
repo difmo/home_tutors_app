@@ -19,6 +19,7 @@ final alTransactionsProvider =
   return apiService.fetchAllTransactions(isAdmin);
 });
 
-final stateNameProvider = StateProvider<String>((ref) => "");
+// final stateNameProvider = StateProvider<String>((ref) => "");
+final selectedStateProvider = StateProvider<String>((ref) => "All");
 
 final isRegisterProvider = StateProvider<bool>((ref) => false);

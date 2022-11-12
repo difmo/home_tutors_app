@@ -4,6 +4,7 @@ import 'package:app/controllers/profile_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:app/providers/profile_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final reBuild = useState(false);
     final firstLoad = useState(false);
-    final stateNameStateProvider = ref.watch(stateNameProvider.notifier);
+    // final stateNameStateProvider = ref.watch(stateNameProvider.notifier);
 
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
@@ -585,15 +586,17 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                       'idType': selectedIdType.value,
                                       'idUrlFront': idFrontPicUrl.value,
                                       'idUrlBack': idBackPicUrl.value,
+                                      'status': 0,
+                                      'createdOn': FieldValue.serverTimestamp(),
                                     };
                                     await ProfileController.updateProfile(
                                         profileBody: profilData);
                                     ref.refresh(profileDataProvider);
                                     EasyLoading.dismiss();
-                                    if (data?["state"] != selectedState.value) {
-                                      stateNameStateProvider.state =
-                                          selectedState.value;
-                                    }
+                                    // if (data?["state"] != selectedState.value) {
+                                    //   stateNameStateProvider.state =
+                                    //       selectedState.value;
+                                    // }
                                     Future.delayed(Duration.zero).then((value) {
                                       context.go(AppRoutes.home);
                                     });

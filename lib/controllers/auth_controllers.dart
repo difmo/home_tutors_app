@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/statics.dart';

@@ -27,10 +27,7 @@ class UsersListScreen extends HookConsumerWidget {
                 onTap: () {
                   context.push(AppRoutes.userDetails, extra: item);
                 },
-                leading: Text(
-                  "${index + 1}.",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                leading: const CircleAvatar(child: Icon(Icons.person)),
                 title: Text(item?["name"] ?? "Name"),
                 subtitle: Text(formatWithMonthName
                     .format(item?["createdOn"].toDate() ?? DateTime.now())),

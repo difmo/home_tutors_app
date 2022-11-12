@@ -1,5 +1,4 @@
 import 'package:app/controllers/admin/admin_controllers.dart';
-import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
 import 'package:app/providers/profile_provider.dart';
@@ -7,6 +6,7 @@ import 'package:app/views/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -16,14 +16,19 @@ import '../../providers/admin_providers.dart';
 class PostListScreen extends HookConsumerWidget {
   const PostListScreen({super.key});
 
-  Widget postListWidget(BuildContext context,
-      List<QueryDocumentSnapshot<Map<String, dynamic>>>? data) {
+  Widget postListWidget(
+      BuildContext context,
+      List<QueryDocumentSnapshot<Map<String, dynamic>>>? data,
+      ScrollController controller) {
     return checkEmpty(data)
         ? const Center(
             child: Text("No post available"),
           )
         : ListView.builder(
+            controller: controller,
+            key: const PageStorageKey<String>('postPosition'),
             shrinkWrap: true,
+            padding: const EdgeInsets.only(bottom: 100.0),
             itemCount: data?.length ?? 0,
             itemBuilder: (context, index) {
               var item = data?[index];
@@ -48,11 +53,12 @@ class PostListScreen extends HookConsumerWidget {
                                       spreadRadius: 5,
                                       color: Colors.grey.shade300)
                                 ]),
-                            child: Row(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
@@ -67,29 +73,57 @@ class PostListScreen extends HookConsumerWidget {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 10.0),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.class_,
-                                          color: Colors.green,
-                                        ),
-                                        const SizedBox(width: 5.0),
-                                        Text("Class: ${item["class"]}"),
-                                      ],
+                                    Text(formatWithMonthName.format(
+                                        item["createdOn"] == null
+                                            ? DateTime.now()
+                                            : item["createdOn"].toDate())),
+                                  ],
+                                ),
+                                const SizedBox(height: 10.0),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.class_,
+                                      color: Colors.green,
                                     ),
-                                    const SizedBox(height: 5.0),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.school,
-                                          color: Colors.green,
-                                        ),
-                                        const SizedBox(width: 5.0),
-                                        Text("Subject: ${item["subject"]}"),
-                                      ],
+                                    const SizedBox(width: 5.0),
+                                    Text("Class: ${item["class"]}"),
+                                  ],
+                                ),
+                                const SizedBox(height: 5.0),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.school,
+                                      color: Colors.green,
                                     ),
-                                    const SizedBox(height: 5.0),
+                                    const SizedBox(width: 5.0),
+                                    Text("Subject: ${item["subject"]}"),
+                                  ],
+                                ),
+                                const SizedBox(height: 5.0),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.6,
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_city,
+                                        color: Colors.green,
+                                      ),
+                                      const SizedBox(width: 5.0),
+                                      Expanded(
+                                        child: Text(
+                                            "Location: ${item["locality"]}, ${item["city"]}"),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 5.0),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
                                           0.6,
@@ -101,40 +135,15 @@ class PostListScreen extends HookConsumerWidget {
                                           ),
                                           const SizedBox(width: 5.0),
                                           Expanded(
-                                            child: Text(
-                                                "Location: ${item["locality"]}, ${item["city"]}"),
+                                            child:
+                                                Text("State: ${item["state"]}"),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 5.0),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.switch_video_outlined,
-                                          color: Colors.green,
-                                        ),
-                                        const SizedBox(width: 5.0),
-                                        Text("Mode: ${item["mode"]} -- "),
-                                        const Text(
-                                          "(Read more)",
-                                          style: TextStyle(color: Colors.blue),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                const Spacer(),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(formatWithMonthName.format(
-                                        item["createdOn"] == null
-                                            ? DateTime.now()
-                                            : item["createdOn"].toDate())),
-                                    const SizedBox(height: 65.0),
                                     Container(
-                                      padding: const EdgeInsets.all(10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 5),
                                       decoration: BoxDecoration(
                                           color: Colors.blue,
                                           borderRadius:
@@ -146,10 +155,30 @@ class PostListScreen extends HookConsumerWidget {
                                             color: Colors.white),
                                       ),
                                     ),
-                                    const SizedBox(height: 10.0),
-                                    const Text("Responded"),
                                   ],
                                 ),
+                                const SizedBox(height: 5.0),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.switch_video_outlined,
+                                          color: Colors.green,
+                                        ),
+                                        const SizedBox(width: 5.0),
+                                        Text("Mode: ${item["mode"]} -- "),
+                                        const Text(
+                                          "(Read more)",
+                                          style: TextStyle(color: Colors.blue),
+                                        ),
+                                      ],
+                                    ),
+                                    const Text("Responded"),
+                                  ],
+                                )
                               ],
                             ),
                           ),
@@ -159,12 +188,26 @@ class PostListScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final stateName = ref.watch(stateNameProvider);
+    // final stateName = ref.watch(stateNameProvider);
+    final selectedState = ref.watch(selectedStateProvider);
+    final scrollController = useScrollController();
+    final limitCount = useState(20);
+    useEffect(() {
+      scrollController.addListener(() {
+        if (scrollController.position.atEdge) {
+          if (scrollController.position.pixels == 0) {
+          } else {
+            limitCount.value = limitCount.value + 20;
+          }
+        }
+      });
+      return;
+    }, []);
     return Scaffold(
       body: StreamBuilder(
-          stream: AuthControllers.isAdmin()
-              ? AdminControllers.fetchAllPosts()
-              : UserControllers.fetchAllPosts(stateName),
+          stream: selectedState == 'All'
+              ? AdminControllers.fetchAllPosts(limitCount.value)
+              : UserControllers.fetchAllPosts(selectedState, limitCount.value),
           builder: (context, snapshot) {
             if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
@@ -174,12 +217,18 @@ class PostListScreen extends HookConsumerWidget {
               case ConnectionState.waiting:
                 return const Center(child: Text('Awaiting...'));
               case ConnectionState.active:
-                totalPostCount = snapshot.data?.docs.first["id"];
-                return postListWidget(context, snapshot.data?.docs);
+                if (!checkEmpty(snapshot.data?.docs)) {
+                  totalPostCount = snapshot.data?.docs.first["id"];
+                }
+                return postListWidget(
+                    context, snapshot.data?.docs, scrollController);
 
               case ConnectionState.done:
-                totalPostCount = snapshot.data?.docs.first["id"];
-                return postListWidget(context, snapshot.data?.docs);
+                if (!checkEmpty(snapshot.data?.docs)) {
+                  totalPostCount = snapshot.data?.docs.first["id"];
+                }
+                return postListWidget(
+                    context, snapshot.data?.docs, scrollController);
             }
           }),
     );
