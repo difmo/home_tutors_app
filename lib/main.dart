@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app/controllers/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -14,7 +16,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseMessaging.instance.subscribeToTopic('all');
-  PushNotificationService.initialize();
+  if (!Platform.isIOS) {
+    PushNotificationService.initialize();
+  }
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const ProviderScope(child: MyApp()));

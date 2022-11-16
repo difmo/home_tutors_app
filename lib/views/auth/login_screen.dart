@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/utils.dart';
@@ -27,6 +29,8 @@ class LoginScreen extends HookConsumerWidget {
           timeout: const Duration(seconds: 120),
           verificationCompleted: (PhoneAuthCredential credential) async {},
           verificationFailed: (FirebaseAuthException e) {
+            log(e.toString());
+
             EasyLoading.dismiss();
             response.error = e.message;
           },
@@ -109,6 +113,7 @@ class LoginScreen extends HookConsumerWidget {
                             formKey: _formKey,
                             submitFunction: () async {
                               Utils.loading();
+                              log('tapped');
                               await sendOtp(
                                 "+91${phoneController.text.trim()}",
                               );
