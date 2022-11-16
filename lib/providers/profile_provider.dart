@@ -13,11 +13,11 @@ final profileDataProvider = FutureProvider.autoDispose((Ref ref) async {
   return apiService.fetchProfileData();
 });
 
-final alTransactionsProvider =
-    FutureProvider.autoDispose.family((Ref ref, bool isAdmin) async {
-  final apiService = ref.read(profileApiProviders);
-  return apiService.fetchAllTransactions(isAdmin);
-});
+// final alTransactionsProvider =
+//     FutureProvider.autoDispose.family((Ref ref, bool isAdmin) async {
+//   final apiService = ref.read(profileApiProviders);
+//   return apiService.fetchAllTransactions(isAdmin);
+// });
 
 // final stateNameProvider = StateProvider<String>((ref) => "");
 final selectedStateProvider = StateProvider<String>((ref) => "All");

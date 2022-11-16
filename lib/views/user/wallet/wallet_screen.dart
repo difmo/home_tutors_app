@@ -31,7 +31,9 @@ class WalletScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileProvider = ref.watch(profileDataProvider);
-    final transactionsProvider = ref.watch(alTransactionsProvider(false));
+    final selectedStatus = useState("All");
+    final scrollController = useScrollController();
+    final limitCount = useState(20);
 
     final handlePaymentSuccess =
         useCallback((PaymentSuccessResponse response) async {
@@ -57,7 +59,6 @@ class WalletScreen extends HookConsumerWidget {
         EasyLoading.dismiss();
         EasyLoading.showSuccess("Payment successful");
         ref.refresh(profileDataProvider);
-        ref.refresh(alTransactionsProvider(false));
       }
     }, []);
     //error
@@ -75,10 +76,8 @@ class WalletScreen extends HookConsumerWidget {
             postBody: postData, docId: paymentDocId!);
         EasyLoading.dismiss();
         EasyLoading.showError(response.message ?? "Something went wrong");
-        ref.refresh(alTransactionsProvider(false));
       }
 
-      ref.refresh(alTransactionsProvider(false));
       log("payment error ${response.message}");
     }, []);
     // wallet
@@ -90,6 +89,14 @@ class WalletScreen extends HookConsumerWidget {
         _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
         _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
         _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, handleExternalWallet);
+        scrollController.addListener(() {
+          if (scrollController.position.atEdge) {
+            if (scrollController.position.pixels == 0) {
+            } else {
+              limitCount.value = limitCount.value + 20;
+            }
+          }
+        });
         return () {
           _razorpay.clear();
         };
@@ -203,22 +210,38 @@ class WalletScreen extends HookConsumerWidget {
                 ],
               ),
               const SizedBox(height: 15.0),
-              transactionsProvider.when(
-                data: (listData) {
-                  return Expanded(
-                      child: TransactionsListScreen(data: listData));
-                },
-                error: (error, stackTrace) {
-                  return const Center(
-                    child: Text("Something went wrong"),
-                  );
-                },
-                loading: () {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
-              )
+              StreamBuilder(
+                  stream: ProfileController.fetchAllTransactions(
+                      false, limitCount.value, selectedStatus.value),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                        return const Center(child: Text('No data'));
+                      case ConnectionState.waiting:
+                        return const Center(child: Text('Awaiting...'));
+                      case ConnectionState.active:
+                        return Expanded(
+                            child: transactionListWidget(
+                          context,
+                          controller: scrollController,
+                          data: snapshot.data?.docs,
+                          isAdmin: false,
+                        ));
+
+                      case ConnectionState.done:
+                        return Expanded(
+                            child: transactionListWidget(
+                          context,
+                          controller: scrollController,
+                          data: snapshot.data?.docs,
+                          isAdmin: false,
+                        ));
+                    }
+                  }),
             ],
           ),
         )),

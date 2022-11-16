@@ -209,7 +209,6 @@ class UserDetailsScreen extends HookConsumerWidget {
                         title: "Account reviewed by Admin",
                         body: "Check your account status");
                     EasyLoading.dismiss();
-                    ref.refresh(allUsersDataProvider);
                   },
                 ),
                 const SizedBox(height: 100.0),
@@ -228,7 +227,6 @@ class UserDetailsScreen extends HookConsumerWidget {
             Utils.loading();
             await AdminControllers.deletePost(userId: item!.id);
             EasyLoading.dismiss();
-            ref.refresh(allUsersDataProvider);
             Future.delayed(Duration.zero).then((value) {
               context.pop();
             });

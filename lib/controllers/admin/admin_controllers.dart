@@ -24,19 +24,24 @@ class AdminControllers {
     }
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>?>
-      fetchAllUsers() async {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllUsers(
+      int? status) {
     try {
-      var collection =
-          FirebaseFirestore.instance.collection('users').orderBy('createdOn');
-      var docSnapshot = await collection.get();
-      if (docSnapshot.docs.isNotEmpty) {
-        List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
-            docSnapshot.docs;
-        return data.reversed.toList();
+      Stream<QuerySnapshot<Map<String, dynamic>>> collection;
+      if (status == 10) {
+        collection = FirebaseFirestore.instance
+            .collection('users')
+            .orderBy('createdOn', descending: true)
+            .snapshots();
       } else {
-        return null;
+        collection = FirebaseFirestore.instance
+            .collection('users')
+            .orderBy('createdOn', descending: true)
+            .where("status", isEqualTo: status)
+            .snapshots();
       }
+
+      return collection;
     } catch (e) {
       rethrow;
     }

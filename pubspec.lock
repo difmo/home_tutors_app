@@ -327,7 +327,7 @@ packages:
       name: flutter_local_notifications
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "12.0.3"
+    version: "12.0.3+1"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -393,7 +393,7 @@ packages:
       name: go_router
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.5"
+    version: "5.1.8"
   hooks_riverpod:
     dependency: "direct main"
     description:
@@ -687,7 +687,7 @@ packages:
       name: share_plus
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.2.0"
+    version: "6.3.0"
   share_plus_platform_interface:
     dependency: transitive
     description:
@@ -839,7 +839,7 @@ packages:
       name: uuid
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.6"
+    version: "3.0.7"
   vector_math:
     dependency: transitive
     description:

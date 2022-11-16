@@ -147,24 +147,36 @@ class ProfileController {
     }
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>?>
-      fetchAllTransactions(bool isAdmin) async {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllTransactions(
+      bool isAdmin, int limit, String status) {
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
-
-      var collection = isAdmin
-          ? FirebaseFirestore.instance.collection('transaction')
-          : FirebaseFirestore.instance
+      Stream<QuerySnapshot<Map<String, dynamic>>> collection;
+      if (isAdmin) {
+        if (status == "All") {
+          collection = FirebaseFirestore.instance
               .collection('transaction')
-              .where("uid", isEqualTo: auth.currentUser?.uid);
-      var docSnapshot = await collection.get();
-      if (docSnapshot.docs.isNotEmpty) {
-        List<QueryDocumentSnapshot<Map<String, dynamic>>> data =
-            docSnapshot.docs;
-        return data.reversed.toList();
+              .limit(limit)
+              .orderBy('createdOn', descending: true)
+              .snapshots();
+        } else {
+          collection = FirebaseFirestore.instance
+              .collection('transaction')
+              .where("status", isEqualTo: status == "true" ? true : false)
+              .limit(limit)
+              .orderBy('createdOn', descending: true)
+              .snapshots();
+        }
       } else {
-        return null;
+        collection = FirebaseFirestore.instance
+            .collection('transaction')
+            .where("uid", isEqualTo: auth.currentUser?.uid)
+            .limit(limit)
+            .orderBy('createdOn', descending: true)
+            .snapshots();
       }
+
+      return collection;
     } catch (e) {
       rethrow;
     }
