@@ -10,7 +10,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../providers/admin_providers.dart';
 import '../constants.dart';
 import '../posts/post_details.dart';
 

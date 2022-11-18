@@ -20,8 +20,9 @@ class WalletScreen extends HookConsumerWidget {
   WalletScreen({super.key});
   final List<WalletRechargeOptionsModel> _walletRechargeOptionsList = [
     WalletRechargeOptionsModel(coins: 250, amount: 500),
-    WalletRechargeOptionsModel(coins: 500, amount: 1000),
-    WalletRechargeOptionsModel(coins: 1500, amount: 3000),
+    WalletRechargeOptionsModel(coins: 600, amount: 1000),
+    WalletRechargeOptionsModel(coins: 1300, amount: 2000),
+    WalletRechargeOptionsModel(coins: 2400, amount: 3000),
   ];
   final Razorpay _razorpay = Razorpay();
   int walletBalance = 0;

@@ -9,11 +9,16 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 class PushNotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
+  static DarwinInitializationSettings iosInitializationSettings =
+      const DarwinInitializationSettings(
+    requestAlertPermission: true,
+    requestBadgePermission: true,
+    requestSoundPermission: true,
+  );
   static void initialize() {
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
-            android: AndroidInitializationSettings('@mipmap/ic_launcher'));
+    InitializationSettings initializationSettings = InitializationSettings(
+        android: const AndroidInitializationSettings('@mipmap/ic_launcher'),
+        iOS: iosInitializationSettings);
 
     _notificationsPlugin.initialize(initializationSettings);
     // _notificationsPlugin.initialize(initializationSettings,onSelectNotification: (String? route) async{
