@@ -5,17 +5,29 @@ class UserControllers {
   static User? currentUser = FirebaseAuth.instance.currentUser;
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllPosts(
-      String stateName, int limit) {
+      String? stateName, int limit) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> collection;
     try {
-      var collection = FirebaseFirestore.instance
-          .collection('posts')
-          .where('createdOn',
-              isGreaterThanOrEqualTo: Timestamp.fromDate(
-                  DateTime.now().subtract(const Duration(days: 7))))
-          .where("state", isEqualTo: stateName)
-          .orderBy('createdOn', descending: true)
-          .limit(limit)
-          .snapshots();
+      if (stateName == null) {
+        collection = FirebaseFirestore.instance
+            .collection('posts')
+            .where('createdOn',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(
+                    DateTime.now().subtract(const Duration(days: 7))))
+            .orderBy('createdOn', descending: true)
+            .limit(limit)
+            .snapshots();
+      } else {
+        collection = FirebaseFirestore.instance
+            .collection('posts')
+            .where('createdOn',
+                isGreaterThanOrEqualTo: Timestamp.fromDate(
+                    DateTime.now().subtract(const Duration(days: 7))))
+            .where("state", isEqualTo: stateName)
+            .orderBy('createdOn', descending: true)
+            .limit(limit)
+            .snapshots();
+      }
 
       return collection;
     } catch (e) {

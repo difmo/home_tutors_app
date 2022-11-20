@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:app/controllers/admin/admin_controllers.dart';
+import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
 import 'package:app/providers/profile_provider.dart';
@@ -34,7 +37,7 @@ class PostListScreen extends HookConsumerWidget {
               var item = data?[index];
               return item == null
                   ? const SizedBox.shrink()
-                  : checkContains(item["users"])
+                  : checkContains(int.parse(item["max_hits"]), item["users"])
                       ? const SizedBox.shrink()
                       : InkWell(
                           onTap: () {
@@ -205,9 +208,11 @@ class PostListScreen extends HookConsumerWidget {
     }, []);
     return Scaffold(
       body: StreamBuilder(
-          stream: selectedState == 'All'
+          stream: AuthControllers.isAdmin()
               ? AdminControllers.fetchAllPosts(limitCount.value)
-              : UserControllers.fetchAllPosts(selectedState, limitCount.value),
+              : UserControllers.fetchAllPosts(
+                  selectedState == 'All' ? null : selectedState,
+                  limitCount.value),
           builder: (context, snapshot) {
             if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
@@ -235,14 +240,23 @@ class PostListScreen extends HookConsumerWidget {
   }
 }
 
-bool checkContains(List<dynamic> data) {
+bool checkContains(int max, List<dynamic> data) {
   User? currentUser = FirebaseAuth.instance.currentUser;
-  bool purchased = false;
-  for (var element in data) {
-    if (element == currentUser?.phoneNumber) {
-      purchased = true;
-      break;
+  bool hide = false;
+  if (AuthControllers.isAdmin()) {
+    log(hide.toString());
+    return hide;
+  } else {
+    for (var element in data) {
+      if (element == currentUser?.phoneNumber) {
+        hide = true;
+        break;
+      }
+    }
+    if ((data.length - 1) == max) {
+      hide = true;
     }
   }
-  return purchased;
+
+  return hide;
 }

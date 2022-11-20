@@ -104,14 +104,67 @@ class TeacherProfileScreen extends HookConsumerWidget {
                       children: [
                         InkWell(
                             onTap: () async {
-                              final XFile? profilePic = await _picker.pickImage(
-                                  source: ImageSource.camera,
-                                  imageQuality: 10,
-                                  preferredCameraDevice: CameraDevice.front);
-                              if (profilePic != null) {
-                                profilePicFile = File(profilePic.path);
-                                reBuild.value = !reBuild.value;
-                              }
+                              showModalBottomSheet<XFile?>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                                label: const Text('Gallery'),
+                                                icon: const Icon(
+                                                    Icons.photo_library),
+                                                onPressed: () async {
+                                                  final XFile? profilePic =
+                                                      await _picker.pickImage(
+                                                          source: ImageSource
+                                                              .gallery,
+                                                          imageQuality: 10,
+                                                          preferredCameraDevice:
+                                                              CameraDevice
+                                                                  .front);
+                                                  if (profilePic != null) {
+                                                    profilePicFile =
+                                                        File(profilePic.path);
+                                                    reBuild.value =
+                                                        !reBuild.value;
+                                                    Navigator.pop(context);
+                                                  }
+                                                }),
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              label: const Text('Camera'),
+                                              icon:
+                                                  const Icon(Icons.camera_alt),
+                                              onPressed: () async {
+                                                final XFile? profilePic =
+                                                    await _picker.pickImage(
+                                                        source:
+                                                            ImageSource.camera,
+                                                        imageQuality: 10,
+                                                        preferredCameraDevice:
+                                                            CameraDevice.front);
+                                                if (profilePic != null) {
+                                                  profilePicFile =
+                                                      File(profilePic.path);
+                                                  reBuild.value =
+                                                      !reBuild.value;
+                                                  Navigator.pop(context);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
                             },
                             child: profilePicFile == null
                                 ? profilePicUrl.value.isNotEmpty
@@ -440,14 +493,69 @@ class TeacherProfileScreen extends HookConsumerWidget {
                           Expanded(
                               child: InkWell(
                             onTap: () async {
-                              final XFile? idFrontPic = await _picker.pickImage(
-                                  source: ImageSource.camera,
-                                  imageQuality: 10,
-                                  preferredCameraDevice: CameraDevice.rear);
-                              if (idFrontPic != null) {
-                                idFront = File(idFrontPic.path);
-                                reBuild.value = !reBuild.value;
-                              }
+                              showModalBottomSheet<XFile?>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                                label: const Text('Gallery'),
+                                                icon: const Icon(
+                                                    Icons.photo_library),
+                                                onPressed: () async {
+                                                  final XFile? idFrontPic =
+                                                      await _picker.pickImage(
+                                                          source: ImageSource
+                                                              .gallery,
+                                                          imageQuality: 10,
+                                                          preferredCameraDevice:
+                                                              CameraDevice
+                                                                  .rear);
+                                                  if (idFrontPic != null) {
+                                                    idFront =
+                                                        File(idFrontPic.path);
+                                                    reBuild.value =
+                                                        !reBuild.value;
+
+                                                    Navigator.pop(context);
+                                                  }
+                                                }),
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              label: const Text('Camera'),
+                                              icon:
+                                                  const Icon(Icons.camera_alt),
+                                              onPressed: () async {
+                                                final XFile? idFrontPic =
+                                                    await _picker.pickImage(
+                                                        source:
+                                                            ImageSource.camera,
+                                                        imageQuality: 10,
+                                                        preferredCameraDevice:
+                                                            CameraDevice.rear);
+                                                if (idFrontPic != null) {
+                                                  idFront =
+                                                      File(idFrontPic.path);
+                                                  reBuild.value =
+                                                      !reBuild.value;
+
+                                                  Navigator.pop(context);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -479,14 +587,68 @@ class TeacherProfileScreen extends HookConsumerWidget {
                           Expanded(
                               child: InkWell(
                             onTap: () async {
-                              final XFile? idBackPic = await _picker.pickImage(
-                                  source: ImageSource.camera,
-                                  imageQuality: 10,
-                                  preferredCameraDevice: CameraDevice.rear);
-                              if (idBackPic != null) {
-                                idBack = File(idBackPic.path);
-                                reBuild.value = !reBuild.value;
-                              }
+                              showModalBottomSheet<XFile?>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                                label: const Text('Gallery'),
+                                                icon: const Icon(
+                                                    Icons.photo_library),
+                                                onPressed: () async {
+                                                  final XFile? idBackPic =
+                                                      await _picker.pickImage(
+                                                          source: ImageSource
+                                                              .gallery,
+                                                          imageQuality: 10,
+                                                          preferredCameraDevice:
+                                                              CameraDevice
+                                                                  .rear);
+                                                  if (idBackPic != null) {
+                                                    idBack =
+                                                        File(idBackPic.path);
+                                                    reBuild.value =
+                                                        !reBuild.value;
+
+                                                    Navigator.pop(context);
+                                                  }
+                                                }),
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                              label: const Text('Camera'),
+                                              icon:
+                                                  const Icon(Icons.camera_alt),
+                                              onPressed: () async {
+                                                final XFile? idBackPic =
+                                                    await _picker.pickImage(
+                                                        source:
+                                                            ImageSource.camera,
+                                                        imageQuality: 10,
+                                                        preferredCameraDevice:
+                                                            CameraDevice.rear);
+                                                if (idBackPic != null) {
+                                                  idBack = File(idBackPic.path);
+                                                  reBuild.value =
+                                                      !reBuild.value;
+
+                                                  Navigator.pop(context);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  });
                             },
                             child: Container(
                               decoration: BoxDecoration(
