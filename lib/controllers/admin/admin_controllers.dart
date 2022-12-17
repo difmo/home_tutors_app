@@ -71,7 +71,7 @@ class AdminControllers {
     }
   }
 
-  static Future deletePost({
+  static Future deleteUser({
     required String userId,
   }) async {
     try {

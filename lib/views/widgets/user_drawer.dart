@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../controllers/routes.dart';
 import '../../controllers/utils.dart';
+import 'round_alert_box.dart';
 
 class UserDrawerWidget extends StatelessWidget {
   final Map<dynamic, dynamic>? profileData;
@@ -94,18 +95,17 @@ class UserDrawerWidget extends StatelessWidget {
                   mode: LaunchMode.externalNonBrowserApplication);
             },
           ),
-          // ListTile(
-          //   leading: const Icon(Icons.lock),
-          //   title: const Text("Change password"),
-          //   onTap: () async {
-          //     Utils.loading();
-          //     await FirebaseAuth.instance
-          //         .sendPasswordResetEmail(email: profileData?["email"]);
-          //     EasyLoading.dismiss();
-          //     EasyLoading.showInfo(
-          //         "Password change link has been sent to your email ID");
-          //   },
-          // ),
+          ListTile(
+            leading: const Icon(Icons.delete),
+            title: const Text("Delete account"),
+            onTap: () async {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const RoundedAlertBox();
+                  });
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text("Logout"),

@@ -1,4 +1,3 @@
-
 import 'package:app/controllers/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -40,7 +39,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Home Tutors',
-      builder: EasyLoading.init(),
+      builder: EasyLoading.init(), 
       theme: ThemeData(
         primarySwatch: Colors.blue,
         brightness: Brightness.light,

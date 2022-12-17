@@ -224,7 +224,7 @@ class UserDetailsScreen extends HookConsumerWidget {
           child: const Icon(Icons.delete),
           onPressed: () async {
             Utils.loading();
-            await AdminControllers.deletePost(userId: item!.id);
+            await AdminControllers.deleteUser(userId: item!.id);
             EasyLoading.dismiss();
             Future.delayed(Duration.zero).then((value) {
               context.pop();
