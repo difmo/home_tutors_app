@@ -1,6 +1,6 @@
 import 'package:app/controllers/routes.dart';
+// import 'package:app/controllers/utils.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -13,7 +13,6 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FirebaseMessaging.instance.subscribeToTopic('all');
   PushNotificationService.initialize();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -39,7 +38,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Home Tutors',
-      builder: EasyLoading.init(), 
+      builder: EasyLoading.init(),
       theme: ThemeData(
         primarySwatch: Colors.blue,
         brightness: Brightness.light,

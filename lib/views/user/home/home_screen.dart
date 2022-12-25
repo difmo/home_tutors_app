@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../controllers/statics.dart';
+import '../../../controllers/utils.dart';
 import '../../../providers/profile_provider.dart';
 import '../history_screen.dart';
 
@@ -138,6 +139,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }, error: (error, stackTrace) {
       return const ErrorWidgetScreen();
     }, data: (data) {
+      Utils.subscribeToTopic(data?["state"] ?? "all");
+
       // if (data != null) {
       // SchedulerBinding.instance.addPostFrameCallback((_) {
       //   stateName.state = data["state"];

@@ -52,8 +52,12 @@ class AdminControllers {
   }) async {
     try {
       await FirebaseFirestore.instance.collection('posts').doc().set(postBody);
+      String topic = "all";
+      if (postBody["state"] != null) {
+        topic = (postBody["state"] ?? "all").replaceAll(' ', '').toLowerCase();
+      }
       await AdminControllers.sendNotification(
-          deviceToken: "/topics/all",
+          deviceToken: "/topics/$topic",
           title: "New lead added for ${postBody["state"]}",
           body: "checkout new lead in ${postBody["city"]} city");
     } catch (e) {
