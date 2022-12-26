@@ -4,6 +4,7 @@ import 'package:app/views/admin/admin_home_screen.dart';
 import 'package:app/views/admin/all_transactions_screen.dart';
 import 'package:app/views/admin/user_details_screen.dart';
 import 'package:app/views/admin/users_list.dart';
+import 'package:app/views/admin/wallet_hits_screen.dart';
 import 'package:app/views/auth/login_screen.dart';
 import 'package:app/views/auth/otp_screen.dart';
 import 'package:app/views/user/home/home_screen.dart';
@@ -30,6 +31,7 @@ class AppRoutes {
   static const String allUsersList = '/all_users_list';
   static const String walletScreen = '/wallet_screen';
   static const String allTransactions = '/all_transactions';
+  static const String walletHits = '/wallet_hits';
   static const String postDetails = '/post_details';
   static const String imageView = '/image_view';
 
@@ -104,6 +106,12 @@ class AppRoutes {
         path: allTransactions,
         builder: (BuildContext context, GoRouterState state) {
           return const AllTransactionsScreen();
+        },
+      ),
+      GoRoute(
+        path: walletHits,
+        builder: (BuildContext context, GoRouterState state) {
+          return const WalletHitsScreen();
         },
       ),
       GoRoute(

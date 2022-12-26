@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl/intl.dart';
@@ -88,8 +89,12 @@ bool checkEmpty(mixedVar) {
   return false;
 }
 
-DateFormat formatWithMonthName = DateFormat.yMMMd();
-DateFormat formatWithMonthNameTime = DateFormat.yMMMd().add_jm();
+final DateFormat formatWithMonthName = DateFormat.yMMMd();
+final DateFormat formatWithMonthNameTime = DateFormat.yMMMd().add_jm();
+
+final List<TextInputFormatter> numberOnlyInput = <TextInputFormatter>[
+  FilteringTextInputFormatter.digitsOnly
+];
 
 Future<void> openUrl(String url) async {
   if (!await launchUrl(Uri.parse(url))) {

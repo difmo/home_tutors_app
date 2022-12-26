@@ -35,73 +35,77 @@ class UsersListScreen extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
-      body: StreamBuilder(
-          stream: AdminControllers.fetchAllUsers(selectedStatus.value),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+      body: SafeArea(
+        child: StreamBuilder(
+            stream: AdminControllers.fetchAllUsers(selectedStatus.value),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return const Center(child: Text('No data'));
-              case ConnectionState.waiting:
-                return const Center(child: Text('Awaiting...'));
-              case ConnectionState.active:
-                return ListView.separated(
-                    key: const PageStorageKey<String>('userPosition'),
-                    controller: scrollController,
-                    padding: const EdgeInsets.only(bottom: 100.0),
-                    separatorBuilder: (context, index) {
-                      return const Divider();
-                    },
-                    itemCount: snapshot.data?.docs.length ?? 0,
-                    itemBuilder: (context, index) {
-                      var item = snapshot.data?.docs[index];
-                      return ListTile(
-                        onTap: () {
-                          context.push(AppRoutes.userDetails, extra: item);
-                        },
-                        leading: const CircleAvatar(child: Icon(Icons.person)),
-                        title: Text(item?["name"] ?? "Name"),
-                        subtitle: Text(formatWithMonthName.format(
-                            item?["createdOn"].toDate() ?? DateTime.now())),
-                        trailing: item?["status"] == 1
-                            ? const Icon(Icons.verified, color: Colors.blue)
-                            : item?["status"] == 0
-                                ? const Icon(Icons.access_time,
-                                    color: Colors.grey)
-                                : const Icon(Icons.close, color: Colors.red),
-                      );
-                    });
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return const Center(child: Text('No data'));
+                case ConnectionState.waiting:
+                  return const Center(child: Text('Awaiting...'));
+                case ConnectionState.active:
+                  return ListView.separated(
+                      key: const PageStorageKey<String>('userPosition'),
+                      controller: scrollController,
+                      padding: const EdgeInsets.only(bottom: 100.0),
+                      separatorBuilder: (context, index) {
+                        return const Divider();
+                      },
+                      itemCount: snapshot.data?.docs.length ?? 0,
+                      itemBuilder: (context, index) {
+                        var item = snapshot.data?.docs[index];
+                        return ListTile(
+                          onTap: () {
+                            context.push(AppRoutes.userDetails, extra: item);
+                          },
+                          leading:
+                              const CircleAvatar(child: Icon(Icons.person)),
+                          title: Text(item?["name"] ?? "Name"),
+                          subtitle: Text(formatWithMonthName.format(
+                              item?["createdOn"].toDate() ?? DateTime.now())),
+                          trailing: item?["status"] == 1
+                              ? const Icon(Icons.verified, color: Colors.blue)
+                              : item?["status"] == 0
+                                  ? const Icon(Icons.access_time,
+                                      color: Colors.grey)
+                                  : const Icon(Icons.close, color: Colors.red),
+                        );
+                      });
 
-              case ConnectionState.done:
-                return ListView.separated(
-                    key: const PageStorageKey<String>('userPosition'),
-                    controller: scrollController,
-                    padding: const EdgeInsets.only(bottom: 100.0),
-                    separatorBuilder: (context, index) {
-                      return const Divider();
-                    },
-                    itemCount: snapshot.data?.docs.length ?? 0,
-                    itemBuilder: (context, index) {
-                      var item = snapshot.data?.docs[index];
-                      return ListTile(
-                        onTap: () {
-                          context.push(AppRoutes.userDetails, extra: item);
-                        },
-                        leading: const CircleAvatar(child: Icon(Icons.person)),
-                        title: Text(item?["name"] ?? "Name"),
-                        subtitle: Text(formatWithMonthName.format(
-                            item?["createdOn"].toDate() ?? DateTime.now())),
-                        trailing: item?["status"] == 1
-                            ? const Icon(Icons.verified, color: Colors.blue)
-                            : item?["status"] == 0
-                                ? const Icon(Icons.access_time,
-                                    color: Colors.grey)
-                                : const Icon(Icons.close, color: Colors.red),
-                      );
-                    });
-            }
-          }),
+                case ConnectionState.done:
+                  return ListView.separated(
+                      key: const PageStorageKey<String>('userPosition'),
+                      controller: scrollController,
+                      padding: const EdgeInsets.only(bottom: 100.0),
+                      separatorBuilder: (context, index) {
+                        return const Divider();
+                      },
+                      itemCount: snapshot.data?.docs.length ?? 0,
+                      itemBuilder: (context, index) {
+                        var item = snapshot.data?.docs[index];
+                        return ListTile(
+                          onTap: () {
+                            context.push(AppRoutes.userDetails, extra: item);
+                          },
+                          leading:
+                              const CircleAvatar(child: Icon(Icons.person)),
+                          title: Text(item?["name"] ?? "Name"),
+                          subtitle: Text(formatWithMonthName.format(
+                              item?["createdOn"].toDate() ?? DateTime.now())),
+                          trailing: item?["status"] == 1
+                              ? const Icon(Icons.verified, color: Colors.blue)
+                              : item?["status"] == 0
+                                  ? const Icon(Icons.access_time,
+                                      color: Colors.grey)
+                                  : const Icon(Icons.close, color: Colors.red),
+                        );
+                      });
+              }
+            }),
+      ),
       appBar: AppBar(
         title: const Text("Users"),
       ),

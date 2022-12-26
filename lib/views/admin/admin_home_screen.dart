@@ -1,3 +1,4 @@
+import 'package:app/views/admin/widgets/send_notification_widget.dart';
 import 'package:app/views/posts/posts_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -91,6 +92,24 @@ class AdminHomeScreen extends HookConsumerWidget {
               title: const Text('Transaction'),
               onTap: () {
                 context.push(AppRoutes.allTransactions);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.tap_and_play),
+              title: const Text('Wallet Hits'),
+              onTap: () {
+                context.push(AppRoutes.walletHits);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.notification_add),
+              title: const Text('Send Notification'),
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SendNotificationWidget();
+                    });
               },
             ),
             ListTile(

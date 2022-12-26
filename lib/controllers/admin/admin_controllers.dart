@@ -47,6 +47,31 @@ class AdminControllers {
     }
   }
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllWalletHits() {
+    try {
+      Stream<QuerySnapshot<Map<String, dynamic>>> collection;
+      collection = FirebaseFirestore.instance
+          .collection('wallet_hits')
+          .orderBy('createdOn', descending: true)
+          .snapshots();
+
+      return collection;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future promoteLead(
+      {required Map<String, dynamic> data, String? docId}) async {
+    try {
+      final CollectionReference users =
+          FirebaseFirestore.instance.collection("posts");
+      await users.doc(docId).update(data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future createLeads({
     required Map<String, dynamic> postBody,
   }) async {

@@ -20,6 +20,9 @@ Widget transactionListWidget(BuildContext context,
               itemBuilder: (context, index) {
                 var item = data?[index];
                 return ListTile(
+                  onTap: () {
+                    openUrl("tel:${item?["phone"]}");
+                  },
                   leading: Text((index + 1).toString()),
                   title: Text(
                       "₹ ${item?["amount"]} -- ${formatWithMonthNameTime.format(item?["createdOn"].toDate() ?? DateTime.now())}"),

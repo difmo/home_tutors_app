@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -125,8 +126,39 @@ class PostDetailsScreen extends HookConsumerWidget {
                       // DetailsTileWidget(
                       //     icon: Icons.school,
                       //     title: "Prefered Qualification: ${postData?["qualify"]}"),
-
+                      if (!ifPurchased.value) ...[
+                        DetailsColorTileWidget(
+                          icon: Icons.wallet,
+                          title: "Coins needed: ",
+                          value: "${postData?["req_coins"]}",
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.people, color: Colors.grey.shade700),
+                            const SizedBox(width: 5.0),
+                            Text(
+                              "${(postData?["users"].length) - 1} ",
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                            const Text(
+                              "out of ",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                            Text(
+                              "${postData?["max_hits"]}",
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                            const Text(
+                              " Responded",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ],
+                        ),
+                      ],
                       if (ifPurchased.value || AuthControllers.isAdmin()) ...[
+                        const Divider(
+                          thickness: 1.0,
+                        ),
                         DetailsColorTileWidget(
                           icon: Icons.person,
                           title: "Contact name: ",
@@ -152,35 +184,8 @@ class PostDetailsScreen extends HookConsumerWidget {
                             value: "${postData?["email"]}",
                           ),
                         ),
-                      ] else ...[
-                        DetailsColorTileWidget(
-                          icon: Icons.wallet,
-                          title: "Coins needed: ",
-                          value: "${postData?["req_coins"]}",
-                        ),
-                        Row(
-                          children: [
-                            const Icon(Icons.people),
-                            const SizedBox(width: 5.0),
-                            Text(
-                              "${(postData?["users"].length) - 1} ",
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                            const Text(
-                              "out of ",
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                            Text(
-                              "${postData?["max_hits"]}",
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                            const Text(
-                              " Responded",
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                          ],
-                        )
                       ],
+
                       if (AuthControllers.isAdmin()) ...[
                         const SizedBox(height: 25.0),
                         const Text("Collected users", style: pagetitleStyle),
@@ -226,6 +231,11 @@ class PostDetailsScreen extends HookConsumerWidget {
                     Expanded(
                       child: InkWell(
                         onTap: () async {
+                          Utils.loading();
+                          await ProfileController.createWalletHit(
+                              postId: postData?.id ?? "null");
+                          EasyLoading.dismiss();
+
                           context.push(AppRoutes.walletScreen);
                         },
                         child: Container(
@@ -299,17 +309,37 @@ class PostDetailsScreen extends HookConsumerWidget {
           ),
         ),
         floatingActionButton: AuthControllers.isAdmin()
-            ? FloatingActionButton(
-                backgroundColor: Colors.green,
-                child: const Icon(Icons.delete),
-                onPressed: () async {
-                  Utils.loading();
-                  await AdminControllers.deleteLead(postId: postData!.id);
-                  EasyLoading.dismiss();
-                  Future.delayed(Duration.zero).then((value) {
-                    context.pop();
-                  });
-                })
+            ? SpeedDial(
+                icon: Icons.more_horiz,
+                children: [
+                  SpeedDialChild(
+                      label: "Delete",
+                      backgroundColor: Colors.red,
+                      child: const Icon(Icons.delete),
+                      onTap: () async {
+                        Utils.loading();
+                        await AdminControllers.deleteLead(postId: postData!.id);
+                        EasyLoading.dismiss();
+                        Future.delayed(Duration.zero).then((value) {
+                          context.pop();
+                        });
+                      }),
+                  SpeedDialChild(
+                      label: "Promote",
+                      backgroundColor: Colors.green,
+                      child: const Icon(Icons.arrow_upward),
+                      onTap: () async {
+                        Utils.loading();
+                        await AdminControllers.promoteLead(
+                            docId: postData!.id,
+                            data: {"createdOn": FieldValue.serverTimestamp()});
+                        EasyLoading.dismiss();
+                        Future.delayed(Duration.zero).then((value) {
+                          context.pop();
+                        });
+                      })
+                ],
+              )
             : null);
   }
 }

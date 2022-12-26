@@ -152,7 +152,7 @@ class AddLeadScreen extends HookConsumerWidget {
                         ),
                         const SizedBox(height: 10.0),
                         TextFormField(
-                          maxLength: 20,
+                          maxLength: 35,
                           validator: (value) {
                             if (value!.length < 2) {
                               return "Enter a valid subject";
@@ -355,6 +355,7 @@ class AddLeadScreen extends HookConsumerWidget {
                             }
                           },
                           controller: maxHitsController,
+                          inputFormatters: numberOnlyInput,
                           keyboardType: TextInputType.number,
                           maxLength: 3,
                           decoration: const InputDecoration(
@@ -371,6 +372,7 @@ class AddLeadScreen extends HookConsumerWidget {
                             }
                           },
                           controller: coinReqController,
+                          inputFormatters: numberOnlyInput,
                           keyboardType: TextInputType.number,
                           maxLength: 3,
                           decoration: const InputDecoration(
@@ -413,6 +415,8 @@ class AddLeadScreen extends HookConsumerWidget {
                             }
                           },
                           controller: phoneController,
+                          inputFormatters: numberOnlyInput,
+
                           keyboardType: TextInputType.number,
                           maxLength: 10,
                           decoration: const InputDecoration(

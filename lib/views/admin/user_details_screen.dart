@@ -20,6 +20,8 @@ class UserDetailsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedStatus = useState(profileStatusList[0]);
+    final walletController = useTextEditingController(
+        text: (item?["wallet_balance"] ?? 0).toString());
     useEffect(
       () {
         for (var element in profileStatusList) {
@@ -207,6 +209,25 @@ class UserDetailsScreen extends HookConsumerWidget {
                         deviceToken: item?["fcm_token"],
                         title: "Account reviewed by Admin",
                         body: "Check your account status");
+                    EasyLoading.dismiss();
+                  },
+                ),
+                const SizedBox(height: 20.0),
+                TextField(
+                  inputFormatters: numberOnlyInput,
+                  controller: walletController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: "Wallet Balance",
+                    border: OutlineInputBorder(),
+                  ),
+                  onSubmitted: (value) async {
+                    Utils.loading();
+                    await ProfileController.updateProfile(profileBody: {
+                      "wallet_balance": checkEmpty(walletController.text)
+                          ? 0
+                          : int.parse(walletController.text)
+                    }, uidFromAdmin: item?["uid"]);
                     EasyLoading.dismiss();
                   },
                 ),

@@ -147,6 +147,24 @@ class ProfileController {
     }
   }
 
+  static Future createWalletHit({required String postId}) async {
+    try {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      Map<String, dynamic> postBody = {
+        "uid": auth.currentUser?.uid,
+        "mobile": auth.currentUser?.phoneNumber,
+        "post_id": postId,
+        "createdOn": FieldValue.serverTimestamp()
+      };
+      await FirebaseFirestore.instance
+          .collection('wallet_hits')
+          .doc()
+          .set(postBody);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllTransactions(
       bool isAdmin, int limit, String status) {
     try {
