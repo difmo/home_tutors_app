@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:app/controllers/profile_controllers.dart';
+import 'package:app/controllers/utils.dart';
 import 'package:app/views/constants.dart';
 import 'package:app/views/user/wallet/transactions_list_screen.dart';
 import 'package:app/views/widgets/error_widget_screen.dart';
@@ -13,17 +14,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
+import '../../../controllers/admin/admin_controllers.dart';
 import '../../../providers/profile_provider.dart';
 
 // ignore: must_be_immutable
 class WalletScreen extends HookConsumerWidget {
   WalletScreen({super.key});
-  final List<WalletRechargeOptionsModel> _walletRechargeOptionsList = [
-    WalletRechargeOptionsModel(coins: 250, amount: 500),
-    WalletRechargeOptionsModel(coins: 600, amount: 1000),
-    WalletRechargeOptionsModel(coins: 1300, amount: 2000),
-    WalletRechargeOptionsModel(coins: 2400, amount: 3000),
-  ];
+
   final Razorpay _razorpay = Razorpay();
   int walletBalance = 0;
   int selectedAmount = 0;
@@ -32,6 +29,7 @@ class WalletScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileProvider = ref.watch(profileDataProvider);
+    final amtOptionsProvider = ref.watch(amountOptionsProvider);
     final selectedStatus = useState("All");
     final scrollController = useScrollController();
     final limitCount = useState(20);
@@ -110,7 +108,7 @@ class WalletScreen extends HookConsumerWidget {
       return Scaffold(
         body: SafeArea(
             child: Padding(
-          padding: const EdgeInsets.all(17.0),
+          padding: const EdgeInsets.fromLTRB(17.0, 17.0, 17.0, 0.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -119,73 +117,84 @@ class WalletScreen extends HookConsumerWidget {
                 style: pageSubTitleStyle,
               ),
               const SizedBox(height: 25.0),
-              Wrap(
-                children: _walletRechargeOptionsList
-                    .map((item) => InkWell(
-                          onTap: () async {
-                            selectedAmount = item.amount;
-                            FirebaseAuth auth = FirebaseAuth.instance;
-                            Map<String, dynamic> postData = {
-                              "uid": auth.currentUser?.uid,
-                              "amount": selectedAmount,
-                              "previous_balance": walletBalance,
-                              "phone": auth.currentUser?.phoneNumber,
-                              "status": false,
-                              "order_id": "",
-                              "payment_id": "",
-                              "payment_signature": "",
-                              "message": "",
-                              'createdOn': FieldValue.serverTimestamp()
-                            };
-                            EasyLoading.show(
-                                status: "Please wait",
-                                maskType: EasyLoadingMaskType.clear);
+              amtOptionsProvider.when(
+                data: (listData) {
+                  return Wrap(
+                    children: listData.docs
+                        .map((item) => InkWell(
+                              onTap: () async {
+                                selectedAmount = item["amount"];
+                                FirebaseAuth auth = FirebaseAuth.instance;
+                                Map<String, dynamic> postData = {
+                                  "uid": auth.currentUser?.uid,
+                                  "amount": selectedAmount,
+                                  "previous_balance": walletBalance,
+                                  "phone": auth.currentUser?.phoneNumber,
+                                  "status": false,
+                                  "order_id": "",
+                                  "payment_id": "",
+                                  "payment_signature": "",
+                                  "message": "",
+                                  'createdOn': FieldValue.serverTimestamp()
+                                };
+                                EasyLoading.show(
+                                    status: "Please wait",
+                                    maskType: EasyLoadingMaskType.clear);
 
-                            paymentDocId =
-                                await ProfileController.createTransaction(
-                                    postBody: postData);
-                            EasyLoading.dismiss();
+                                paymentDocId =
+                                    await ProfileController.createTransaction(
+                                        postBody: postData);
+                                EasyLoading.dismiss();
 
-                            var options = {
-                              'key': 'rzp_live_5HtAsZL4CVxxEn',
-                              'amount': item.amount * 100,
-                              'name': 'VIPTUTORS @ SYBRA CORPORATION',
-                              'description': 'Wallet recharge',
-                              'prefill': {
-                                'contact': data?["phone"] ?? "8427373281",
-                                'email': data?["email"] ?? "vipndls@gmail.com"
-                              }
-                            };
-                            _razorpay.open(options);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            margin: const EdgeInsets.all(7.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey.shade300,
-                                    spreadRadius: 3,
-                                    blurRadius: 5)
-                              ],
-                              color: Colors.white,
-                            ),
-                            child: Column(
-                              children: [
-                                Text("₹${item.amount} for"),
-                                const SizedBox(height: 5.0),
-                                Text(
-                                  "${item.coins} Coins",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14.0),
+                                var options = {
+                                  'key': 'rzp_live_5HtAsZL4CVxxEn',
+                                  'amount': item["amount"] * 100,
+                                  'name': 'VIPTUTORS @ SYBRA CORPORATION',
+                                  'description': 'Wallet recharge',
+                                  'prefill': {
+                                    'contact': data?["phone"] ?? "8427373281",
+                                    'email':
+                                        data?["email"] ?? "vipndls@gmail.com"
+                                  }
+                                };
+                                _razorpay.open(options);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                margin: const EdgeInsets.all(7.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.grey.shade300,
+                                        spreadRadius: 3,
+                                        blurRadius: 5)
+                                  ],
+                                  color: Colors.white,
                                 ),
-                              ],
-                            ),
-                          ),
-                        ))
-                    .toList(),
+                                child: Column(
+                                  children: [
+                                    Text("₹${item["amount"]} for"),
+                                    const SizedBox(height: 5.0),
+                                    Text(
+                                      "${item["coins"]} Coins",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14.0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                  );
+                },
+                error: (error, stackTrace) {
+                  return Text("Something went wrong");
+                },
+                loading: () {
+                  return const LinearProgressIndicator();
+                },
               ),
               const SizedBox(height: 25.0),
               const Text(
@@ -270,10 +279,4 @@ class WalletScreen extends HookConsumerWidget {
       return const LoadingWidgetScreen();
     });
   }
-}
-
-class WalletRechargeOptionsModel {
-  final int coins;
-  final int amount;
-  WalletRechargeOptionsModel({required this.coins, required this.amount});
 }

@@ -1,6 +1,7 @@
 import 'package:app/controllers/admin/admin_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -37,7 +38,8 @@ class UsersListScreen extends HookConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: StreamBuilder(
-            stream: AdminControllers.fetchAllUsers(selectedStatus.value),
+            stream: AdminControllers.fetchAllUsers(
+                selectedStatus.value, limitCount.value),
             builder: (context, snapshot) {
               if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
@@ -47,34 +49,6 @@ class UsersListScreen extends HookConsumerWidget {
                 case ConnectionState.waiting:
                   return const Center(child: Text('Awaiting...'));
                 case ConnectionState.active:
-                  return ListView.separated(
-                      key: const PageStorageKey<String>('userPosition'),
-                      controller: scrollController,
-                      padding: const EdgeInsets.only(bottom: 100.0),
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                      itemCount: snapshot.data?.docs.length ?? 0,
-                      itemBuilder: (context, index) {
-                        var item = snapshot.data?.docs[index];
-                        return ListTile(
-                          onTap: () {
-                            context.push(AppRoutes.userDetails, extra: item);
-                          },
-                          leading:
-                              const CircleAvatar(child: Icon(Icons.person)),
-                          title: Text(item?["name"] ?? "Name"),
-                          subtitle: Text(formatWithMonthName.format(
-                              item?["createdOn"].toDate() ?? DateTime.now())),
-                          trailing: item?["status"] == 1
-                              ? const Icon(Icons.verified, color: Colors.blue)
-                              : item?["status"] == 0
-                                  ? const Icon(Icons.access_time,
-                                      color: Colors.grey)
-                                  : const Icon(Icons.close, color: Colors.red),
-                        );
-                      });
-
                 case ConnectionState.done:
                   return ListView.separated(
                       key: const PageStorageKey<String>('userPosition'),
@@ -108,6 +82,15 @@ class UsersListScreen extends HookConsumerWidget {
       ),
       appBar: AppBar(
         title: const Text("Users"),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                Utils.loading(msg: "Downloading...");
+                await AdminControllers.getUsersList();
+                EasyLoading.dismiss();
+              },
+              icon: const Icon(Icons.file_download))
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

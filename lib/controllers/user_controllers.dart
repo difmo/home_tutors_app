@@ -1,5 +1,12 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+final userApiProviders = Provider<UserControllers>((ref) {
+  return UserControllers();
+});
 
 class UserControllers {
   static User? currentUser = FirebaseAuth.instance.currentUser;
@@ -57,6 +64,32 @@ class UserControllers {
       return collection;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> fetchAmountOptions() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> collection = await FirebaseFirestore
+          .instance
+          .collection('amount_options')
+          .orderBy('createdOn', descending: true)
+          .get();
+
+      return collection;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<Map<String, dynamic>?> getPostData(String id) async {
+    var collection = FirebaseFirestore.instance.collection('posts');
+    var docSnapshot = await collection.doc(id).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+      log("data: $data");
+      return data;
+    } else {
+      return null;
     }
   }
 }

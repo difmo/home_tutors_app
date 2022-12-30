@@ -1,7 +1,11 @@
+import 'package:app/controllers/admin/admin_controllers.dart';
+import 'package:app/controllers/utils.dart';
 import 'package:app/views/admin/widgets/send_notification_widget.dart';
 import 'package:app/views/posts/posts_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -15,22 +19,27 @@ class AdminHomeScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: const SafeArea(child: PostListScreen()),
-      appBar: AppBar(
-        title: const Text('Posts'),
-        centerTitle: false,
-        actions: [
-          TextButton.icon(
-              onPressed: () {
+      appBar: AppBar(title: const Text('Posts'), centerTitle: false),
+      floatingActionButton: SpeedDial(
+        icon: Icons.more_horiz,
+        children: [  
+          SpeedDialChild(
+              label: "Add",
+              backgroundColor: Colors.green,
+              child: const Icon(Icons.add),
+              onTap: () async {
                 context.push(AppRoutes.addNewLead);
-              },
-              icon: const Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              label: const Text(
-                'New post',
-                style: TextStyle(color: Colors.white),
-              ))
+              }),
+          SpeedDialChild(
+              label: "Clean",
+              backgroundColor: Colors.red,
+              child: const Icon(Icons.cleaning_services_rounded),
+              onTap: () async {
+                Utils.loading(msg: "Please wait, cleaning database");
+                await AdminControllers.clearOldPosts();
+                EasyLoading.dismiss();
+                EasyLoading.showSuccess("Database cleared");
+              }),
         ],
       ),
       drawer: Drawer(
@@ -99,6 +108,13 @@ class AdminHomeScreen extends HookConsumerWidget {
               title: const Text('Wallet Hits'),
               onTap: () {
                 context.push(AppRoutes.walletHits);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.attach_money_outlined),
+              title: const Text('Amount Options'),
+              onTap: () {
+                context.push(AppRoutes.amountOptionsScreen);
               },
             ),
             ListTile(

@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:app/controllers/statics.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:excel/excel.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 final adminApiProviders = Provider<AdminControllers>((ref) {
   return AdminControllers();
@@ -24,18 +29,102 @@ class AdminControllers {
     }
   }
 
+  static Future clearOldPosts() async {
+    try {
+      var collection = await FirebaseFirestore.instance
+          .collection('posts')
+          .where('createdOn',
+              isLessThan: Timestamp.fromDate(
+                  DateTime.now().subtract(const Duration(days: 7))))
+          .get();
+      for (var element in collection.docs) {
+        log(element["createdOn"].toDate().toString());
+        await element.reference.delete();
+      }
+      return;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      getUsersList() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> collection = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .orderBy('createdOn', descending: true)
+          .where("status", isEqualTo: 1)
+          .get();
+      var data = collection.docs;
+      await generateUserExcel(data);
+      return data;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future generateUserExcel(
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> listData) async {
+    var excel = Excel.createExcel();
+    Sheet sheetObject = excel['active_users'];
+    var cell = sheetObject.cell(CellIndex.indexByString("A1"));
+    cell.value = 8; // Insert value to selected cell;
+    for (int i = 0; i < listData.length; i++) {
+      var cell = sheetObject.cell(CellIndex.indexByString(
+          'A${i + 1}')); //i+1 means when the loop iterates every time it will write values in new row, e.g A1, A2, ...
+      cell.value = listData[i].data()['name']; // Insert value to selected cell;
+    }
+    for (int i = 0; i < listData.length; i++) {
+      var cell = sheetObject.cell(CellIndex.indexByString(
+          'B${i + 1}')); //i+1 means when the loop iterates every time it will write values in new row, e.g A1, A2, ...
+      cell.value =
+          listData[i].data()['phone']; // Insert value to selected cell;
+    }
+    for (int i = 0; i < listData.length; i++) {
+      var cell = sheetObject.cell(CellIndex.indexByString(
+          'C${i + 1}')); //i+1 means when the loop iterates every time it will write values in new row, e.g A1, A2, ...
+      cell.value =
+          listData[i].data()['email']; // Insert value to selected cell;
+    }
+    for (int i = 0; i < listData.length; i++) {
+      var cell = sheetObject.cell(CellIndex.indexByString(
+          'D${i + 1}')); //i+1 means when the loop iterates every time it will write values in new row, e.g A1, A2, ...
+      cell.value =
+          listData[i].data()['createdOn']; // Insert value to selected cell;
+    }
+    final file = await _localFile;
+    var tempFile = await file.writeAsBytes(excel.encode()!);
+    Share.shareXFiles([
+      XFile(tempFile.path, name: "active_users"),
+    ], subject: "Download file", text: "List of active users");
+    return file.writeAsBytes(excel.encode()!);
+  }
+
+  static Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
+  }
+
+  static Future<File> get _localFile async {
+    final path = await _localPath;
+    return File('$path/active_users.xlsx');
+  }
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllUsers(
-      int? status) {
+      int? status, int limit) {
     try {
       Stream<QuerySnapshot<Map<String, dynamic>>> collection;
       if (status == 10) {
         collection = FirebaseFirestore.instance
             .collection('users')
+            .limit(limit)
             .orderBy('createdOn', descending: true)
             .snapshots();
       } else {
         collection = FirebaseFirestore.instance
             .collection('users')
+            .limit(limit)
             .orderBy('createdOn', descending: true)
             .where("status", isEqualTo: status)
             .snapshots();
@@ -52,6 +141,20 @@ class AdminControllers {
       Stream<QuerySnapshot<Map<String, dynamic>>> collection;
       collection = FirebaseFirestore.instance
           .collection('wallet_hits')
+          .orderBy('createdOn', descending: true)
+          .snapshots();
+
+      return collection;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAmountOptions() {
+    try {
+      Stream<QuerySnapshot<Map<String, dynamic>>> collection;
+      collection = FirebaseFirestore.instance
+          .collection('amount_options')
           .orderBy('createdOn', descending: true)
           .snapshots();
 
@@ -90,6 +193,19 @@ class AdminControllers {
     }
   }
 
+  static Future createAmountOption({
+    required Map<String, dynamic> postBody,
+  }) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('amount_options')
+          .doc()
+          .set(postBody);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future deleteLead({
     required String postId,
   }) async {
@@ -105,6 +221,19 @@ class AdminControllers {
   }) async {
     try {
       await FirebaseFirestore.instance.collection('users').doc(userId).delete();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future deleteAmountOption({
+    required String id,
+  }) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('amount_options')
+          .doc(id)
+          .delete();
     } catch (e) {
       rethrow;
     }

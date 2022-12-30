@@ -1,9 +1,11 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../controllers/admin/admin_controllers.dart';
+import '../../../controllers/statics.dart';
 import '../../../controllers/utils.dart';
 
 class SendNotificationWidget extends HookConsumerWidget {
@@ -12,6 +14,7 @@ class SendNotificationWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final selectedState = useState("all");
     final title = useTextEditingController();
     final message = useTextEditingController();
 
@@ -19,7 +22,7 @@ class SendNotificationWidget extends HookConsumerWidget {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0))),
       contentPadding: const EdgeInsets.all(20.0),
-      title: const Text("Send notification to all user"),
+      title: const Text("Send notification to:"),
       content: SizedBox(
         child: Form(
           key: _formKey,
@@ -28,6 +31,29 @@ class SendNotificationWidget extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              DropdownSearch<String>(
+                validator: (value) {
+                  if (checkEmpty(value)) {
+                    return "Choose state";
+                  } else {
+                    return null;
+                  }
+                },
+                selectedItem:
+                    selectedState.value.isEmpty ? null : selectedState.value,
+                popupProps: const PopupProps.menu(
+                    showSelectedItems: true, showSearchBox: true),
+                items: stateList,
+                dropdownDecoratorProps: const DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    labelText: "Select state",
+                    hintText: "choose state or search",
+                  ),
+                ),
+                onChanged: (value) {
+                  selectedState.value = value!;
+                },
+              ),
               TextField(
                 controller: title,
                 autofocus: true,
@@ -35,7 +61,7 @@ class SendNotificationWidget extends HookConsumerWidget {
                     labelText: "Title",
                     hintText: 'Notification title',
                     border: InputBorder.none),
-                maxLength: 50,
+                maxLength: 75,
               ),
               TextField(
                 controller: message,
@@ -44,7 +70,7 @@ class SendNotificationWidget extends HookConsumerWidget {
                     hintText: 'Short Notification content',
                     border: InputBorder.none),
                 maxLines: 3,
-                maxLength: 100,
+                maxLength: 150,
               ),
             ],
           ),
@@ -67,7 +93,8 @@ class SendNotificationWidget extends HookConsumerWidget {
                 submitFunction: () async {
                   Utils.loading();
                   await AdminControllers.sendNotification(
-                      deviceToken: "/topics/all",
+                      deviceToken:
+                          "/topics/${selectedState.value.replaceAll(' ', '').toLowerCase()}",
                       title: title.text,
                       body: message.text);
                   EasyLoading.dismiss();

@@ -25,7 +25,8 @@ class HistoryScreen extends StatelessWidget {
               var item = data?[index];
               return ListTile(
                 onTap: () {
-                  context.push(AppRoutes.postDetails, extra: item);
+                  context.pushNamed(AppRoutes.postDetails,
+                      extra: item.data(), params: {"id": item.id});
                 },
                 leading: Text(
                   "${index + 1}.",

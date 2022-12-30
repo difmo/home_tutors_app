@@ -41,7 +41,8 @@ class PostListScreen extends HookConsumerWidget {
                       ? const SizedBox.shrink()
                       : InkWell(
                           onTap: () {
-                            context.push(AppRoutes.postDetails, extra: item);
+                            context.pushNamed(AppRoutes.postDetails,
+                                extra: item.data(), params: {"id": item.id});
                           },
                           child: Container(
                             padding: const EdgeInsets.all(10),
@@ -222,12 +223,6 @@ class PostListScreen extends HookConsumerWidget {
               case ConnectionState.waiting:
                 return const Center(child: Text('Awaiting...'));
               case ConnectionState.active:
-                if (!checkEmpty(snapshot.data?.docs)) {
-                  totalPostCount = snapshot.data?.docs.first["id"];
-                }
-                return postListWidget(
-                    context, snapshot.data?.docs, scrollController);
-
               case ConnectionState.done:
                 if (!checkEmpty(snapshot.data?.docs)) {
                   totalPostCount = snapshot.data?.docs.first["id"];

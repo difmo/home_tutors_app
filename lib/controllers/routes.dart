@@ -2,6 +2,7 @@ import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/views/admin/add_post_screen.dart';
 import 'package:app/views/admin/admin_home_screen.dart';
 import 'package:app/views/admin/all_transactions_screen.dart';
+import 'package:app/views/admin/amount_options_screen.dart';
 import 'package:app/views/admin/user_details_screen.dart';
 import 'package:app/views/admin/users_list.dart';
 import 'package:app/views/admin/wallet_hits_screen.dart';
@@ -17,6 +18,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+const String dynamicUriPrifix = "https://viptutors.page.link";
+
 class AppRoutes {
   static const String onboarding = '/';
   static const String login = '/login';
@@ -31,8 +34,10 @@ class AppRoutes {
   static const String allUsersList = '/all_users_list';
   static const String walletScreen = '/wallet_screen';
   static const String allTransactions = '/all_transactions';
+  static const String amountOptionsScreen = '/amount_options';
+
   static const String walletHits = '/wallet_hits';
-  static const String postDetails = '/post_details';
+  static const String postDetails = '/post_details:id';
   static const String imageView = '/image_view';
 
   static final GoRouter router = GoRouter(
@@ -115,11 +120,18 @@ class AppRoutes {
         },
       ),
       GoRoute(
+        path: amountOptionsScreen,
+        builder: (BuildContext context, GoRouterState state) {
+          return const AmountOptionsScreen();
+        },
+      ),
+      GoRoute(
         path: postDetails,
+        name: postDetails,
         builder: (BuildContext context, GoRouterState state) {
           return PostDetailsScreen(
-              postData:
-                  state.extra as QueryDocumentSnapshot<Map<String, dynamic>>?);
+              id: state.params["id"] ?? "",
+              data: state.extra as Map<String, dynamic>?);
         },
       ),
       GoRoute(
