@@ -131,13 +131,12 @@ class ProfileController {
     }
   }
 
-  Future<Map<dynamic, dynamic>?> fetchProfileData() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    if (auth.currentUser == null) {
+  Future<Map<dynamic, dynamic>?> fetchProfileData(String? uid) async {
+    if (uid == null) {
       return null;
     } else {
       var collection = FirebaseFirestore.instance.collection('users');
-      var docSnapshot = await collection.doc(auth.currentUser!.uid).get();
+      var docSnapshot = await collection.doc(uid).get();
       if (docSnapshot.exists) {
         Map<String, dynamic>? data = docSnapshot.data();
         return data;
@@ -147,15 +146,9 @@ class ProfileController {
     }
   }
 
-  static Future createWalletHit({required String postId}) async {
+  static Future createWalletHit(
+      {required Map<String, dynamic> postBody}) async {
     try {
-      FirebaseAuth auth = FirebaseAuth.instance;
-      Map<String, dynamic> postBody = {
-        "uid": auth.currentUser?.uid,
-        "mobile": auth.currentUser?.phoneNumber,
-        "post_id": postId,
-        "createdOn": FieldValue.serverTimestamp()
-      };
       await FirebaseFirestore.instance
           .collection('wallet_hits')
           .doc()

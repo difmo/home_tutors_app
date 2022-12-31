@@ -64,8 +64,6 @@ class HistoryScreen extends StatelessWidget {
               case ConnectionState.waiting:
                 return const Center(child: Text('Awaiting...'));
               case ConnectionState.active:
-                return postListWidget(context, snapshot.data?.docs);
-
               case ConnectionState.done:
                 return postListWidget(context, snapshot.data?.docs);
             }

@@ -19,7 +19,11 @@ import '../../../controllers/statics.dart';
 
 // ignore: must_be_immutable
 class TeacherProfileScreen extends HookConsumerWidget {
-  TeacherProfileScreen({super.key});
+  final String? uid;
+  TeacherProfileScreen({
+    super.key,
+    this.uid,
+  });
   final _formKey = GlobalKey<FormState>();
 
   final ImagePicker _picker = ImagePicker();
@@ -59,7 +63,8 @@ class TeacherProfileScreen extends HookConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-          child: ref.watch(profileDataProvider).when(
+          child:
+              ref.watch(profileDataProvider(uid ?? auth.currentUser?.uid)).when(
         loading: () {
           return const Center(
             child: CircularProgressIndicator(),
@@ -476,7 +481,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                             : selectedIdType.value,
                         popupProps:
                             const PopupProps.menu(showSelectedItems: true),
-                        items: const ["Aadhar Card", "Voter Card", "Passport"],
+                        items: const ["Aadhar Card", "Voter Card", "Other"],
                         dropdownDecoratorProps: const DropDownDecoratorProps(
                           dropdownSearchDecoration: InputDecoration(
                             labelText: "ID proof type",
@@ -726,12 +731,14 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                           await ProfileController.uploadImage(
                                               idBack!);
                                     }
+                                    if (uid == null) {
+                                      User? user =
+                                          FirebaseAuth.instance.currentUser;
+                                      await user
+                                          ?.updatePhotoURL(profilePicUrl.value);
+                                      await user?.reload();
+                                    }
 
-                                    User? user =
-                                        FirebaseAuth.instance.currentUser;
-                                    await user
-                                        ?.updatePhotoURL(profilePicUrl.value);
-                                    await user?.reload();
                                     Map<String, dynamic> profilData = {
                                       'name': nameController.text,
                                       'email': emailController.text.trim(),
@@ -748,19 +755,26 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                       'idType': selectedIdType.value,
                                       'idUrlFront': idFrontPicUrl.value,
                                       'idUrlBack': idBackPicUrl.value,
-                                      'status': 0,
+                                      'status': uid == null ? 0 : 1,
                                       'createdOn': FieldValue.serverTimestamp(),
                                     };
                                     await ProfileController.updateProfile(
-                                        profileBody: profilData);
-                                    ref.refresh(profileDataProvider);
+                                        profileBody: profilData,
+                                        uidFromAdmin: uid);
+                                    ref.refresh(profileDataProvider(
+                                        uid ?? auth.currentUser?.uid));
                                     EasyLoading.dismiss();
                                     // if (data?["state"] != selectedState.value) {
                                     //   stateNameStateProvider.state =
                                     //       selectedState.value;
                                     // }
                                     Future.delayed(Duration.zero).then((value) {
-                                      context.go(AppRoutes.home);
+                                      if (uid != null) {
+                                        context.pop();
+                                        context.pop();
+                                      } else {
+                                        context.go(AppRoutes.home);
+                                      }
                                     });
                                   }
                                 });

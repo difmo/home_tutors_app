@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:app/controllers/routes.dart';
 import 'package:app/views/auth/profile_verification_screen.dart';
 import 'package:app/views/posts/posts_list.dart';
 import 'package:app/views/widgets/error_widget_screen.dart';
 import 'package:app/views/widgets/loading_widget_screen.dart';
 import 'package:app/views/widgets/user_drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -130,7 +133,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final profileProvider = ref.watch(profileDataProvider);
+    final profileProvider =
+        ref.watch(profileDataProvider(FirebaseAuth.instance.currentUser?.uid));
     // final stateName = ref.watch(stateNameProvider.notifier);
     // final selectedState = ref.watch(selectedStateProvider.notifier);
 
@@ -139,6 +143,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }, error: (error, stackTrace) {
       return const ErrorWidgetScreen();
     }, data: (data) {
+      log(data?["state"].replaceAll(' ', '').toLowerCase());
       Utils.subscribeToTopic(data?["state"] ?? "all");
 
       // if (data != null) {

@@ -38,13 +38,6 @@ class AllTransactionsScreen extends HookConsumerWidget {
               case ConnectionState.waiting:
                 return const Center(child: Text('Awaiting...'));
               case ConnectionState.active:
-                return transactionListWidget(
-                  context,
-                  controller: scrollController,
-                  data: snapshot.data?.docs,
-                  isAdmin: true,
-                );
-
               case ConnectionState.done:
                 return transactionListWidget(
                   context,

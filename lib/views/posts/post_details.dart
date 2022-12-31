@@ -8,6 +8,7 @@ import 'package:app/controllers/user_controllers.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:app/views/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -17,6 +18,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../controllers/statics.dart';
 import '../../providers/profile_provider.dart';
 
 class PostDetailsScreen extends HookConsumerWidget {
@@ -182,6 +184,20 @@ class PostDetailsScreen extends HookConsumerWidget {
                               ],
                             ),
                           ],
+                          const SizedBox(height: 20.0),
+                          Center(
+                            child: InkWell(
+                              onTap: () {
+                                openUrl(websiteUrl);
+                              },
+                              child: const Text(
+                                websiteUrl,
+                                style: TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
                           if (ifPurchased.value ||
                               AuthControllers.isAdmin()) ...[
                             const Divider(
@@ -262,9 +278,19 @@ class PostDetailsScreen extends HookConsumerWidget {
                         Expanded(
                           child: InkWell(
                             onTap: () async {
+                              FirebaseAuth auth = FirebaseAuth.instance;
+                              Map<String, dynamic> postBody = {
+                                "uid": auth.currentUser?.uid,
+                                "mobile": auth.currentUser?.phoneNumber,
+                                "post_id": postId.value,
+                                "post_no": postData.value?["id"],
+                                "post_desc": postData.value?["desc"],
+                                "createdOn": FieldValue.serverTimestamp()
+                              };
                               Utils.loading();
+
                               await ProfileController.createWalletHit(
-                                  postId: postId.value);
+                                  postBody: postBody);
                               EasyLoading.dismiss();
 
                               context.push(AppRoutes.walletScreen);
@@ -293,7 +319,8 @@ class PostDetailsScreen extends HookConsumerWidget {
                                   int.parse(postData.value?["max_hits"])) {
                                 Utils.loading();
                                 var profileData = await ProfileController()
-                                    .fetchProfileData();
+                                    .fetchProfileData(
+                                        FirebaseAuth.instance.currentUser?.uid);
                                 log(postId.value);
                                 if (profileData?["wallet_balance"] >=
                                     int.parse(postData.value?["req_coins"])) {
@@ -305,7 +332,8 @@ class PostDetailsScreen extends HookConsumerWidget {
                                             "wallet_balance"] -
                                         int.parse(postData.value?["req_coins"]))
                                   });
-                                  ref.refresh(profileDataProvider);
+                                  ref.refresh(profileDataProvider(
+                                      FirebaseAuth.instance.currentUser?.uid));
                                   ifPurchased.value = true;
                                 } else {
                                   EasyLoading.showError(
@@ -332,6 +360,17 @@ class PostDetailsScreen extends HookConsumerWidget {
                         ),
                       ],
                     ),
+                  const SizedBox(height: 10.0),
+                  InkWell(
+                      onTap: () {
+                        openUrl("tel://$adminPhone");
+                      },
+                      child: const Text(
+                        "Contact to VIP Tutors $adminPhone",
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      )),
                 ],
               ),
             )),
@@ -383,9 +422,12 @@ class PostDetailsScreen extends HookConsumerWidget {
                           child: const Icon(Icons.arrow_upward),
                           onTap: () async {
                             Utils.loading();
+                            int lastLeadNo =
+                                await AdminControllers.lastPostId();
                             await AdminControllers.promoteLead(
                                 docId: postId.value,
                                 data: {
+                                  "id": lastLeadNo + 1,
                                   "createdOn": FieldValue.serverTimestamp()
                                 });
                             EasyLoading.dismiss();

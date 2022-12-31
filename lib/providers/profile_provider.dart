@@ -1,5 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../controllers/admin/admin_controllers.dart';
 import '../controllers/profile_controllers.dart';
 import '../controllers/user_controllers.dart';
 
@@ -9,14 +10,21 @@ final cityListProvider =
   return apiService.getCityList(state);
 });
 
-final profileDataProvider = FutureProvider.autoDispose((Ref ref) async {
+final profileDataProvider =
+    FutureProvider.autoDispose.family((Ref ref, String? uid) async {
   final apiService = ref.read(profileApiProviders);
-  return apiService.fetchProfileData();
+  return apiService.fetchProfileData(uid);
 });
 
 final amountOptionsProvider = FutureProvider.autoDispose((Ref ref) async {
   final apiService = ref.read(userApiProviders);
   return apiService.fetchAmountOptions();
+});
+
+final searchUserFutureProvider =
+    FutureProvider.autoDispose.family((Ref ref, String searchValue) async {
+  final apiService = ref.read(adminApiProviders);
+  return apiService.searchUser(searchValue);
 });
 
 // final alTransactionsProvider =

@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:app/controllers/profile_controllers.dart';
-import 'package:app/controllers/utils.dart';
 import 'package:app/views/constants.dart';
 import 'package:app/views/user/wallet/transactions_list_screen.dart';
 import 'package:app/views/widgets/error_widget_screen.dart';
@@ -14,7 +13,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-import '../../../controllers/admin/admin_controllers.dart';
+import '../../../controllers/statics.dart';
 import '../../../providers/profile_provider.dart';
 
 // ignore: must_be_immutable
@@ -28,7 +27,8 @@ class WalletScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final profileProvider = ref.watch(profileDataProvider);
+    final profileProvider =
+        ref.watch(profileDataProvider(FirebaseAuth.instance.currentUser?.uid));
     final amtOptionsProvider = ref.watch(amountOptionsProvider);
     final selectedStatus = useState("All");
     final scrollController = useScrollController();
@@ -57,7 +57,8 @@ class WalletScreen extends HookConsumerWidget {
         });
         EasyLoading.dismiss();
         EasyLoading.showSuccess("Payment successful");
-        ref.refresh(profileDataProvider);
+        ref.refresh(
+            profileDataProvider(FirebaseAuth.instance.currentUser?.uid));
       }
     }, []);
     //error
@@ -145,14 +146,13 @@ class WalletScreen extends HookConsumerWidget {
                                     await ProfileController.createTransaction(
                                         postBody: postData);
                                 EasyLoading.dismiss();
-
                                 var options = {
                                   'key': 'rzp_live_5HtAsZL4CVxxEn',
                                   'amount': item["amount"] * 100,
                                   'name': 'VIPTUTORS @ SYBRA CORPORATION',
                                   'description': 'Wallet recharge',
                                   'prefill': {
-                                    'contact': data?["phone"] ?? "8427373281",
+                                    'contact': data?["phone"] ?? adminPhone,
                                     'email':
                                         data?["email"] ?? "vipndls@gmail.com"
                                   }
@@ -190,7 +190,7 @@ class WalletScreen extends HookConsumerWidget {
                   );
                 },
                 error: (error, stackTrace) {
-                  return Text("Something went wrong");
+                  return const Text("Something went wrong");
                 },
                 loading: () {
                   return const LinearProgressIndicator();
@@ -234,14 +234,6 @@ class WalletScreen extends HookConsumerWidget {
                       case ConnectionState.waiting:
                         return const Center(child: Text('Awaiting...'));
                       case ConnectionState.active:
-                        return Expanded(
-                            child: transactionListWidget(
-                          context,
-                          controller: scrollController,
-                          data: snapshot.data?.docs,
-                          isAdmin: false,
-                        ));
-
                       case ConnectionState.done:
                         return Expanded(
                             child: transactionListWidget(

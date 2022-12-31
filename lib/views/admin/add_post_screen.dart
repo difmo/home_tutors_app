@@ -12,7 +12,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/statics.dart';
-import '../../providers/admin_providers.dart';
 
 class AddLeadScreen extends HookConsumerWidget {
   AddLeadScreen({super.key});
@@ -416,7 +415,6 @@ class AddLeadScreen extends HookConsumerWidget {
                           },
                           controller: phoneController,
                           inputFormatters: numberOnlyInput,
-
                           keyboardType: TextInputType.number,
                           maxLength: 10,
                           decoration: const InputDecoration(
@@ -435,6 +433,9 @@ class AddLeadScreen extends HookConsumerWidget {
                                     submitFunction: () async {
                                       Utils.loading(
                                           msg: "Creating new lead...");
+                                      int lastLeadNo =
+                                          await AdminControllers.lastPostId();
+
                                       Map<String, dynamic> postBody = {
                                         // "title": titleController.text,
                                         "desc": descController.text,
@@ -456,7 +457,7 @@ class AddLeadScreen extends HookConsumerWidget {
                                         "phone": phoneController.text,
                                         "email": adminContactMail,
                                         'users': FieldValue.arrayUnion([""]),
-                                        "id": totalPostCount + 1,
+                                        "id": lastLeadNo + 1,
                                       };
                                       await AdminControllers.createLeads(
                                           postBody: postBody);

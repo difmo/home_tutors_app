@@ -14,7 +14,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/utils.dart';
-import '../../providers/admin_providers.dart';
 
 class PostListScreen extends HookConsumerWidget {
   const PostListScreen({super.key});
@@ -207,31 +206,26 @@ class PostListScreen extends HookConsumerWidget {
       });
       return;
     }, []);
-    return Scaffold(
-      body: StreamBuilder(
-          stream: AuthControllers.isAdmin()
-              ? AdminControllers.fetchAllPosts(limitCount.value)
-              : UserControllers.fetchAllPosts(
-                  selectedState == 'All' ? null : selectedState,
-                  limitCount.value),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+    return StreamBuilder(
+        stream: AuthControllers.isAdmin()
+            ? AdminControllers.fetchAllPosts(limitCount.value)
+            : UserControllers.fetchAllPosts(
+                selectedState == 'All' ? null : selectedState,
+                limitCount.value),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return const Center(child: Text('No data'));
-              case ConnectionState.waiting:
-                return const Center(child: Text('Awaiting...'));
-              case ConnectionState.active:
-              case ConnectionState.done:
-                if (!checkEmpty(snapshot.data?.docs)) {
-                  totalPostCount = snapshot.data?.docs.first["id"];
-                }
-                return postListWidget(
-                    context, snapshot.data?.docs, scrollController);
-            }
-          }),
-    );
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return const Center(child: Text('No data'));
+            case ConnectionState.waiting:
+              return const Center(child: Text('Awaiting...'));
+            case ConnectionState.active:
+            case ConnectionState.done:
+              return postListWidget(
+                  context, snapshot.data?.docs, scrollController);
+          }
+        });
   }
 }
 

@@ -103,3 +103,13 @@ Future<void> openUrl(String url) async {
 }
 
 const String adminContactMail = "tlr@viptutors.in";
+
+bool isNumber(String? s) {
+  if (s == null) {
+    return false;
+  }
+  if (s.length < 10) {
+    return false;
+  }
+  return double.tryParse(s) != null;
+}

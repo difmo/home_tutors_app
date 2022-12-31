@@ -1,4 +1,5 @@
 const String adminPhone = "+918427373281";
+const String websiteUrl = "https://www.viptutors.in";
 
 const List<String> stateList = [
   "Andaman and Nicobar Islands",

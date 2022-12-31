@@ -36,28 +36,6 @@ class WalletHitsScreen extends HookConsumerWidget {
                 case ConnectionState.waiting:
                   return const Center(child: Text('Awaiting...'));
                 case ConnectionState.active:
-                  return ListView.separated(
-                      key: const PageStorageKey<String>('userPosition'),
-                      controller: scrollController,
-                      padding: const EdgeInsets.only(bottom: 100.0),
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                      itemCount: snapshot.data?.docs.length ?? 0,
-                      itemBuilder: (context, index) {
-                        var item = snapshot.data?.docs[index];
-                        return ListTile(
-                          onTap: () {
-                            openUrl("tel:${item?["mobile"]}");
-                          },
-                          leading:
-                              const CircleAvatar(child: Icon(Icons.person)),
-                          title: Text(item?["mobile"] ?? "Phone"),
-                          subtitle: Text(formatWithMonthName.format(
-                              item?["createdOn"].toDate() ?? DateTime.now())),
-                        );
-                      });
-
                 case ConnectionState.done:
                   return ListView.separated(
                       key: const PageStorageKey<String>('userPosition'),
@@ -73,10 +51,12 @@ class WalletHitsScreen extends HookConsumerWidget {
                           onTap: () {
                             openUrl("tel:${item?["mobile"]}");
                           },
-                          leading:
-                              const CircleAvatar(child: Icon(Icons.person)),
+                          leading: CircleAvatar(
+                              child: Text(item?["post_no"].toString() ?? "00")),
                           title: Text(item?["mobile"] ?? "Phone"),
-                          subtitle: Text(formatWithMonthName.format(
+                          subtitle: Text(
+                              "${item?["post_no"]} - ${item?["post_desc"]}"),
+                          trailing: Text(formatWithMonthName.format(
                               item?["createdOn"].toDate() ?? DateTime.now())),
                         );
                       });

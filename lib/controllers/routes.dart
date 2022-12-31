@@ -3,6 +3,7 @@ import 'package:app/views/admin/add_post_screen.dart';
 import 'package:app/views/admin/admin_home_screen.dart';
 import 'package:app/views/admin/all_transactions_screen.dart';
 import 'package:app/views/admin/amount_options_screen.dart';
+import 'package:app/views/admin/search_result_screen.dart';
 import 'package:app/views/admin/user_details_screen.dart';
 import 'package:app/views/admin/users_list.dart';
 import 'package:app/views/admin/wallet_hits_screen.dart';
@@ -35,6 +36,7 @@ class AppRoutes {
   static const String walletScreen = '/wallet_screen';
   static const String allTransactions = '/all_transactions';
   static const String amountOptionsScreen = '/amount_options';
+  static const String searchResults = '/search_results';
 
   static const String walletHits = '/wallet_hits';
   static const String postDetails = '/post_details:id';
@@ -86,7 +88,9 @@ class AppRoutes {
       GoRoute(
         path: teacherProfile,
         builder: (BuildContext context, GoRouterState state) {
-          return TeacherProfileScreen();
+          return TeacherProfileScreen(
+            uid: state.extra as String?,
+          );
         },
       ),
       GoRoute(
@@ -132,6 +136,14 @@ class AppRoutes {
           return PostDetailsScreen(
               id: state.params["id"] ?? "",
               data: state.extra as Map<String, dynamic>?);
+        },
+      ),
+      GoRoute(
+        path: searchResults,
+        builder: (BuildContext context, GoRouterState state) {
+          return SearchResuleScreen(
+            searchKey: state.extra as String,
+          );
         },
       ),
       GoRoute(

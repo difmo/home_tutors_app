@@ -5,11 +5,12 @@ import 'dart:io';
 import 'package:app/controllers/statics.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../utils.dart';
 
 final adminApiProviders = Provider<AdminControllers>((ref) {
   return AdminControllers();
@@ -29,6 +30,19 @@ class AdminControllers {
     }
   }
 
+  static Future<int> lastPostId() async {
+    try {
+      var collection = await FirebaseFirestore.instance
+          .collection('posts')
+          .limit(5)
+          .orderBy('createdOn', descending: true)
+          .get();
+      return collection.docs.first["id"] ?? collection.docs.length;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future clearOldPosts() async {
     try {
       var collection = await FirebaseFirestore.instance
@@ -36,6 +50,22 @@ class AdminControllers {
           .where('createdOn',
               isLessThan: Timestamp.fromDate(
                   DateTime.now().subtract(const Duration(days: 7))))
+          .get();
+      for (var element in collection.docs) {
+        log(element["createdOn"].toDate().toString());
+        await element.reference.delete();
+      }
+      return;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future clearDeclinedUsers() async {
+    try {
+      var collection = await FirebaseFirestore.instance
+          .collection('users')
+          .where('status', isEqualTo: 2)
           .get();
       for (var element in collection.docs) {
         log(element["createdOn"].toDate().toString());
@@ -111,11 +141,13 @@ class AdminControllers {
     return File('$path/active_users.xlsx');
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllUsers(
-      int? status, int limit) {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllUsers(int limit,
+      {required bool noFIlter,
+      required String filterKey,
+      required dynamic filterValue}) {
     try {
       Stream<QuerySnapshot<Map<String, dynamic>>> collection;
-      if (status == 10) {
+      if (noFIlter) {
         collection = FirebaseFirestore.instance
             .collection('users')
             .limit(limit)
@@ -126,8 +158,31 @@ class AdminControllers {
             .collection('users')
             .limit(limit)
             .orderBy('createdOn', descending: true)
-            .where("status", isEqualTo: status)
+            .where(filterKey, isEqualTo: filterValue)
             .snapshots();
+      }
+
+      return collection;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> searchUser(
+      String searchValue) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> collection;
+      if (isNumber(searchValue)) {
+        collection = await FirebaseFirestore.instance
+            .collection('users')
+            .where("phone", isEqualTo: "+91$searchValue")
+            .get();
+      } else {
+        collection = await FirebaseFirestore.instance
+            .collection('users')
+            .orderBy('name')
+            .limit(50)
+            .startAt([searchValue]).get();
       }
 
       return collection;

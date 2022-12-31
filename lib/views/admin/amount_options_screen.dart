@@ -31,7 +31,7 @@ class _AmountOptionsScreenState extends State<AmountOptionsScreen> {
           onDismissed: (direction) async {
             await AdminControllers.deleteAmountOption(id: item?.id ?? "");
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('Amount deleted')));
+                .showSnackBar(const SnackBar(content: Text('Amount deleted')));
           },
           child: ListTile(
             leading: const Icon(Icons.attach_money),
@@ -115,8 +115,8 @@ class _AmountOptionsScreenState extends State<AmountOptionsScreen> {
                 formKey: _formKey,
                 submitFunction: () async {
                   Map<String, dynamic> bodyData = {
-                    "coins": coinsController.text,
-                    "amount": amountController.text,
+                    "coins": int.parse(coinsController.text),
+                    "amount": int.parse(amountController.text),
                     "createdOn": FieldValue.serverTimestamp()
                   };
                   Utils.loading();
