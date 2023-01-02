@@ -252,7 +252,8 @@ class UserDetailsScreen extends HookConsumerWidget {
                 context.push(AppRoutes.teacherProfile, extra: item?.id);
               }),
           SpeedDialChild(
-              backgroundColor: Colors.green,
+              backgroundColor: Colors.red,
+              label: "Delete",
               child: const Icon(Icons.delete),
               onTap: () async {
                 Utils.loading();

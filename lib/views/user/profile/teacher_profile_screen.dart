@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:app/controllers/profile_controllers.dart';
@@ -20,18 +21,11 @@ import '../../../controllers/statics.dart';
 // ignore: must_be_immutable
 class TeacherProfileScreen extends HookConsumerWidget {
   final String? uid;
-  TeacherProfileScreen({
-    super.key,
-    this.uid,
-  });
+  TeacherProfileScreen({super.key, this.uid});
   final _formKey = GlobalKey<FormState>();
 
   final ImagePicker _picker = ImagePicker();
   final FirebaseAuth auth = FirebaseAuth.instance;
-
-  File? profilePicFile;
-  File? idFront;
-  File? idBack;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,7 +38,12 @@ class TeacherProfileScreen extends HookConsumerWidget {
 
     final localityController = useTextEditingController();
     final qualiController = useTextEditingController();
-    final classController = useTextEditingController();
+
+    final selectedClasses = useState<List>([]);
+
+    final profilePicFile = useState<File?>(null);
+    final idFront = useState<File?>(null);
+    final idBack = useState<File?>(null);
 
     final profilePicUrl = useState("");
     final idFrontPicUrl = useState("");
@@ -87,7 +86,10 @@ class TeacherProfileScreen extends HookConsumerWidget {
             selectedGender.value = data["gender"];
             selectedState.value = data["state"];
             selectedCity.value = data["city"];
-            classController.text = data["preferedClass"];
+            dynamic preferedClassValue = data["preferedClass"];
+            if (preferedClassValue.runtimeType == List) {
+              selectedClasses.value = data["preferedClass"];
+            }
             subjectController.text = data["preferedSubject"];
             selectedExp.value = data["totalExp"];
             selectedIdType.value = data["idType"];
@@ -134,11 +136,11 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                                               CameraDevice
                                                                   .front);
                                                   if (profilePic != null) {
-                                                    profilePicFile =
+                                                    profilePicFile.value =
                                                         File(profilePic.path);
                                                     reBuild.value =
                                                         !reBuild.value;
-                                                    Navigator.pop(context);
+                                                    context.pop();
                                                   }
                                                 }),
                                           ),
@@ -157,11 +159,11 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                                         preferredCameraDevice:
                                                             CameraDevice.front);
                                                 if (profilePic != null) {
-                                                  profilePicFile =
+                                                  profilePicFile.value =
                                                       File(profilePic.path);
                                                   reBuild.value =
                                                       !reBuild.value;
-                                                  Navigator.pop(context);
+                                                  context.pop();
                                                 }
                                               },
                                             ),
@@ -171,7 +173,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                     );
                                   });
                             },
-                            child: profilePicFile == null
+                            child: profilePicFile.value == null
                                 ? profilePicUrl.value.isNotEmpty
                                     ? CircleAvatar(
                                         radius: 40.0,
@@ -183,7 +185,8 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                             'assets/images/placeholder_user.jpeg'))
                                 : CircleAvatar(
                                     radius: 40.0,
-                                    backgroundImage: FileImage(profilePicFile!),
+                                    backgroundImage:
+                                        FileImage(profilePicFile.value!),
                                   )),
                         Expanded(
                           child: Padding(
@@ -349,20 +352,30 @@ class TeacherProfileScreen extends HookConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 10.0),
-                    TextFormField(
+                    DropdownSearch<String>.multiSelection(
                       validator: (value) {
-                        if (value!.length < 2) {
-                          return "enter valid class";
+                        if (checkEmpty(value)) {
+                          return "Choose prefered classes";
                         } else {
                           return null;
                         }
                       },
-                      controller: classController,
-                      maxLength: 70,
-                      decoration: const InputDecoration(
-                        hintText: "Separate by comma ','",
-                        label: Text('Class'),
+                      items: preferredClassList,
+                      popupProps: const PopupPropsMultiSelection.menu(
+                        showSelectedItems: true,
                       ),
+                      dropdownDecoratorProps: const DropDownDecoratorProps(
+                        dropdownSearchDecoration: InputDecoration(
+                          labelText: "Prefered Classes",
+                          hintText: "You can choose multiple",
+                        ),
+                      ),
+                      selectedItems: selectedClasses.value.cast<String>(),
+                      onSaved: (newValue) {
+                        if (!checkEmpty(newValue)) {
+                          selectedClasses.value = newValue!.cast<String>();
+                        }
+                      },
                     ),
                     const SizedBox(height: 10.0),
                     DropdownSearch<String>(
@@ -391,7 +404,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                     ),
                     const SizedBox(height: 10.0),
                     TextFormField(
-                      maxLength: 20,
+                      maxLength: 50,
                       validator: (value) {
                         if (value!.length < 2) {
                           return "Enter a valid subject";
@@ -523,12 +536,12 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                                               CameraDevice
                                                                   .rear);
                                                   if (idFrontPic != null) {
-                                                    idFront =
+                                                    idFront.value =
                                                         File(idFrontPic.path);
                                                     reBuild.value =
                                                         !reBuild.value;
 
-                                                    Navigator.pop(context);
+                                                    context.pop();
                                                   }
                                                 }),
                                           ),
@@ -547,12 +560,12 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                                         preferredCameraDevice:
                                                             CameraDevice.rear);
                                                 if (idFrontPic != null) {
-                                                  idFront =
+                                                  idFront.value =
                                                       File(idFrontPic.path);
                                                   reBuild.value =
                                                       !reBuild.value;
 
-                                                  Navigator.pop(context);
+                                                  context.pop();
                                                 }
                                               },
                                             ),
@@ -568,7 +581,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                   borderRadius: BorderRadius.circular(10.0)),
                               margin: const EdgeInsets.all(5.0),
                               height: 100,
-                              child: idFront == null
+                              child: idFront.value == null
                                   ? profilePicUrl.value.isNotEmpty
                                       ? Image.network(idFrontPicUrl.value,
                                           fit: BoxFit.cover)
@@ -584,7 +597,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                           ],
                                         )
                                   : Image.file(
-                                      idFront!,
+                                      idFront.value!,
                                       fit: BoxFit.cover,
                                     ),
                             ),
@@ -617,12 +630,12 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                                               CameraDevice
                                                                   .rear);
                                                   if (idBackPic != null) {
-                                                    idBack =
+                                                    idBack.value =
                                                         File(idBackPic.path);
                                                     reBuild.value =
                                                         !reBuild.value;
 
-                                                    Navigator.pop(context);
+                                                    context.pop();
                                                   }
                                                 }),
                                           ),
@@ -641,11 +654,12 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                                         preferredCameraDevice:
                                                             CameraDevice.rear);
                                                 if (idBackPic != null) {
-                                                  idBack = File(idBackPic.path);
+                                                  idBack.value =
+                                                      File(idBackPic.path);
                                                   reBuild.value =
                                                       !reBuild.value;
 
-                                                  Navigator.pop(context);
+                                                  context.pop();
                                                 }
                                               },
                                             ),
@@ -661,7 +675,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                   borderRadius: BorderRadius.circular(10.0)),
                               margin: const EdgeInsets.all(5.0),
                               height: 100,
-                              child: idBack == null
+                              child: idBack.value == null
                                   ? profilePicUrl.value.isNotEmpty
                                       ? Image.network(
                                           idBackPicUrl.value,
@@ -678,7 +692,8 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                             Icon(Icons.image, size: 50.0),
                                           ],
                                         )
-                                  : Image.file(idBack!, fit: BoxFit.cover),
+                                  : Image.file(idBack.value!,
+                                      fit: BoxFit.cover),
                             ),
                           )),
                         ],
@@ -693,19 +708,19 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                 formKey: _formKey,
                                 submitFunction: () async {
                                   if (checkEmpty(profilePicUrl.value) &&
-                                      profilePicFile == null) {
+                                      profilePicFile.value == null) {
                                     Fluttertoast.showToast(
                                         msg: "Provide profile picture",
                                         backgroundColor: Colors.red);
                                     return;
                                   } else if (checkEmpty(idFrontPicUrl.value) &&
-                                      idFront == null) {
+                                      idFront.value == null) {
                                     Fluttertoast.showToast(
                                         msg: "Provide ID front page",
                                         backgroundColor: Colors.red);
                                     return;
                                   } else if (checkEmpty(idBackPicUrl.value) &&
-                                      idBack == null) {
+                                      idBack.value == null) {
                                     Fluttertoast.showToast(
                                         msg: "Provide ID back page",
                                         backgroundColor: Colors.red);
@@ -713,23 +728,23 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                   } else {
                                     Utils.loading(
                                         msg: "Updating profile details...");
-                                    if (profilePicFile != null) {
+                                    if (profilePicFile.value != null) {
                                       profilePicUrl.value =
                                           await ProfileController.uploadImage(
-                                              profilePicFile!);
+                                              profilePicFile.value!);
                                       FirebaseAuth.instance.currentUser!
                                           .updatePhotoURL(profilePicUrl.value);
                                     }
-                                    if (idFront != null) {
+                                    if (idFront.value != null) {
                                       idFrontPicUrl.value =
                                           await ProfileController.uploadImage(
-                                              idFront!);
+                                              idFront.value!);
                                     }
 
-                                    if (idBack != null) {
+                                    if (idBack.value != null) {
                                       idBackPicUrl.value =
                                           await ProfileController.uploadImage(
-                                              idBack!);
+                                              idBack.value!);
                                     }
                                     if (uid == null) {
                                       User? user =
@@ -746,7 +761,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                       'locality': localityController.text,
                                       'city': selectedCity.value,
                                       'state': selectedState.value,
-                                      'preferedClass': classController.text,
+                                      'preferedClass': selectedClasses.value,
                                       'preferedSubject': subjectController.text,
                                       'preferedMode': selectedMode.value,
                                       'gender': selectedGender.value,

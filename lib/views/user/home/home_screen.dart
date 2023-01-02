@@ -8,6 +8,7 @@ import 'package:app/views/widgets/loading_widget_screen.dart';
 import 'package:app/views/widgets/user_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -135,8 +136,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final profileProvider =
         ref.watch(profileDataProvider(FirebaseAuth.instance.currentUser?.uid));
-    // final stateName = ref.watch(stateNameProvider.notifier);
-    // final selectedState = ref.watch(selectedStateProvider.notifier);
 
     return profileProvider.when(loading: () {
       return const LoadingWidgetScreen();
@@ -146,11 +145,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       log(data?["state"].replaceAll(' ', '').toLowerCase());
       Utils.subscribeToTopic(data?["state"] ?? "all");
 
-      // if (data != null) {
-      // SchedulerBinding.instance.addPostFrameCallback((_) {
-      //   stateName.state = data["state"];
-      // });
-      // }
+      if (data != null) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          ref.watch(selectedStateProvider.notifier).state = data["state"];
+        });
+      }
 
       return data?["status"] == 1
           ? DefaultTabController(

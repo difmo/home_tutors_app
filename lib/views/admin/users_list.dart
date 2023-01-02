@@ -24,7 +24,6 @@ class UsersListScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedStatus = useState(10);
-    final selectedState = ref.watch(selectedStateProvider);
     final noFIlter = useState(true);
     final filterKey = useState("");
     final filterValue = useState<dynamic>("");

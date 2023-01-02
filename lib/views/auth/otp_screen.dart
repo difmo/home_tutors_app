@@ -84,8 +84,8 @@ class OtpVerifyScreen extends HookConsumerWidget {
                                 context.go(AppRoutes.adminHome);
                                 return;
                               }
-                              var profileData =
-                                  await ProfileController().fetchProfileData(
+                              var profileData = await ProfileController()
+                                  .fetchProfileData(
                                       FirebaseAuth.instance.currentUser?.uid);
                               EasyLoading.dismiss();
                               Future.delayed(Duration.zero).then((value) async {
