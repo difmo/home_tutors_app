@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app/controllers/profile_controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -59,9 +61,16 @@ class UserDrawerWidget extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.wallet),
-            title: const Text("Wallet & History"),
+            title: const Text("Wallet"),
             onTap: () {
               context.push(AppRoutes.walletScreen);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.attach_money),
+            title: const Text("Wallet History"),
+            onTap: () {
+              context.push(AppRoutes.walletHistory);
             },
           ),
           ListTile(
@@ -95,17 +104,18 @@ class UserDrawerWidget extends StatelessWidget {
                   mode: LaunchMode.externalNonBrowserApplication);
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.delete),
-            title: const Text("Delete account"),
-            onTap: () async {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const RoundedAlertBox();
-                  });
-            },
-          ),
+          if (Platform.isIOS)
+            ListTile(
+              leading: const Icon(Icons.delete),
+              title: const Text("Delete account"),
+              onTap: () async {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const RoundedAlertBox();
+                    });
+              },
+            ),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text("Logout"),

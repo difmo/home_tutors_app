@@ -191,7 +191,7 @@ class PostDetailsScreen extends HookConsumerWidget {
                                 openUrl(websiteUrl);
                               },
                               child: const Text(
-                                websiteUrl,
+                                "Visit Website: $websiteUrl",
                                 style: TextStyle(
                                     color: Colors.grey,
                                     fontWeight: FontWeight.bold),
@@ -302,11 +302,11 @@ class PostDetailsScreen extends HookConsumerWidget {
                                     borderRadius: BorderRadius.circular(10)),
                                 child: const Center(
                                   child: Text(
-                                    "Upgrade",
+                                    "Upgrade Wallet",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 16.0),
+                                        fontSize: 14.0),
                                   ),
                                 )),
                           ),
@@ -353,7 +353,7 @@ class PostDetailsScreen extends HookConsumerWidget {
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 16.0),
+                                        fontSize: 14.0),
                                   ),
                                 )),
                           ),
@@ -361,16 +361,17 @@ class PostDetailsScreen extends HookConsumerWidget {
                       ],
                     ),
                   const SizedBox(height: 10.0),
-                  InkWell(
-                      onTap: () {
-                        openUrl("tel://$adminPhone");
-                      },
-                      child: const Text(
-                        "Contact to VIP Tutors $adminPhone",
-                        style: TextStyle(
-                          color: Colors.grey,
-                        ),
-                      )),
+                  if (!AuthControllers.isAdmin())
+                    InkWell(
+                        onTap: () {
+                          openUrl("tel://$adminPhone");
+                        },
+                        child: const Text(
+                          "Contact to VIP Tutors $adminPhone",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        )),
                 ],
               ),
             )),

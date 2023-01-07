@@ -13,6 +13,7 @@ import 'package:app/views/user/home/home_screen.dart';
 import 'package:app/views/onboarding_screen.dart';
 import 'package:app/views/posts/post_details.dart';
 import 'package:app/views/user/profile/teacher_profile_screen.dart';
+import 'package:app/views/user/wallet/wallet_history_screen.dart';
 import 'package:app/views/user/wallet/wallet_screen.dart';
 import 'package:app/views/widgets/image_full_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -34,6 +35,7 @@ class AppRoutes {
   static const String addNewLead = '/add_new_lead';
   static const String allUsersList = '/all_users_list';
   static const String walletScreen = '/wallet_screen';
+  static const String walletHistory = '/wallet_history';
   static const String allTransactions = '/all_transactions';
   static const String amountOptionsScreen = '/amount_options';
   static const String searchResults = '/search_results';
@@ -152,6 +154,12 @@ class AppRoutes {
           return ImageFullView(
             imageurl: state.extra as String,
           );
+        },
+      ),
+      GoRoute(
+        path: walletHistory,
+        builder: (BuildContext context, GoRouterState state) {
+          return const WalletHistory();
         },
       ),
     ],

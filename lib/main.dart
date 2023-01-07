@@ -37,14 +37,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      title: 'Home Tutors',
-      builder: EasyLoading.init(),
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        brightness: Brightness.light,
-      ),
-      routerConfig: AppRoutes.router,
-    );
+        debugShowCheckedModeBanner: false,
+        title: 'Home Tutors',
+        builder: EasyLoading.init(),
+        theme:
+            ThemeData(primarySwatch: Colors.blue, brightness: Brightness.light),
+        routerConfig: AppRoutes.router);
   }
 }
