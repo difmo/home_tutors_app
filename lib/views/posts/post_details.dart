@@ -20,6 +20,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../controllers/statics.dart';
 import '../../providers/profile_provider.dart';
+import '../admin/add_post_screen.dart';
 
 class PostDetailsScreen extends HookConsumerWidget {
   final String id;
@@ -418,6 +419,14 @@ class PostDetailsScreen extends HookConsumerWidget {
                             });
                           }),
                       SpeedDialChild(
+                          label: "Edit",
+                          backgroundColor: Colors.orange,
+                          child: const Icon(Icons.edit),
+                          onTap: () async {
+                            var editData = EditPostModel(id: id, data: data);
+                            context.push(AppRoutes.addNewLead, extra: editData);
+                          }),
+                      SpeedDialChild(
                           label: "Promote",
                           backgroundColor: Colors.green,
                           child: const Icon(Icons.arrow_upward),
@@ -425,7 +434,7 @@ class PostDetailsScreen extends HookConsumerWidget {
                             Utils.loading();
                             int lastLeadNo =
                                 await AdminControllers.lastPostId();
-                            await AdminControllers.promoteLead(
+                            await AdminControllers.editLead(
                                 docId: postId.value,
                                 data: {
                                   "id": lastLeadNo + 1,

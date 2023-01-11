@@ -219,7 +219,7 @@ class AdminControllers {
     }
   }
 
-  static Future promoteLead(
+  static Future editLead(
       {required Map<String, dynamic> data, String? docId}) async {
     try {
       final CollectionReference users =

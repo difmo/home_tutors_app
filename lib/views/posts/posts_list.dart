@@ -152,7 +152,7 @@ class PostListScreen extends HookConsumerWidget {
                                           borderRadius:
                                               BorderRadius.circular(10)),
                                       child: Text(
-                                        "${((int.parse(item["max_hits"]) - (item["users"].length - 1)))}/0",
+                                        "0/${((int.parse(item["max_hits"]) - (item["users"].length - 1)))}",
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white),

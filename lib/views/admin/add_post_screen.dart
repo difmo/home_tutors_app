@@ -13,8 +13,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/statics.dart';
 
+class EditPostModel {
+  final String? id;
+  final Map<String, dynamic>? data;
+  EditPostModel({this.id, this.data});
+}
+
 class AddLeadScreen extends HookConsumerWidget {
-  AddLeadScreen({super.key});
+  final EditPostModel? editData;
+  AddLeadScreen({super.key, this.editData});
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -40,6 +47,26 @@ class AddLeadScreen extends HookConsumerWidget {
 
     final selectedMode = useState("");
     final selectedGender = useState("");
+
+    useEffect(() {
+      if (editData != null) {
+        descController.text = editData?.data?["desc"];
+        feeController.text = editData?.data?["fee"];
+        classController.text = editData?.data?["class"];
+        selectedMode.value = editData?.data?["mode"];
+        subjectController.text = editData?.data?["subject"];
+        localityController.text = editData?.data?["locality"];
+        selectedState.value = editData?.data?["state"];
+        selectedCity.value = editData?.data?["city"];
+        selectedGender.value = editData?.data?["gender"];
+        localityController.text = editData?.data?["locality"];
+        maxHitsController.text = editData?.data?["max_hits"];
+        coinReqController.text = editData?.data?["req_coins"];
+        nameController.text = editData?.data?["name"];
+        phoneController.text = editData?.data?["phone"];
+      }
+      return;
+    }, []);
 
     return Scaffold(
       body: SafeArea(
@@ -431,13 +458,7 @@ class AddLeadScreen extends HookConsumerWidget {
                                 formSubmitFunction(
                                     formKey: _formKey,
                                     submitFunction: () async {
-                                      Utils.loading(
-                                          msg: "Creating new lead...");
-                                      int lastLeadNo =
-                                          await AdminControllers.lastPostId();
-
                                       Map<String, dynamic> postBody = {
-                                        // "title": titleController.text,
                                         "desc": descController.text,
                                         "fee": feeController.text,
                                         "class": classController.text,
@@ -451,16 +472,30 @@ class AddLeadScreen extends HookConsumerWidget {
                                             maxHitsController.text.trim(),
                                         "req_coins":
                                             coinReqController.text.trim(),
-                                        'createdOn':
-                                            FieldValue.serverTimestamp(),
                                         "name": nameController.text,
                                         "phone": phoneController.text,
                                         "email": adminContactMail,
-                                        'users': FieldValue.arrayUnion([""]),
-                                        "id": lastLeadNo + 1,
                                       };
-                                      await AdminControllers.createLeads(
-                                          postBody: postBody);
+
+                                      if (editData != null) {
+                                        Utils.loading(msg: "Updating lead...");
+                                        await AdminControllers.editLead(
+                                            data: postBody,
+                                            docId: editData?.id);
+                                      } else {
+                                        Utils.loading(
+                                            msg: "Creating new lead...");
+                                        int lastLeadNo =
+                                            await AdminControllers.lastPostId();
+                                        postBody['id'] = lastLeadNo + 1;
+                                        postBody['createdOn'] =
+                                            FieldValue.serverTimestamp();
+                                        postBody['users'] =
+                                            FieldValue.arrayUnion([""]);
+
+                                        await AdminControllers.createLeads(
+                                            postBody: postBody);
+                                      }
                                       EasyLoading.dismiss();
                                       Future.delayed(Duration.zero)
                                           .then((value) {

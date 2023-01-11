@@ -104,7 +104,9 @@ class AppRoutes {
       GoRoute(
         path: addNewLead,
         builder: (BuildContext context, GoRouterState state) {
-          return AddLeadScreen();
+          return AddLeadScreen(
+            editData: state.extra as EditPostModel?,
+          );
         },
       ),
       GoRoute(
