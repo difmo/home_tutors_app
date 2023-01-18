@@ -1,4 +1,5 @@
 import 'package:app/controllers/admin/admin_controllers.dart';
+import 'package:app/views/widgets/location/location_search_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../controllers/statics.dart';
+import '../../models/place_details_model.dart';
 
 class EditPostModel {
   final String? id;
@@ -22,6 +24,7 @@ class EditPostModel {
 class AddLeadScreen extends HookConsumerWidget {
   final EditPostModel? editData;
   AddLeadScreen({super.key, this.editData});
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -31,14 +34,15 @@ class AddLeadScreen extends HookConsumerWidget {
     final feeController = useTextEditingController();
 
     final localityController = useTextEditingController();
+    final locationPosition = useState<GeoPoint?>(null);
     // final qualiController = useTextEditingController();
-    final subjectController = useTextEditingController();
+    final selectedSubjectList = useState<List>([]);
 
     final maxHitsController = useTextEditingController();
     final coinReqController = useTextEditingController();
     final nameController = useTextEditingController();
     final phoneController = useTextEditingController();
-    final classController = useTextEditingController();
+    final selectedClassList = useState<List>([]);
 
     final selectedState = useState("");
     final selectedCity = useState("");
@@ -52,14 +56,14 @@ class AddLeadScreen extends HookConsumerWidget {
       if (editData != null) {
         descController.text = editData?.data?["desc"];
         feeController.text = editData?.data?["fee"];
-        classController.text = editData?.data?["class"];
+        selectedSubjectList.value = editData?.data?["classList"] ?? [];
         selectedMode.value = editData?.data?["mode"];
-        subjectController.text = editData?.data?["subject"];
+        selectedClassList.value = editData?.data?["subjectList"] ?? [];
         localityController.text = editData?.data?["locality"];
+        locationPosition.value = editData?.data?["location"];
         selectedState.value = editData?.data?["state"];
         selectedCity.value = editData?.data?["city"];
         selectedGender.value = editData?.data?["gender"];
-        localityController.text = editData?.data?["locality"];
         maxHitsController.text = editData?.data?["max_hits"];
         coinReqController.text = editData?.data?["req_coins"];
         nameController.text = editData?.data?["name"];
@@ -135,22 +139,58 @@ class AddLeadScreen extends HookConsumerWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextFormField(
-                          maxLength: 20,
+                        DropdownSearch<String>.multiSelection(
                           validator: (value) {
-                            if (value!.trim().isEmpty) {
-                              return "Enter a valid class";
+                            if (checkEmpty(value)) {
+                              return "Choose class";
                             } else {
                               return null;
                             }
                           },
-                          controller: classController,
-                          keyboardType: TextInputType.text,
-                          decoration: const InputDecoration(
-                            hintText: "10th / 12th",
-                            label: Text('Class'),
+                          items: preferredClassList,
+                          popupProps: const PopupPropsMultiSelection.menu(
+                            showSelectedItems: true,
+                            showSearchBox: true,
                           ),
+                          dropdownDecoratorProps: const DropDownDecoratorProps(
+                            dropdownSearchDecoration: InputDecoration(
+                              labelText: "Class",
+                              hintText: "You can choose multiple",
+                            ),
+                          ),
+                          selectedItems: selectedClassList.value.cast<String>(),
+                          onChanged: (newValue) {
+                            selectedClassList.value = newValue.cast<String>();
+                          },
                         ),
+
+                        const SizedBox(height: 10.0),
+                        DropdownSearch<String>.multiSelection(
+                            validator: (value) {
+                              if (checkEmpty(value)) {
+                                return "Choose subject";
+                              } else {
+                                return null;
+                              }
+                            },
+                            items: subjectList,
+                            popupProps: const PopupPropsMultiSelection.menu(
+                              showSelectedItems: true,
+                              showSearchBox: true,
+                            ),
+                            dropdownDecoratorProps:
+                                const DropDownDecoratorProps(
+                              dropdownSearchDecoration: InputDecoration(
+                                labelText: "Subject",
+                                hintText: "You can choose multiple",
+                              ),
+                            ),
+                            selectedItems:
+                                selectedSubjectList.value.cast<String>(),
+                            onChanged: (newValue) {
+                              selectedSubjectList.value =
+                                  newValue.cast<String>();
+                            }),
                         const SizedBox(height: 10.0),
                         DropdownSearch<String>(
                           validator: (value) {
@@ -176,23 +216,23 @@ class AddLeadScreen extends HookConsumerWidget {
                             selectedMode.value = value!;
                           },
                         ),
-                        const SizedBox(height: 10.0),
-                        TextFormField(
-                          maxLength: 35,
-                          validator: (value) {
-                            if (value!.length < 2) {
-                              return "Enter a valid subject";
-                            } else {
-                              return null;
-                            }
-                          },
-                          controller: subjectController,
-                          keyboardType: TextInputType.text,
-                          decoration: const InputDecoration(
-                            hintText: "Provide subject",
-                            label: Text('Subject'),
-                          ),
-                        ),
+
+                        // TextFormField(
+                        //   maxLength: 35,
+                        //   validator: (value) {
+                        //     if (value!.length < 2) {
+                        //       return "Enter a valid subject";
+                        //     } else {
+                        //       return null;
+                        //     }
+                        //   },
+                        //   controller: selectedSubject,
+                        //   keyboardType: TextInputType.text,
+                        //   decoration: const InputDecoration(
+                        //     hintText: "Provide subject",
+                        //     label: Text('Subject'),
+                        //   ),
+                        // ),
 
                         const SizedBox(height: 30.0),
                         Text(
@@ -204,6 +244,33 @@ class AddLeadScreen extends HookConsumerWidget {
                           ),
                         ),
                         TextFormField(
+                          readOnly: true,
+                          onTap: () async {
+                            PlaceDetailsModel? data = await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const SearchLocationScreen();
+                              },
+                            );
+                            if (data != null) {
+                              localityController.text =
+                                  data.result?.vicinity ?? "";
+                              locationPosition.value = GeoPoint(
+                                  data.result?.geometry?.location?.lat ?? 0.0,
+                                  data.result?.geometry?.location?.lng ?? 0.0);
+                              for (var element
+                                  in data.result!.addressComponents!) {
+                                if (element?.types?.first ==
+                                    "administrative_area_level_1") {
+                                  selectedState.value = element!.longName ?? "";
+                                }
+                                if (element?.types?.first ==
+                                    "administrative_area_level_3") {
+                                  selectedCity.value = element!.longName ?? "";
+                                }
+                              }
+                            }
+                          },
                           validator: (value) {
                             if (value!.length < 2) {
                               return "Enter valid locality";
@@ -461,12 +528,18 @@ class AddLeadScreen extends HookConsumerWidget {
                                       Map<String, dynamic> postBody = {
                                         "desc": descController.text,
                                         "fee": feeController.text,
-                                        "class": classController.text,
+                                        "class":
+                                            selectedClassList.value.join(', '),
+                                        "classList": selectedClassList.value,
                                         "mode": selectedMode.value,
-                                        "subject": subjectController.text,
+                                        "subject": selectedSubjectList.value
+                                            .join(', '),
+                                        "subjectList":
+                                            selectedSubjectList.value,
                                         "locality": localityController.text,
                                         "state": selectedState.value,
                                         "city": selectedCity.value,
+                                        "location": locationPosition.value,
                                         "gender": selectedGender.value,
                                         "max_hits":
                                             maxHitsController.text.trim(),

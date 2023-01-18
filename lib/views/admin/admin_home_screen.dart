@@ -5,7 +5,6 @@ import 'package:app/views/posts/posts_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -19,29 +18,26 @@ class AdminHomeScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: const SafeArea(child: PostListScreen()),
-      appBar: AppBar(title: const Text('Posts'), centerTitle: false),
-      floatingActionButton: SpeedDial(
-        icon: Icons.more_horiz,
-        children: [  
-          SpeedDialChild(
-              label: "Add",
-              backgroundColor: Colors.green,
-              child: const Icon(Icons.add),
-              onTap: () async {
+      appBar: AppBar(
+        title: const Text('Posts'),
+        centerTitle: false,
+        actions: [
+          TextButton.icon(
+              label: const Text("Add", style: TextStyle(color: Colors.white)),
+              icon: const Icon(Icons.add, color: Colors.white),
+              onPressed: () async {
                 context.push(AppRoutes.addNewLead);
-              }),
-          SpeedDialChild(
-              label: "Clean",
-              backgroundColor: Colors.red,
-              child: const Icon(Icons.cleaning_services_rounded),
-              onTap: () async {
-                Utils.loading(msg: "Please wait, cleaning database");
-                await AdminControllers.clearOldPosts();
-                EasyLoading.dismiss();
-                EasyLoading.showSuccess("Database cleared");
               }),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.cleaning_services_rounded),
+          onPressed: () async {
+            Utils.loading(msg: "Please wait, cleaning database");
+            await AdminControllers.clearOldPosts();
+            EasyLoading.dismiss();
+            EasyLoading.showSuccess("Database cleared");
+          }),
       drawer: Drawer(
         child: ListView(
           children: [

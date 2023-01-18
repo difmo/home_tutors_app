@@ -16,6 +16,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../controllers/statics.dart';
+import '../../../models/place_details_model.dart';
+import '../../widgets/location/location_search_screen.dart';
 
 // ignore: must_be_immutable
 class TeacherProfileScreen extends HookConsumerWidget {
@@ -30,12 +32,13 @@ class TeacherProfileScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final reBuild = useState(false);
     final firstLoad = useState(false);
-    // final stateNameStateProvider = ref.watch(stateNameProvider.notifier);
 
     final nameController = useTextEditingController();
     final emailController = useTextEditingController();
 
     final localityController = useTextEditingController();
+    final locationPosition = useState<GeoPoint?>(null);
+
     final qualiController = useTextEditingController();
 
     final selectedClasses = useState<List>([]);
@@ -50,7 +53,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
 
     final selectedState = useState("");
     final selectedCity = useState("");
-    final subjectController = useTextEditingController();
+    final selectedSubjects = useState<List>([]);
 
     final selectedExp = useState("");
     final selectedIdType = useState("");
@@ -80,16 +83,14 @@ class TeacherProfileScreen extends HookConsumerWidget {
             idFrontPicUrl.value = data["idUrlFront"];
             idBackPicUrl.value = data["idUrlBack"];
             emailController.text = data["email"];
+            locationPosition.value = data["location"];
             localityController.text = data["locality"];
             qualiController.text = data["qualification"];
             selectedGender.value = data["gender"];
             selectedState.value = data["state"];
             selectedCity.value = data["city"];
-            dynamic preferedClassValue = data["preferedClass"];
-            if (preferedClassValue.runtimeType == List) {
-              selectedClasses.value = data["preferedClass"];
-            }
-            subjectController.text = data["preferedSubject"];
+            selectedClasses.value = data["preferedClassList"] ?? [];
+            selectedSubjects.value = data["preferedSubjectList"] ?? [];
             selectedExp.value = data["totalExp"];
             selectedIdType.value = data["idType"];
             selectedMode.value = data["preferedMode"];
@@ -262,6 +263,31 @@ class TeacherProfileScreen extends HookConsumerWidget {
                       ),
                     ),
                     TextFormField(
+                      readOnly: true,
+                      onTap: () async {
+                        PlaceDetailsModel? data = await showDialog(
+                          context: context,
+                          builder: (context) {
+                            return const SearchLocationScreen();
+                          },
+                        );
+                        if (data != null) {
+                          localityController.text = data.result?.vicinity ?? "";
+                          locationPosition.value = GeoPoint(
+                              data.result?.geometry?.location?.lat ?? 0.0,
+                              data.result?.geometry?.location?.lng ?? 0.0);
+                          for (var element in data.result!.addressComponents!) {
+                            if (element?.types?.first ==
+                                "administrative_area_level_1") {
+                              selectedState.value = element!.longName ?? "";
+                            }
+                            if (element?.types?.first ==
+                                "administrative_area_level_3") {
+                              selectedCity.value = element!.longName ?? "";
+                            }
+                          }
+                        }
+                      },
                       validator: (value) {
                         if (value!.length < 2) {
                           return "Enter valid locality";
@@ -362,6 +388,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                       items: preferredClassList,
                       popupProps: const PopupPropsMultiSelection.menu(
                         showSelectedItems: true,
+                        showSearchBox: true,
                       ),
                       dropdownDecoratorProps: const DropDownDecoratorProps(
                         dropdownSearchDecoration: InputDecoration(
@@ -370,9 +397,9 @@ class TeacherProfileScreen extends HookConsumerWidget {
                         ),
                       ),
                       selectedItems: selectedClasses.value.cast<String>(),
-                      onSaved: (newValue) {
+                      onChanged: (newValue) {
                         if (!checkEmpty(newValue)) {
-                          selectedClasses.value = newValue!.cast<String>();
+                          selectedClasses.value = newValue.cast<String>();
                         }
                       },
                     ),
@@ -402,21 +429,31 @@ class TeacherProfileScreen extends HookConsumerWidget {
                       },
                     ),
                     const SizedBox(height: 10.0),
-                    TextFormField(
-                      maxLength: 50,
+                    DropdownSearch<String>.multiSelection(
                       validator: (value) {
-                        if (value!.length < 2) {
-                          return "Enter a valid subject";
+                        if (checkEmpty(value)) {
+                          return "Choose prefered subjects";
                         } else {
                           return null;
                         }
                       },
-                      controller: subjectController,
-                      keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        hintText: "Provide subject",
-                        label: Text('Subject'),
+                      items: subjectList,
+                      popupProps: const PopupPropsMultiSelection.menu(
+                        showSearchBox: true,
+                        showSelectedItems: true,
                       ),
+                      dropdownDecoratorProps: const DropDownDecoratorProps(
+                        dropdownSearchDecoration: InputDecoration(
+                          labelText: "Prefered Subjects",
+                          hintText: "You can choose multiple",
+                        ),
+                      ),
+                      selectedItems: selectedSubjects.value.cast<String>(),
+                      onChanged: (newValue) {
+                        if (!checkEmpty(newValue)) {
+                          selectedSubjects.value = newValue.cast<String>();
+                        }
+                      },
                     ),
                     const SizedBox(height: 30.0),
                     Text(
@@ -760,8 +797,13 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                       'locality': localityController.text,
                                       'city': selectedCity.value,
                                       'state': selectedState.value,
-                                      'preferedClass': selectedClasses.value,
-                                      'preferedSubject': subjectController.text,
+                                      "location": locationPosition.value,
+                                      'preferedClass': "",
+                                      'preferedClassList':
+                                          selectedClasses.value,
+                                      'preferedSubject': "",
+                                      'preferedSubjectList':
+                                          selectedSubjects.value,
                                       'preferedMode': selectedMode.value,
                                       'gender': selectedGender.value,
                                       'totalExp': selectedExp.value,

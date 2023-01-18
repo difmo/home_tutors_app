@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../models/utils_model.dart';
+import '../user_controllers.dart';
 import '../utils.dart';
 
 final adminApiProviders = Provider<AdminControllers>((ref) {
@@ -352,6 +354,34 @@ class AdminControllers {
       return data;
     } else {
       return null;
+    }
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>?>> getMatchedUsers(
+      Map<String, dynamic>? data) async {
+    if (data?["location"] != null) {
+      LessGetGeoPoint getLessGeoPoint = Utils.getGeoPoints(
+          data: PostLocationFilterModel(
+              geoPoint: data?["location"], radius: 10.0));
+      var subjectCollection = await FirebaseFirestore.instance
+          .collection('users')
+          .where("location", isLessThan: getLessGeoPoint.great)
+          .where("location", isGreaterThan: getLessGeoPoint.less)
+          .limit(50)
+          .get();
+
+      // List<QueryDocumentSnapshot<Map<String, dynamic>>?> finalCollection = [];
+
+      // for (var doc in subjectCollection.docs) {
+      //   for (var doc2 in classCollection.docs) {
+      //     if (!finalCollection.contains(doc)) {
+      //       finalCollection.add(doc);
+      //     }
+      //   }
+      // }
+      return subjectCollection.docs;
+    } else {
+      return [];
     }
   }
 }

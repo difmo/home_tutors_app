@@ -7,6 +7,8 @@ import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:app/views/constants.dart';
+import 'package:app/views/posts/widgets/collected_users.dart';
+import 'package:app/views/posts/widgets/matched_users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -30,6 +32,8 @@ class PostDetailsScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final tabController = useTabController(initialLength: 2, initialIndex: 0);
+    final selectedIndex = useState(0);
     final ifPurchased = useState(false);
     final postData = useState<Map<String, dynamic>?>({});
     final postId = useState("");
@@ -114,9 +118,11 @@ class PostDetailsScreen extends HookConsumerWidget {
                                 "Locality: ",
                               ),
                               const SizedBox(width: 5.0),
-                              Text(
-                                "${postData.value?["locality"]}",
-                                style: const TextStyle(color: Colors.blue),
+                              Flexible(
+                                child: Text(
+                                  "${postData.value?["locality"]}",
+                                  style: const TextStyle(color: Colors.blue),
+                                ),
                               ),
                             ],
                           ),
@@ -233,38 +239,41 @@ class PostDetailsScreen extends HookConsumerWidget {
 
                           if (AuthControllers.isAdmin()) ...[
                             const SizedBox(height: 25.0),
-                            const Text("Collected users",
-                                style: pagetitleStyle),
-                            ListView.builder(
-                                primary: false,
-                                shrinkWrap: true,
-                                itemCount: postData.value?["users"].length,
-                                itemBuilder: (context, index) {
-                                  return postData.value?["users"][index].isEmpty
-                                      ? const SizedBox.shrink()
-                                      : ListTile(
-                                          onTap: () async {
-                                            if (!checkEmpty(postData
-                                                .value?["users"][index])) {
-                                              Utils.loading();
-                                              var data = await AdminControllers
-                                                  .fetchProfileData(postData
-                                                      .value?["users"][index]);
-                                              EasyLoading.dismiss();
-                                              Future.delayed(Duration.zero)
-                                                  .then((value) {
-                                                context.push(
-                                                    AppRoutes.userDetails,
-                                                    extra: data);
-                                              });
-                                            }
-                                          },
-                                          leading: Text(index.toString()),
-                                          title: Text(
-                                              postData.value?["users"][index]),
-                                        );
-                                }),
-                            const SizedBox(height: 50.0),
+                            TabBar(
+                              onTap: (int index) {
+                                selectedIndex.value = index;
+                                tabController.animateTo(index);
+                              },
+                              unselectedLabelColor: Colors.black,
+                              labelColor: Colors.red,
+                              tabs: const [
+                                Tab(
+                                  icon: Icon(Icons.people),
+                                  text: "Collected",
+                                ),
+                                Tab(
+                                  icon: Icon(Icons.connect_without_contact),
+                                  text: "Matched",
+                                )
+                              ],
+                              controller: tabController,
+                              indicatorSize: TabBarIndicatorSize.tab,
+                            ),
+                            IndexedStack(
+                              index: selectedIndex.value,
+                              children: <Widget>[
+                                Visibility(
+                                  maintainState: true,
+                                  visible: selectedIndex.value == 0,
+                                  child: CollectedUser(data: postData.value),
+                                ),
+                                Visibility(
+                                  maintainState: true,
+                                  visible: selectedIndex.value == 1,
+                                  child: MatchedUsers(postData: postData.value),
+                                ),
+                              ],
+                            ),
                           ]
                         ],
                       ),

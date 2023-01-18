@@ -1,21 +1,32 @@
 import 'dart:developer';
 
+import 'package:app/controllers/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:http/http.dart' as http;
+
+import '../models/utils_model.dart';
 
 final userApiProviders = Provider<UserControllers>((ref) {
   return UserControllers();
 });
 
+class PostLocationFilterModel {
+  final GeoPoint geoPoint;
+  final double radius;
+
+  PostLocationFilterModel({required this.geoPoint, required this.radius});
+}
+
 class UserControllers {
   static User? currentUser = FirebaseAuth.instance.currentUser;
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllPosts(
-      String? stateName, int limit) {
+      {PostLocationFilterModel? filterData, required int limit}) {
     Stream<QuerySnapshot<Map<String, dynamic>>> collection;
     try {
-      if (stateName == null) {
+      if (filterData == null) {
         collection = FirebaseFirestore.instance
             .collection('posts')
             .where('createdOn',
@@ -25,13 +36,11 @@ class UserControllers {
             .limit(limit)
             .snapshots();
       } else {
+        LessGetGeoPoint getLessGeoPoint = Utils.getGeoPoints(data: filterData);
         collection = FirebaseFirestore.instance
             .collection('posts')
-            .where('createdOn',
-                isGreaterThanOrEqualTo: Timestamp.fromDate(
-                    DateTime.now().subtract(const Duration(days: 7))))
-            .where("state", isEqualTo: stateName)
-            .orderBy('createdOn', descending: true)
+            .where("location", isLessThan: getLessGeoPoint.great)
+            .where("location", isGreaterThan: getLessGeoPoint.less)
             .limit(limit)
             .snapshots();
       }
@@ -91,5 +100,31 @@ class UserControllers {
     } else {
       return null;
     }
+  }
+
+  static Future<String?> getLocations(Uri uri,
+      {Map<String, String>? headers}) async {
+    try {
+      final response = await http.get(uri, headers: headers);
+      if (response.statusCode == 200) {
+        return response.body;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return null;
+  }
+
+  static Future<String?> getLocationDetails(Uri uri,
+      {Map<String, String>? headers}) async {
+    try {
+      final response = await http.get(uri, headers: headers);
+      if (response.statusCode == 200) {
+        return response.body;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return null;
   }
 }

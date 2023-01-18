@@ -1,6 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../controllers/admin/admin_controllers.dart';
 import '../controllers/profile_controllers.dart';
 import '../controllers/user_controllers.dart';
 
@@ -19,12 +18,6 @@ final profileDataProvider =
 final amountOptionsProvider = FutureProvider.autoDispose((Ref ref) async {
   final apiService = ref.read(userApiProviders);
   return apiService.fetchAmountOptions();
-});
-
-final searchUserFutureProvider =
-    FutureProvider.autoDispose.family((Ref ref, String searchValue) async {
-  final apiService = ref.read(adminApiProviders);
-  return apiService.searchUser(searchValue);
 });
 
 // final alTransactionsProvider =

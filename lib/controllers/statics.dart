@@ -1,5 +1,6 @@
 const String adminPhone = "+918427373281";
 const String websiteUrl = "https://www.viptutors.in";
+const String googleApiKey = "AIzaSyA2rMtFcSCZNfZhpcrrMDVfVJa_RXUl4xg";
 
 const List<String> stateList = [
   "Andaman and Nicobar Islands",
@@ -81,7 +82,6 @@ const List<String> preferredClassList = [
   "Diploma",
   "Others",
 ];
-
 
 const List<String> subjectList = [
   "English",

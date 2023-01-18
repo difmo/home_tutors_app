@@ -110,6 +110,9 @@ class UserDetailsScreen extends HookConsumerWidget {
                     icon: Icons.edit_note_sharp,
                     title: "Class: ${item?["preferedClass"]}"),
                 DetailsTileWidget(
+                    icon: Icons.book,
+                    title: "Class: ${item?["preferedSubject"]}"),
+                DetailsTileWidget(
                     icon: Icons.switch_video_outlined,
                     title: "Mode: ${item?["preferedMode"]}"),
                 DetailsTileWidget(

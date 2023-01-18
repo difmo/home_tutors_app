@@ -4,7 +4,6 @@ import 'package:app/controllers/admin/admin_controllers.dart';
 import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
-import 'package:app/providers/profile_provider.dart';
 import 'package:app/views/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +15,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../controllers/utils.dart';
 
 class PostListScreen extends HookConsumerWidget {
-  const PostListScreen({super.key});
+  final PostLocationFilterModel? filterData;
+  const PostListScreen({super.key, this.filterData});
 
   Widget postListWidget(
       BuildContext context,
@@ -165,19 +165,24 @@ class PostListScreen extends HookConsumerWidget {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.switch_video_outlined,
-                                          color: Colors.green,
-                                        ),
-                                        const SizedBox(width: 5.0),
-                                        Text("Mode: ${item["mode"]} -- "),
-                                        const Text(
-                                          "(Read more)",
-                                          style: TextStyle(color: Colors.blue),
-                                        ),
-                                      ],
+                                    Flexible(
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.monetization_on,
+                                            color: Colors.green,
+                                          ),
+                                          const SizedBox(width: 5.0),
+                                          Flexible(
+                                              child:
+                                                  Text("Fee: ₹${item["fee"]}")),
+                                          const Text(
+                                            "(Read more)",
+                                            style:
+                                                TextStyle(color: Colors.blue),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     const Text("Responded"),
                                   ],
@@ -191,8 +196,7 @@ class PostListScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final stateName = ref.watch(stateNameProvider);
-    final selectedState = ref.watch(selectedStateProvider);
+    // final selectedState = ref.watch(selectedStateProvider);
     final scrollController = useScrollController();
     final limitCount = useState(20);
     useEffect(() {
@@ -210,8 +214,9 @@ class PostListScreen extends HookConsumerWidget {
         stream: AuthControllers.isAdmin()
             ? AdminControllers.fetchAllPosts(limitCount.value)
             : UserControllers.fetchAllPosts(
-                selectedState == 'All' ? null : selectedState,
-                limitCount.value),
+                filterData: filterData,
+                // selectedState == 'All' ? null : selectedState,
+                limit: limitCount.value),
         builder: (context, snapshot) {
           if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 

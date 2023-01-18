@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'package:app/controllers/user_controllers.dart';
+import 'package:app/models/utils_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -24,6 +27,22 @@ class Utils {
 
   static void loading({String? msg}) {
     EasyLoading.show(maskType: EasyLoadingMaskType.clear, status: msg);
+  }
+
+    static LessGetGeoPoint getGeoPoints({required PostLocationFilterModel data}) {
+    double lat = 0.0144927536231884;
+    double lon = 0.0181818181818182;
+    double lowerLat = data.geoPoint.latitude - (lat * data.radius);
+    double lowerLon = data.geoPoint.longitude - (lon * data.radius);
+
+    double greaterLat = data.geoPoint.latitude + (lat * data.radius);
+    double greaterLon = data.geoPoint.longitude + (lon * data.radius);
+
+    GeoPoint lesserGeopoint = GeoPoint(lowerLat, lowerLon);
+    GeoPoint greaterGeopoint = GeoPoint(greaterLat, greaterLon);
+    final LessGetGeoPoint getLessGeoPoint =
+        LessGetGeoPoint(lesserGeopoint, greaterGeopoint);
+    return getLessGeoPoint;
   }
 }
 
