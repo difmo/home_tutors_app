@@ -27,11 +27,16 @@ class CollectedUser extends StatelessWidget {
                           data?["users"][index]);
                       EasyLoading.dismiss();
                       Future.delayed(Duration.zero).then((value) {
-                        context.push(AppRoutes.userDetails, extra: data);
+                        context.push(AppRoutes.userDetails, extra: userData);
                       });
                     }
                   },
                   leading: Text(index.toString()),
+                  trailing: IconButton(
+                      onPressed: () {
+                        openUrl("tel:${data?["users"][index]}");
+                      },
+                      icon: const CircleAvatar(child: Icon(Icons.call))),
                   title: Text(data?["users"][index]),
                 );
         });

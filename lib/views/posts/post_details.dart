@@ -192,18 +192,11 @@ class PostDetailsScreen extends HookConsumerWidget {
                             ),
                           ],
                           const SizedBox(height: 20.0),
-                          Center(
-                            child: InkWell(
-                              onTap: () {
-                                openUrl(websiteUrl);
-                              },
-                              child: const Text(
-                                "Visit Website: $websiteUrl",
-                                style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
+                          TextColoredButton(
+                            onTap: () {
+                              openUrl(websiteUrl);
+                            },
+                            lable: "Visit Website: $websiteUrl",
                           ),
                           if (ifPurchased.value ||
                               AuthControllers.isAdmin()) ...[
@@ -274,7 +267,8 @@ class PostDetailsScreen extends HookConsumerWidget {
                                 ),
                               ],
                             ),
-                          ]
+                            const SizedBox(height: 75.0),
+                          ],
                         ],
                       ),
                     ),
@@ -372,16 +366,12 @@ class PostDetailsScreen extends HookConsumerWidget {
                     ),
                   const SizedBox(height: 10.0),
                   if (!AuthControllers.isAdmin())
-                    InkWell(
-                        onTap: () {
-                          openUrl("tel://$adminPhone");
-                        },
-                        child: const Text(
-                          "Contact to VIP Tutors $adminPhone",
-                          style: TextStyle(
-                            color: Colors.grey,
-                          ),
-                        )),
+                    TextColoredButton(
+                      onTap: () {
+                        openUrl("tel://$adminPhone");
+                      },
+                      lable: "Contact to VIP Tutors $adminPhone",
+                    ),
                 ],
               ),
             )),
@@ -436,19 +426,20 @@ class PostDetailsScreen extends HookConsumerWidget {
                             context.push(AppRoutes.addNewLead, extra: editData);
                           }),
                       SpeedDialChild(
-                          label: "Promote",
+                          label: "Repost",
                           backgroundColor: Colors.green,
                           child: const Icon(Icons.arrow_upward),
                           onTap: () async {
                             Utils.loading();
                             int lastLeadNo =
                                 await AdminControllers.lastPostId();
-                            await AdminControllers.editLead(
-                                docId: postId.value,
-                                data: {
-                                  "id": lastLeadNo + 1,
-                                  "createdOn": FieldValue.serverTimestamp()
-                                });
+                            var newPostBody = postData.value;
+                            newPostBody?["id"] = lastLeadNo + 1;
+                            newPostBody?["createdOn"] =
+                                FieldValue.serverTimestamp();
+                            newPostBody?['users'] = FieldValue.arrayUnion([""]);
+                            await AdminControllers.createLeads(
+                                postBody: newPostBody!);
                             EasyLoading.dismiss();
                             Future.delayed(Duration.zero).then((value) {
                               context.pop();
@@ -508,6 +499,31 @@ class DetailsColorTileWidget extends StatelessWidget {
             style: const TextStyle(color: Colors.blue),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class TextColoredButton extends StatelessWidget {
+  final void Function()? onTap;
+  final String lable;
+  const TextColoredButton({super.key, this.onTap, required this.lable});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+            color: Colors.lightBlue, borderRadius: BorderRadius.circular(5)),
+        child: Center(
+          child: Text(
+            lable,
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
     );
   }

@@ -45,13 +45,26 @@ class AdminControllers {
     }
   }
 
+  static Future<DateTime?> oldPostDate() async {
+    try {
+      var collection = await FirebaseFirestore.instance
+          .collection('posts')
+          .limit(5)
+          .orderBy('createdOn', descending: false)
+          .get();
+      return collection.docs.first["createdOn"].toDate();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future clearOldPosts() async {
     try {
       var collection = await FirebaseFirestore.instance
           .collection('posts')
           .where('createdOn',
-              isLessThan: Timestamp.fromDate(
-                  DateTime.now().subtract(const Duration(days: 7))))
+              isLessThan: Timestamp.fromDate(DateTime.now()
+                  .subtract(const Duration(days: autoPostDeleteDateRange))))
           .get();
       for (var element in collection.docs) {
         log(element["createdOn"].toDate().toString());
@@ -357,29 +370,51 @@ class AdminControllers {
     }
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>?>> getMatchedUsers(
+  Future<List<Map<String, dynamic>?>> getMatchedUsers(
       Map<String, dynamic>? data) async {
     if (data?["location"] != null) {
       LessGetGeoPoint getLessGeoPoint = Utils.getGeoPoints(
           data: PostLocationFilterModel(
-              geoPoint: data?["location"], radius: 10.0));
-      var subjectCollection = await FirebaseFirestore.instance
+              geoPoint: data?["location"], radius: adminLocationRadius));
+      var locationCollection = await FirebaseFirestore.instance
           .collection('users')
           .where("location", isLessThan: getLessGeoPoint.great)
           .where("location", isGreaterThan: getLessGeoPoint.less)
-          .limit(50)
+          .limit(100)
           .get();
+      List<Map<String, dynamic>> locationListUsers = [];
+      List<Map<String, dynamic>> classListUsers = [];
+      List<Map<String, dynamic>> subjectListUsers = [];
 
-      // List<QueryDocumentSnapshot<Map<String, dynamic>>?> finalCollection = [];
+      for (var element in locationCollection.docs) {
+        locationListUsers.add(element.data());
+      }
+      log("Total all users ${locationListUsers.length}");
 
-      // for (var doc in subjectCollection.docs) {
-      //   for (var doc2 in classCollection.docs) {
-      //     if (!finalCollection.contains(doc)) {
-      //       finalCollection.add(doc);
-      //     }
-      //   }
-      // }
-      return subjectCollection.docs;
+      for (var user in locationListUsers) {
+        for (var userClass in user["preferedClassList"]) {
+          log("Class from user $userClass");
+          if (data?["classList"].contains(userClass)) {
+            log("contains");
+            classListUsers.add(user);
+            break;
+          }
+        }
+      }
+      log("Class users ${classListUsers.length}");
+
+      for (var user in classListUsers) {
+        for (var userSubject in user["preferedSubjectList"]) {
+          log("Subject from user $userSubject");
+          if (data?["subjectList"].contains(userSubject)) {
+            log("contains");
+            subjectListUsers.add(user);
+            break;
+          }
+        }
+      }
+      log("Subject users ${subjectListUsers.length}");
+      return subjectListUsers;
     } else {
       return [];
     }

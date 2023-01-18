@@ -50,6 +50,7 @@ class ProfileController {
       'name': "",
       'email': "",
       'status': 0,
+      "rating": 1,
       'phone': user?.phoneNumber,
       'photoUrl': "",
       'locality': "",

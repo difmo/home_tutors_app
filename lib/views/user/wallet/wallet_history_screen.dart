@@ -26,7 +26,9 @@ class WalletHistory extends StatelessWidget {
                   "- ${item?["req_coins"]} Coins",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text("Post ID: ${item?["id"]}"),
+                subtitle: Text(
+                    "Posted on: ${formatWithMonthNameTime.format(item?["createdOn"].toDate())}"),
+                trailing: Text("Post ID: ${item?["id"]}"),
               );
             });
   }

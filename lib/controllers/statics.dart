@@ -1,6 +1,9 @@
 const String adminPhone = "+918427373281";
 const String websiteUrl = "https://www.viptutors.in";
 const String googleApiKey = "AIzaSyA2rMtFcSCZNfZhpcrrMDVfVJa_RXUl4xg";
+const int autoPostDeleteDateRange = 30;
+const double adminLocationRadius = 7.0;
+const double userLocationRadius = 20.0;
 
 const List<String> stateList = [
   "Andaman and Nicobar Islands",
@@ -165,5 +168,6 @@ const List<String> subjectList = [
   "Eng. Chemistry",
   "Medical subjects",
   "Art and Craft",
-  "Kuran"
+  "Kuran",
+  "All Subjects"
 ];

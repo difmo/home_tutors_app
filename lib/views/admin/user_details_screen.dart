@@ -21,6 +21,7 @@ class UserDetailsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedStatus = useState(profileStatusList[0]);
+    final selectedReview = useState(profileReviewList[1]);
     final walletController = useTextEditingController(
         text: (item?["wallet_balance"] ?? 0).toString());
     useEffect(
@@ -28,6 +29,12 @@ class UserDetailsScreen extends HookConsumerWidget {
         for (var element in profileStatusList) {
           if (element.status == item?["status"]) {
             selectedStatus.value = element;
+          }
+        }
+        var data = item?.data();
+        for (var element in profileReviewList) {
+          if (element.status == data?["rating"]) {
+            selectedReview.value = element;
           }
         }
         if (checkEmpty(item?["name"])) {
@@ -217,6 +224,44 @@ class UserDetailsScreen extends HookConsumerWidget {
                   },
                 ),
                 const SizedBox(height: 20.0),
+                const Center(
+                  child: Text(
+                    "Admin Review",
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(
+                      profileReviewList.length,
+                      (index) => IconButton(
+                          onPressed: () async {
+                            selectedReview.value = profileReviewList[index];
+                            Utils.loading();
+                            await ProfileController.updateProfile(profileBody: {
+                              "rating": selectedReview.value.status
+                            }, uidFromAdmin: item?["uid"]);
+                            EasyLoading.dismiss();
+                          },
+                          icon: Container(
+                            padding: EdgeInsets.all(
+                                selectedReview.value.status == index ? 3 : 0),
+                            decoration: BoxDecoration(
+                                border: selectedReview.value.status == index
+                                    ? Border.all()
+                                    : null,
+                                borderRadius: BorderRadius.circular(50),
+                                color: selectedReview.value.status == index
+                                    ? Colors.grey.shade300
+                                    : null),
+                            child: CircleAvatar(
+                              backgroundColor: profileReviewList[index].color,
+                            ),
+                          ))),
+                ),
+                const SizedBox(height: 20.0),
                 TextField(
                   inputFormatters: numberOnlyInput,
                   controller: walletController,
@@ -279,8 +324,21 @@ class ProfileStatusModel {
   ProfileStatusModel({required this.status, required this.title});
 }
 
+class ProfileReviewModel {
+  final int status;
+  final Color color;
+
+  ProfileReviewModel({required this.status, required this.color});
+}
+
 final List<ProfileStatusModel> profileStatusList = [
   ProfileStatusModel(title: "Pending", status: 0),
   ProfileStatusModel(title: "Approved", status: 1),
   ProfileStatusModel(title: "Declined", status: 2),
+];
+
+final List<ProfileReviewModel> profileReviewList = [
+  ProfileReviewModel(color: Colors.green, status: 0),
+  ProfileReviewModel(color: Colors.orange, status: 1),
+  ProfileReviewModel(color: Colors.red, status: 2),
 ];

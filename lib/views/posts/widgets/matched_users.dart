@@ -4,7 +4,9 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../controllers/admin/admin_controllers.dart';
 import '../../../controllers/routes.dart';
+import '../../../controllers/utils.dart';
 
 class MatchedUsers extends HookConsumerWidget {
   final Map<String, dynamic>? postData;
@@ -22,12 +24,22 @@ class MatchedUsers extends HookConsumerWidget {
             final item = data[index];
             return ListTile(
               onTap: () async {
+                Utils.loading();
+                var userData =
+                    await AdminControllers.fetchProfileData(item?["phone"]);
+                EasyLoading.dismiss();
                 Future.delayed(Duration.zero).then((value) {
-                  context.push(AppRoutes.userDetails, extra: item);
+                  context.push(AppRoutes.userDetails, extra: userData);
                 });
               },
               leading: const Icon(Icons.person),
+              trailing: IconButton(
+                  onPressed: () {
+                    openUrl("tel:${item?["phone"]}");
+                  },
+                  icon: const CircleAvatar(child: Icon(Icons.call))),
               title: Text(item?["phone"]),
+              subtitle: Text(item?["name"]),
             );
           });
     }, error: (error, stackTrace) {

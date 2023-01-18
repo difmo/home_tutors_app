@@ -162,6 +162,18 @@ class PostListScreen extends HookConsumerWidget {
                                 ),
                                 const SizedBox(height: 5.0),
                                 Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.switch_video_outlined,
+                                      color: Colors.green,
+                                    ),
+                                    const SizedBox(width: 5.0),
+                                    Flexible(
+                                        child: Text("Mode: ₹${item["mode"]}")),
+                                  ],
+                                ),
+                                const SizedBox(height: 5.0),
+                                Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [

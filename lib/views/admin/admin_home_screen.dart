@@ -1,27 +1,52 @@
 import 'package:app/controllers/admin/admin_controllers.dart';
 import 'package:app/controllers/utils.dart';
+import 'package:app/views/admin/widgets/clear_data_confirm_widget.dart';
 import 'package:app/views/admin/widgets/send_notification_widget.dart';
 import 'package:app/views/posts/posts_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../controllers/profile_controllers.dart';
 import '../../controllers/routes.dart';
+import '../../controllers/statics.dart';
 
 class AdminHomeScreen extends HookConsumerWidget {
   const AdminHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final clearPost = useCallback(() async {
+      DateTime lastDate =
+          await AdminControllers.oldPostDate() ?? DateTime.now();
+      if (lastDate.isBefore(DateTime.now()
+          .subtract(const Duration(days: autoPostDeleteDateRange)))) {
+        await AdminControllers.clearOldPosts();
+      }
+    }, []);
+    useEffect(() {
+      if (DateTime.now().hour >= 19 && DateTime.now().hour <= 21) {
+        clearPost();
+      }
+      return;
+    }, []);
     return Scaffold(
       body: const SafeArea(child: PostListScreen()),
       appBar: AppBar(
         title: const Text('Posts'),
         centerTitle: false,
         actions: [
+          TextButton.icon(
+              label: const Text("Share", style: TextStyle(color: Colors.white)),
+              icon: const Icon(Icons.share, color: Colors.white),
+              onPressed: () async {
+                Share.share(
+                    'check out VIP home tutors https://play.google.com/store/apps/details?id=com.viptutors.app');
+              }),
           TextButton.icon(
               label: const Text("Add", style: TextStyle(color: Colors.white)),
               icon: const Icon(Icons.add, color: Colors.white),
@@ -32,11 +57,23 @@ class AdminHomeScreen extends HookConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
           child: const Icon(Icons.cleaning_services_rounded),
-          onPressed: () async {
-            Utils.loading(msg: "Please wait, cleaning database");
-            await AdminControllers.clearOldPosts();
-            EasyLoading.dismiss();
-            EasyLoading.showSuccess("Database cleared");
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return ClearDataWidget(
+                    onSubmit: () async {
+                      Utils.loading(msg: "Please wait, cleaning database");
+                      await AdminControllers.clearOldPosts();
+                      EasyLoading.dismiss();
+                      EasyLoading.showSuccess("Database cleared");
+                      Navigator.pop(context);
+                    },
+                    title: "Are you sure?",
+                    desc:
+                        "You want to sure to delete all post older than 30 days?");
+              },
+            );
           }),
       drawer: Drawer(
         child: ListView(

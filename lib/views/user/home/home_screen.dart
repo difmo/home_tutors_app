@@ -12,6 +12,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../controllers/statics.dart';
 import '../../../controllers/utils.dart';
 import '../../../providers/profile_provider.dart';
 import '../history_screen.dart';
@@ -215,7 +216,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         filterData.value = null;
                       } else {
                         filterData.value = PostLocationFilterModel(
-                            geoPoint: data?["location"], radius: 20.0);
+                            geoPoint: data?["location"],
+                            radius: userLocationRadius);
                       }
                     } else {
                       EasyLoading.showInfo(
