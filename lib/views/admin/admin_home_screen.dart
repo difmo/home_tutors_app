@@ -35,7 +35,7 @@ class AdminHomeScreen extends HookConsumerWidget {
       return;
     }, []);
     return Scaffold(
-      body: const SafeArea(child: PostListScreen()),
+      body: const SafeArea(child: PostListScreen(false)),
       appBar: AppBar(
         title: const Text('Posts'),
         centerTitle: false,

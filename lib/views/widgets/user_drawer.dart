@@ -81,6 +81,13 @@ class UserDrawerWidget extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.rule),
+            title: const Text("Rules"),
+            onTap: () {
+              context.push(AppRoutes.rulesScreen);
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.file_copy),
             title: const Text("Terms & Conditions"),
             onTap: () {

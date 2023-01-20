@@ -13,13 +13,13 @@ import 'package:app/views/user/home/home_screen.dart';
 import 'package:app/views/onboarding_screen.dart';
 import 'package:app/views/posts/post_details.dart';
 import 'package:app/views/user/profile/teacher_profile_screen.dart';
+import 'package:app/views/user/rules_screen.dart';
 import 'package:app/views/user/wallet/wallet_history_screen.dart';
 import 'package:app/views/user/wallet/wallet_screen.dart';
 import 'package:app/views/widgets/image_full_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 
 const String dynamicUriPrifix = "https://viptutors.page.link";
 
@@ -44,6 +44,7 @@ class AppRoutes {
   static const String walletHits = '/wallet_hits';
   static const String postDetails = '/post_details:id';
   static const String imageView = '/image_view';
+  static const String rulesScreen = '/rules_screen';
 
   static final GoRouter router = GoRouter(
     initialLocation: AuthControllers.manageLogin(),
@@ -163,6 +164,12 @@ class AppRoutes {
         path: walletHistory,
         builder: (BuildContext context, GoRouterState state) {
           return const WalletHistory();
+        },
+      ),
+      GoRoute(
+        path: rulesScreen,
+        builder: (BuildContext context, GoRouterState state) {
+          return const RulesScreen();
         },
       ),
     ],

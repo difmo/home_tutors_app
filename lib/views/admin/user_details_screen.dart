@@ -118,7 +118,7 @@ class UserDetailsScreen extends HookConsumerWidget {
                     title: "Class: ${item?["preferedClass"]}"),
                 DetailsTileWidget(
                     icon: Icons.book,
-                    title: "Class: ${item?["preferedSubject"]}"),
+                    title: "Subject: ${item?["preferedSubject"]}"),
                 DetailsTileWidget(
                     icon: Icons.switch_video_outlined,
                     title: "Mode: ${item?["preferedMode"]}"),

@@ -14,7 +14,7 @@ final userApiProviders = Provider<UserControllers>((ref) {
 
 class PostLocationFilterModel {
   final GeoPoint geoPoint;
-  final double radius;
+  double radius;
 
   PostLocationFilterModel({required this.geoPoint, required this.radius});
 }

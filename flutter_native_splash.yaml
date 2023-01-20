@@ -26,7 +26,6 @@ flutter_native_splash:
   #branding: assets/dart.png
   # branding: assets/logo2.png
 
-
   # To position the branding image at the bottom of the screen you can use bottom, bottomRight,
   # and bottomLeft. The default values is bottom if not specified or specified something else.
   #branding_mode: bottom
@@ -52,7 +51,7 @@ flutter_native_splash:
     # 640 pixels in diameter.
     # App icon without an icon background: This should be 1152×1152 pixels, and fit within a circle
     # 768 pixels in diameter.
-    image: assets/logo2.png
+    image: assets/splash.png
 
     # Splash screen background color.
     color: "#FFFFFF"

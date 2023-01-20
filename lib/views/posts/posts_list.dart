@@ -15,16 +15,24 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../controllers/utils.dart';
 
 class PostListScreen extends HookConsumerWidget {
+  final bool nearBy;
   final PostLocationFilterModel? filterData;
-  const PostListScreen({super.key, this.filterData});
+  const PostListScreen(this.nearBy, {super.key, this.filterData});
 
   Widget postListWidget(
       BuildContext context,
       List<QueryDocumentSnapshot<Map<String, dynamic>>>? data,
       ScrollController controller) {
     return checkEmpty(data)
-        ? const Center(
-            child: Text("No post available"),
+        ? Column(
+            children: [
+              const Center(
+                child: Text("No post available"),
+              ),
+              if (nearBy)
+                const Text("Please try increasing radius for more results",
+                    textAlign: TextAlign.center)
+            ],
           )
         : ListView.builder(
             controller: controller,
