@@ -118,22 +118,18 @@ class PostListScreen extends HookConsumerWidget {
                                   ],
                                 ),
                                 const SizedBox(height: 5.0),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.6,
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.location_city,
-                                        color: Colors.green,
-                                      ),
-                                      const SizedBox(width: 5.0),
-                                      Expanded(
-                                        child: Text(
-                                            "Location: ${item["locality"]}, ${item["city"]}"),
-                                      ),
-                                    ],
-                                  ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_city,
+                                      color: Colors.green,
+                                    ),
+                                    const SizedBox(width: 5.0),
+                                    Expanded(
+                                      child: Text(
+                                          "Location: ${item["locality"]}, ${item["city"]}"),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 5.0),
                                 Row(
@@ -141,35 +137,32 @@ class PostListScreen extends HookConsumerWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.6,
-                                      child: Row(
-                                        children: [
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
+                                        child: Row(children: [
                                           const Icon(
                                             Icons.switch_video_outlined,
                                             color: Colors.green,
                                           ),
                                           const SizedBox(width: 5.0),
                                           Flexible(
-                                              child: Text(
-                                                  "Mode: ₹${item["mode"]}")),
-                                        ],
-                                      ),
-                                    ),
+                                              child:
+                                                  Text("Mode: ${item["mode"]}"))
+                                        ])),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      decoration: BoxDecoration(
-                                          color: Colors.blue,
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      child: Text(
-                                        "0/${((int.parse(item["max_hits"]) - (item["users"].length - 1)))}",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
-                                      ),
-                                    ),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 5),
+                                        decoration: BoxDecoration(
+                                            color: Colors.blue,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: Text(
+                                          "0/${((int.parse(item["max_hits"]) - (item["users"].length - 1)))}",
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ))
                                   ],
                                 ),
                                 const SizedBox(height: 5.0),

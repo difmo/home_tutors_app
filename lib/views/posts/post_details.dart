@@ -193,13 +193,7 @@ class PostDetailsScreen extends HookConsumerWidget {
                               ],
                             ),
                           ],
-                          const SizedBox(height: 20.0),
-                          TextColoredButton(
-                            onTap: () {
-                              openUrl(websiteUrl);
-                            },
-                            lable: "Visit Website: $websiteUrl",
-                          ),
+
                           if (ifPurchased.value ||
                               AuthControllers.isAdmin()) ...[
                             const Divider(
@@ -275,10 +269,17 @@ class PostDetailsScreen extends HookConsumerWidget {
                       ),
                     ),
                   ),
+                  TextColoredButton(
+                    onTap: () {
+                      openUrl(websiteUrl);
+                    },
+                    lable: "Visit Website: $websiteUrl",
+                  ),
                   if (!ifPurchased.value &&
                       !((postData.value?["users"].length - 1) >=
                           int.parse(postData.value?["max_hits"])) &&
-                      !AuthControllers.isAdmin())
+                      !AuthControllers.isAdmin()) ...[
+                    const SizedBox(height: 15.0),
                     Row(
                       children: [
                         Expanded(
@@ -386,13 +387,14 @@ class PostDetailsScreen extends HookConsumerWidget {
                         ),
                       ],
                     ),
-                  const SizedBox(height: 10.0),
+                  ],
+                  const SizedBox(height: 15.0),
                   if (!AuthControllers.isAdmin())
                     TextColoredButton(
                       onTap: () {
-                        openUrl("tel://$adminPhone");
+                        openUrl("tel://$contactNumber");
                       },
-                      lable: "Contact to VIP Tutors $adminPhone",
+                      lable: "Contact :- VIP Tutors Bureau $contactNumber",
                     ),
                 ],
               ),
@@ -549,14 +551,18 @@ class TextColoredButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(10.0),
         decoration: BoxDecoration(
-            color: Colors.lightBlue, borderRadius: BorderRadius.circular(5)),
+            color: Colors.lightBlue, borderRadius: BorderRadius.circular(10)),
         child: Center(
-          child: Text(
-            lable,
-            style: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold),
+          child: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Text(
+              lable,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
       ),

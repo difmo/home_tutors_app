@@ -167,13 +167,13 @@ class AddLeadScreen extends HookConsumerWidget {
                         ),
                         const SizedBox(height: 10.0),
                         DropdownSearch<String>(
-                            validator: (value) {
-                              if (checkEmpty(value)) {
-                                return "Choose board";
-                              } else {
-                                return null;
-                              }
-                            },
+                            // validator: (value) {
+                            //   if (checkEmpty(value)) {
+                            //     return "Choose board";
+                            //   } else {
+                            //     return null;
+                            //   }
+                            // },
                             items: boardList,
                             popupProps:
                                 const PopupProps.menu(showSelectedItems: true),
@@ -184,7 +184,9 @@ class AddLeadScreen extends HookConsumerWidget {
                                 hintText: "Choose a board",
                               ),
                             ),
-                            selectedItem: selectedBoard.value,
+                            selectedItem: selectedBoard.value.isEmpty
+                                ? null
+                                : selectedMode.value,
                             onChanged: (newValue) {
                               if (newValue != null) {
                                 selectedBoard.value = newValue;

@@ -26,14 +26,40 @@ class HomeScreen extends StatefulHookConsumerWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  TabBar get tabBarList => const TabBar(
+  TabBar get tabBarList => TabBar(
         labelColor: Colors.black,
         tabs: [
-          Tab(text: "Nearby"),
-          Tab(text: "ENQUIRY"),
-          Tab(text: "CONTACTED")
+          Row(
+            children: const [
+              Icon(Icons.location_pin, color: Colors.black54),
+              SizedBox(width: 05.0),
+              Tab(text: "Nearby")
+            ],
+          ),
+          const Tab(text: "ENQUIRY"),
+          const Tab(text: "CONTACTED")
         ],
       );
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Are you sure?'),
+            content: const Text('Do you want to exit the App'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           SchedulerBinding.instance.addPostFrameCallback((_) {
             if (firstTime.value) {
               filterData.value = PostLocationFilterModel(
-                  geoPoint: data["location"], radius: 10.0);
+                  geoPoint: data["location"], radius: 11.0);
               firstTime.value = !firstTime.value;
             }
           });
@@ -65,73 +91,77 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
 
       return data?["status"] == 1
-          ? DefaultTabController(
-              length: 3,
-              child: Scaffold(
-                body: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: TabBarView(children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          ? WillPopScope(
+              onWillPop: _onWillPop,
+              child: DefaultTabController(
+                initialIndex: 1,
+                length: 3,
+                child: Scaffold(
+                  body: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: TabBarView(children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                              padding: const EdgeInsets.only(left: 20, top: 10),
+                              child: Text(
+                                  "Nearby Radius [${filterData.value?.radius ?? 11} Miles]",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold))),
+                          Slider(
+                              label: "${filterData.value?.radius ?? 11} Miles",
+                              min: 1,
+                              max: 31,
+                              divisions: 4,
+                              value: filterData.value?.radius ?? 11,
+                              onChanged: (val) {
+                                filterData.value!.radius = val;
+                                setState.value = !setState.value;
+                              }),
+                          Expanded(
+                              child: PostListScreen(true,
+                                  filterData: filterData.value)),
+                        ],
+                      ),
+                      const PostListScreen(false),
+                      const HistoryScreen()
+                    ]),
+                  ),
+                  appBar: AppBar(
+                    titleTextStyle: const TextStyle(fontSize: 14.0),
+                    leading: const Padding(
+                      padding: EdgeInsets.all(5.0),
+                      child: CircleAvatar(
+                          backgroundImage: AssetImage("assets/logo.png")),
+                    ),
+                    centerTitle: true,
+                    title: Row(
                       children: [
-                        Padding(
-                            padding: const EdgeInsets.only(left: 20, top: 10),
+                        const Text("VIP Home Tutors"),
+                        const SizedBox(width: 10.0),
+                        TextButton(
+                            onPressed: () {
+                              context.push(AppRoutes.walletScreen);
+                            },
                             child: Text(
-                                "Nearby Radius [${filterData.value?.radius ?? 10} Miles]",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold))),
-                        Slider(
-                            label: "${filterData.value?.radius ?? 10} Miles",
-                            min: 10,
-                            max: 50,
-                            divisions: 4,
-                            value: filterData.value?.radius ?? 10,
-                            onChanged: (val) {
-                              filterData.value!.radius = val;
-                              setState.value = !setState.value;
-                            }),
-                        Expanded(
-                            child: PostListScreen(true,
-                                filterData: filterData.value)),
+                              "Upgrade ${data?["wallet_balance"] ?? 0}",
+                              style: const TextStyle(
+                                  color: Colors.yellow,
+                                  fontWeight: FontWeight.bold),
+                            )),
                       ],
                     ),
-                    const PostListScreen(false),
-                    const HistoryScreen()
-                  ]),
-                ),
-                appBar: AppBar(
-                  titleTextStyle: const TextStyle(fontSize: 14.0),
-                  leading: const Padding(
-                    padding: EdgeInsets.all(5.0),
-                    child: CircleAvatar(
-                        backgroundImage: AssetImage("assets/logo.png")),
-                  ),
-                  centerTitle: true,
-                  title: Row(
-                    children: [
-                      const Text("VIP Home Tutors"),
-                      const SizedBox(width: 10.0),
-                      TextButton(
-                          onPressed: () {
-                            context.push(AppRoutes.walletScreen);
-                          },
-                          child: Text(
-                            "Upgrade ${data?["wallet_balance"] ?? 0}",
-                            style: const TextStyle(
-                                color: Colors.yellow,
-                                fontWeight: FontWeight.bold),
-                          )),
-                    ],
-                  ),
-                  bottom: PreferredSize(
-                    preferredSize: tabBarList.preferredSize,
-                    child: ColoredBox(
-                      color: Colors.grey.shade100,
-                      child: tabBarList,
+                    bottom: PreferredSize(
+                      preferredSize: tabBarList.preferredSize,
+                      child: ColoredBox(
+                        color: Colors.grey.shade100,
+                        child: tabBarList,
+                      ),
                     ),
                   ),
+                  endDrawer: UserDrawerWidget(profileData: data),
                 ),
-                endDrawer: UserDrawerWidget(profileData: data),
               ),
             )
           : ProfileVerificationScreen(
