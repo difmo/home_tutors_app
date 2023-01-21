@@ -192,6 +192,14 @@ class PostDetailsScreen extends HookConsumerWidget {
                                 ),
                               ],
                             ),
+                            const SizedBox(height: 20.0),
+                            if (!AuthControllers.isAdmin())
+                              TextColoredButton(
+                                onTap: () {
+                                  openUrl(websiteUrl);
+                                },
+                                lable: "Visit Website: $websiteUrl",
+                              ),
                           ],
 
                           if (ifPurchased.value ||
@@ -268,12 +276,6 @@ class PostDetailsScreen extends HookConsumerWidget {
                         ],
                       ),
                     ),
-                  ),
-                  TextColoredButton(
-                    onTap: () {
-                      openUrl(websiteUrl);
-                    },
-                    lable: "Visit Website: $websiteUrl",
                   ),
                   if (!ifPurchased.value &&
                       !((postData.value?["users"].length - 1) >=
@@ -388,14 +390,15 @@ class PostDetailsScreen extends HookConsumerWidget {
                       ],
                     ),
                   ],
-                  const SizedBox(height: 15.0),
-                  if (!AuthControllers.isAdmin())
+                  if (!AuthControllers.isAdmin()) ...[
+                    const SizedBox(height: 15.0),
                     TextColoredButton(
                       onTap: () {
                         openUrl("tel://$contactNumber");
                       },
                       lable: "Contact :- VIP Tutors Bureau $contactNumber",
                     ),
+                  ]
                 ],
               ),
             )),

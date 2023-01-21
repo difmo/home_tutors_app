@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
 import 'package:app/views/auth/profile_verification_screen.dart';
@@ -6,11 +9,13 @@ import 'package:app/views/widgets/error_widget_screen.dart';
 import 'package:app/views/widgets/loading_widget_screen.dart';
 import 'package:app/views/widgets/user_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:in_app_update/in_app_update.dart';
 
 import '../../../controllers/utils.dart';
 import '../../../providers/profile_provider.dart';
@@ -26,6 +31,30 @@ class HomeScreen extends StatefulHookConsumerWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  AppUpdateInfo? _updateInfo;
+
+  Future<void> checkForUpdate() async {
+    if (kDebugMode || Platform.isIOS) {
+      return;
+    }
+    InAppUpdate.checkForUpdate().then((info) {
+      _updateInfo = info;
+      updateApp();
+    }).catchError((e) {
+      debugPrint(e.toString());
+    });
+  }
+
+  updateApp() {
+    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
+      InAppUpdate.performImmediateUpdate().catchError((e) {
+        debugPrint(e.toString());
+      });
+    } else {
+      debugPrint('no update');
+    }
+  }
+
   TabBar get tabBarList => TabBar(
         labelColor: Colors.black,
         tabs: [
@@ -59,6 +88,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         )) ??
         false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkForUpdate();
   }
 
   @override
@@ -105,10 +140,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           Padding(
                               padding: const EdgeInsets.only(left: 20, top: 10),
-                              child: Text(
-                                  "Nearby Radius [${filterData.value?.radius ?? 11} Miles]",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold))),
+                              child: FittedBox(
+                                fit: BoxFit.fitWidth,
+                                child: Text(
+                                    "Search Nearby Leads in Radius of [${filterData.value?.radius ?? 11} Miles]",
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                              )),
                           Slider(
                               label: "${filterData.value?.radius ?? 11} Miles",
                               min: 1,
