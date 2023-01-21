@@ -37,16 +37,34 @@ class AdminHomeScreen extends HookConsumerWidget {
     return Scaffold(
       body: const SafeArea(child: PostListScreen(false)),
       appBar: AppBar(
-        title: const Text('Posts'),
+        title: Row(
+          children: [
+            const Text('Posts'),
+            IconButton(
+                icon: const Icon(Icons.cleaning_services_rounded,
+                    color: Colors.white),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return ClearDataWidget(
+                            onSubmit: () async {
+                              Utils.loading(
+                                  msg: "Please wait, cleaning database");
+                              await AdminControllers.clearOldPosts();
+                              EasyLoading.dismiss();
+                              EasyLoading.showSuccess("Database cleared");
+                              Navigator.pop(context);
+                            },
+                            title: "Are you sure?",
+                            desc:
+                                "You want to sure to delete all post older than 30 days?");
+                      });
+                }),
+          ],
+        ),
         centerTitle: false,
         actions: [
-          TextButton.icon(
-              label: const Text("Share", style: TextStyle(color: Colors.white)),
-              icon: const Icon(Icons.share, color: Colors.white),
-              onPressed: () async {
-                Share.share(
-                    'check out VIP home tutors https://play.google.com/store/apps/details?id=com.viptutors.app');
-              }),
           TextButton.icon(
               label: const Text("Add", style: TextStyle(color: Colors.white)),
               icon: const Icon(Icons.add, color: Colors.white),
@@ -55,26 +73,6 @@ class AdminHomeScreen extends HookConsumerWidget {
               }),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.cleaning_services_rounded),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return ClearDataWidget(
-                    onSubmit: () async {
-                      Utils.loading(msg: "Please wait, cleaning database");
-                      await AdminControllers.clearOldPosts();
-                      EasyLoading.dismiss();
-                      EasyLoading.showSuccess("Database cleared");
-                      Navigator.pop(context);
-                    },
-                    title: "Are you sure?",
-                    desc:
-                        "You want to sure to delete all post older than 30 days?");
-              },
-            );
-          }),
       drawer: Drawer(
         child: ListView(
           children: [
@@ -159,6 +157,14 @@ class AdminHomeScreen extends HookConsumerWidget {
                     builder: (BuildContext context) {
                       return SendNotificationWidget();
                     });
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.share),
+              title: const Text('Share'),
+              onTap: () {
+                Share.share(
+                    'check out VIP home tutors https://play.google.com/store/apps/details?id=com.viptutors.app');
               },
             ),
             ListTile(

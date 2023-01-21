@@ -41,7 +41,7 @@ class PostListScreen extends HookConsumerWidget {
             padding: const EdgeInsets.only(bottom: 100.0),
             itemCount: data?.length ?? 0,
             itemBuilder: (context, index) {
-              var item = data?[index];
+              var item = data?[index].data();
               return item == null
                   ? const SizedBox.shrink()
                   : checkContains(int.parse(item["max_hits"]), item["users"])
@@ -49,7 +49,7 @@ class PostListScreen extends HookConsumerWidget {
                       : InkWell(
                           onTap: () {
                             context.pushNamed(AppRoutes.postDetails,
-                                extra: item.data(), params: {"id": item.id});
+                                extra: item, params: {"id": data![index].id});
                           },
                           child: Container(
                             padding: const EdgeInsets.all(10),
@@ -98,7 +98,10 @@ class PostListScreen extends HookConsumerWidget {
                                       color: Colors.green,
                                     ),
                                     const SizedBox(width: 5.0),
-                                    Text("Class: ${item["class"]}"),
+                                    Expanded(
+                                      child: Text(
+                                          "Class: ${item["class"]} ${item["board"] ?? ""}"),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 5.0),
@@ -109,7 +112,9 @@ class PostListScreen extends HookConsumerWidget {
                                       color: Colors.green,
                                     ),
                                     const SizedBox(width: 5.0),
-                                    Text("Subject: ${item["subject"]}"),
+                                    Expanded(
+                                        child: Text(
+                                            "Subject: ${item["subject"]}")),
                                   ],
                                 ),
                                 const SizedBox(height: 5.0),
@@ -141,14 +146,13 @@ class PostListScreen extends HookConsumerWidget {
                                       child: Row(
                                         children: [
                                           const Icon(
-                                            Icons.location_on,
+                                            Icons.switch_video_outlined,
                                             color: Colors.green,
                                           ),
                                           const SizedBox(width: 5.0),
-                                          Expanded(
-                                            child:
-                                                Text("State: ${item["state"]}"),
-                                          ),
+                                          Flexible(
+                                              child: Text(
+                                                  "Mode: ₹${item["mode"]}")),
                                         ],
                                       ),
                                     ),
@@ -166,18 +170,6 @@ class PostListScreen extends HookConsumerWidget {
                                             color: Colors.white),
                                       ),
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 5.0),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.switch_video_outlined,
-                                      color: Colors.green,
-                                    ),
-                                    const SizedBox(width: 5.0),
-                                    Flexible(
-                                        child: Text("Mode: ₹${item["mode"]}")),
                                   ],
                                 ),
                                 const SizedBox(height: 5.0),

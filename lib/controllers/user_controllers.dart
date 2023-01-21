@@ -63,6 +63,28 @@ class UserControllers {
     }
   }
 
+  static Future addToOrders(Map<String, dynamic> data) async {
+    try {
+      await FirebaseFirestore.instance.collection('orders').doc().set(data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      fetchOrders() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore
+          .instance
+          .collection('orders')
+          .where("uid", isEqualTo: currentUser!.uid)
+          .get();
+      return data.docs;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> fetchPurchasedPost() {
     try {
       var collection = FirebaseFirestore.instance

@@ -1,10 +1,11 @@
-import 'package:app/controllers/user_controllers.dart';
+import 'package:app/providers/profile_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../controllers/utils.dart';
 
-class WalletHistory extends StatelessWidget {
+class WalletHistory extends HookConsumerWidget {
   const WalletHistory({super.key});
 
   Widget postListWidget(BuildContext context,
@@ -19,7 +20,7 @@ class WalletHistory extends StatelessWidget {
             },
             itemCount: data?.length ?? 0,
             itemBuilder: (context, index) {
-              var item = data?[index];
+              var item = data?[index].data();
               return ListTile(
                 leading: const Icon(Icons.attach_money),
                 title: Text(
@@ -28,29 +29,29 @@ class WalletHistory extends StatelessWidget {
                 ),
                 subtitle: Text(
                     "Posted on: ${formatWithMonthNameTime.format(item?["createdOn"].toDate())}"),
-                trailing: Text("Post ID: ${item?["id"]}"),
+                trailing: Text("Post ID: ${item?["post_id"]}"),
               );
             });
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fetchOrders = ref.watch(fetchOrdersProvider);
     return Scaffold(
-      body: StreamBuilder(
-          stream: UserControllers.fetchPurchasedPost(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) return Text('Error: ${snapshot.error}');
-
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return const Center(child: Text('No data'));
-              case ConnectionState.waiting:
-                return const Center(child: Text('Awaiting...'));
-              case ConnectionState.active:
-              case ConnectionState.done:
-                return postListWidget(context, snapshot.data?.docs);
-            }
-          }),
+      body: SafeArea(
+          child: fetchOrders.when(
+        data: (data) {
+          return postListWidget(context, data);
+        },
+        error: (error, stackTrace) {
+          return const Center(
+              child: Text("Someting went wrong, contact support",
+                  textAlign: TextAlign.center));
+        },
+        loading: () {
+          return const Center(child: CircularProgressIndicator());
+        },
+      )),
       appBar: AppBar(
         title: const Text("Wallet History"),
       ),

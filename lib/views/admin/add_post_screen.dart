@@ -43,6 +43,7 @@ class AddLeadScreen extends HookConsumerWidget {
     final nameController = useTextEditingController();
     final phoneController = useTextEditingController();
     final selectedClassList = useState<List>([]);
+    final selectedBoard = useState("");
 
     final selectedState = useState("");
     final selectedCity = useState("");
@@ -56,9 +57,10 @@ class AddLeadScreen extends HookConsumerWidget {
       if (editData != null) {
         descController.text = editData?.data?["desc"];
         feeController.text = editData?.data?["fee"];
-        selectedSubjectList.value = editData?.data?["classList"] ?? [];
+        selectedSubjectList.value = editData?.data?["subjectList"] ?? [];
         selectedMode.value = editData?.data?["mode"];
-        selectedClassList.value = editData?.data?["subjectList"] ?? [];
+        selectedClassList.value = editData?.data?["classList"] ?? [];
+        selectedBoard.value = editData?.data?["board"] ?? "";
         localityController.text = editData?.data?["locality"];
         locationPosition.value = editData?.data?["location"];
         selectedState.value = editData?.data?["state"];
@@ -163,7 +165,31 @@ class AddLeadScreen extends HookConsumerWidget {
                             selectedClassList.value = newValue.cast<String>();
                           },
                         ),
-
+                        const SizedBox(height: 10.0),
+                        DropdownSearch<String>(
+                            validator: (value) {
+                              if (checkEmpty(value)) {
+                                return "Choose board";
+                              } else {
+                                return null;
+                              }
+                            },
+                            items: boardList,
+                            popupProps:
+                                const PopupProps.menu(showSelectedItems: true),
+                            dropdownDecoratorProps:
+                                const DropDownDecoratorProps(
+                              dropdownSearchDecoration: InputDecoration(
+                                labelText: "Board",
+                                hintText: "Choose a board",
+                              ),
+                            ),
+                            selectedItem: selectedBoard.value,
+                            onChanged: (newValue) {
+                              if (newValue != null) {
+                                selectedBoard.value = newValue;
+                              }
+                            }),
                         const SizedBox(height: 10.0),
                         DropdownSearch<String>.multiSelection(
                             validator: (value) {
@@ -531,6 +557,7 @@ class AddLeadScreen extends HookConsumerWidget {
                                         "class":
                                             selectedClassList.value.join(', '),
                                         "classList": selectedClassList.value,
+                                        "board": selectedBoard.value,
                                         "mode": selectedMode.value,
                                         "subject": selectedSubjectList.value
                                             .join(', '),

@@ -13,6 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants.dart';
 import '../posts/post_details.dart';
+import 'widgets/clear_data_confirm_widget.dart';
 
 class UserDetailsScreen extends HookConsumerWidget {
   final QueryDocumentSnapshot<Map<String, dynamic>>? item;
@@ -304,12 +305,21 @@ class UserDetailsScreen extends HookConsumerWidget {
               label: "Delete",
               child: const Icon(Icons.delete),
               onTap: () async {
-                Utils.loading();
-                await AdminControllers.deleteUser(userId: item!.id);
-                EasyLoading.dismiss();
-                Future.delayed(Duration.zero).then((value) {
-                  context.pop();
-                });
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ClearDataWidget(
+                          onSubmit: () async {
+                            Utils.loading();
+                            await AdminControllers.deleteUser(userId: item!.id);
+                            EasyLoading.dismiss();
+                            Future.delayed(Duration.zero).then((value) {
+                              context.pop();
+                            });
+                          },
+                          title: "Are you sure?",
+                          desc: "You want to delete delete this user?");
+                    });
               }),
         ],
       ),

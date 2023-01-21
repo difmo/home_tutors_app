@@ -23,6 +23,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../controllers/statics.dart';
 import '../../providers/profile_provider.dart';
 import '../admin/add_post_screen.dart';
+import '../admin/widgets/clear_data_confirm_widget.dart';
 
 class PostDetailsScreen extends HookConsumerWidget {
   final String id;
@@ -99,7 +100,8 @@ class PostDetailsScreen extends HookConsumerWidget {
                           DetailsColorTileWidget(
                             icon: Icons.class_,
                             title: "Class: ",
-                            value: "${postData.value?["class"]}",
+                            value:
+                                "${postData.value?["class"]} ${postData.value?["board"] ?? ""}",
                           ),
                           DetailsColorTileWidget(
                             icon: Icons.school,
@@ -330,12 +332,32 @@ class PostDetailsScreen extends HookConsumerWidget {
                                     int.parse(postData.value?["req_coins"])) {
                                   UserControllers.addUidIntoPost(
                                       postId: postId.value);
+                                  await ProfileController.updateProfile(
+                                      profileBody: {
+                                        "wallet_balance":
+                                            (profileData?["wallet_balance"] -
+                                                int.parse(postData
+                                                    .value?["req_coins"]))
+                                      });
+                                  User? user =
+                                      FirebaseAuth.instance.currentUser;
+
+                                  Map<String, dynamic> orderData = {
+                                    "uid": user!.uid,
+                                    "phone": user.phoneNumber,
+                                    "post_id": postData.value?["id"],
+                                    "req_coins": postData.value?["req_coins"],
+                                    "wallet_balance":
+                                        profileData?["wallet_balance"],
+                                    "balance_left":
+                                        (profileData?["wallet_balance"] -
+                                            int.parse(
+                                                postData.value?["req_coins"])),
+                                    "createdOn": FieldValue.serverTimestamp()
+                                  };
+                                  await UserControllers.addToOrders(orderData);
                                   EasyLoading.dismiss();
-                                  ProfileController.updateProfile(profileBody: {
-                                    "wallet_balance": (profileData?[
-                                            "wallet_balance"] -
-                                        int.parse(postData.value?["req_coins"]))
-                                  });
+
                                   ref.refresh(profileDataProvider(
                                       FirebaseAuth.instance.currentUser?.uid));
                                   ifPurchased.value = true;
@@ -409,13 +431,24 @@ class PostDetailsScreen extends HookConsumerWidget {
                           backgroundColor: Colors.red,
                           child: const Icon(Icons.delete),
                           onTap: () async {
-                            Utils.loading();
-                            await AdminControllers.deleteLead(
-                                postId: postId.value);
-                            EasyLoading.dismiss();
-                            Future.delayed(Duration.zero).then((value) {
-                              context.pop();
-                            });
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return ClearDataWidget(
+                                      onSubmit: () async {
+                                        Utils.loading();
+                                        await AdminControllers.deleteLead(
+                                            postId: postId.value);
+                                        EasyLoading.dismiss();
+                                        Future.delayed(Duration.zero)
+                                            .then((value) {
+                                          context.pop();
+                                        });
+                                      },
+                                      title: "Are you sure?",
+                                      desc:
+                                          "You want to delete delete this post?");
+                                });
                           }),
                       SpeedDialChild(
                           label: "Edit",
@@ -494,9 +527,11 @@ class DetailsColorTileWidget extends StatelessWidget {
           ),
           const SizedBox(width: 5.0),
           Text(title ?? ""),
-          Text(
-            value ?? "",
-            style: const TextStyle(color: Colors.blue),
+          Expanded(
+            child: Text(
+              value ?? "",
+              style: const TextStyle(color: Colors.blue),
+            ),
           ),
         ],
       ),
