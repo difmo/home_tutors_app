@@ -186,7 +186,7 @@ class AddLeadScreen extends HookConsumerWidget {
                             ),
                             selectedItem: selectedBoard.value.isEmpty
                                 ? null
-                                : selectedMode.value,
+                                : selectedBoard.value,
                             onChanged: (newValue) {
                               if (newValue != null) {
                                 selectedBoard.value = newValue;

@@ -41,9 +41,20 @@ class PostDetailsScreen extends HookConsumerWidget {
     final getData = useCallback((String id) async {
       postData.value = await UserControllers.getPostData(id);
     }, []);
+    final deepLinking = useCallback(() async {
+      final deepLinkData = await dynamicLinks.getInitialLink();
+      final deepLink = deepLinkData?.link;
+      if (deepLink != null) {
+        if (deepLink.queryParameters.isNotEmpty) {
+          postId.value = deepLink.queryParameters["id"] ?? "";
+          getData(postId.value);
+        }
+      }
+    }, []);
 
     useEffect(
       () {
+        deepLinking();
         dynamicLinks.onLink.listen((event) {
           final Uri url = event.link;
           final queryParams = url.queryParameters;
@@ -192,14 +203,6 @@ class PostDetailsScreen extends HookConsumerWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 20.0),
-                            if (!AuthControllers.isAdmin())
-                              TextColoredButton(
-                                onTap: () {
-                                  openUrl(websiteUrl);
-                                },
-                                lable: "Visit Website: $websiteUrl",
-                              ),
                           ],
 
                           if (ifPurchased.value ||
@@ -393,11 +396,10 @@ class PostDetailsScreen extends HookConsumerWidget {
                   if (!AuthControllers.isAdmin()) ...[
                     const SizedBox(height: 15.0),
                     TextColoredButton(
-                      onTap: () {
-                        openUrl("tel://$contactNumber");
-                      },
-                      lable: "Contact :- VIP Tutors Bureau $contactNumber",
-                    ),
+                        onTap: () {
+                          openUrl(websiteUrl);
+                        },
+                        lable: "Connect VIP Tutors Bureau"),
                   ]
                 ],
               ),
@@ -412,17 +414,17 @@ class PostDetailsScreen extends HookConsumerWidget {
                     onPressed: () async {
                       Utils.loading(msg: "Creating link");
                       DynamicLinkParameters parameters = DynamicLinkParameters(
-                          link: Uri.parse(dynamicUriPrifix +
-                              ("${AppRoutes.postDetails}?id=$postId")),
+                          link: Uri.parse(websiteUrl +
+                              ("${AppRoutes.postDetails}?id=${postId.value}")),
                           uriPrefix: dynamicUriPrifix,
                           androidParameters: const AndroidParameters(
                               packageName: "com.viptutors.app",
                               minimumVersion: 0));
-                      final ShortDynamicLink dynamicLink =
-                          await dynamicLinks.buildShortLink(parameters);
+                      final Uri dynamicLink =
+                          await dynamicLinks.buildLink(parameters);
                       EasyLoading.dismiss();
-                      Uri url = dynamicLink.shortUrl;
-                      Share.share(url.toString());
+                      // Uri url = dynamicLink.shortUrl;
+                      Share.share(dynamicLink.toString());
                     },
                     icon: const Icon(Icons.share))
               ],

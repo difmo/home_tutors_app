@@ -798,10 +798,12 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                       'city': selectedCity.value,
                                       'state': selectedState.value,
                                       "location": locationPosition.value,
-                                      'preferedClass': "",
+                                      'preferedClass':
+                                          selectedClasses.value.join(', '),
                                       'preferedClassList':
                                           selectedClasses.value,
-                                      'preferedSubject': "",
+                                      'preferedSubject':
+                                          selectedSubjects.value.join(', '),
                                       'preferedSubjectList':
                                           selectedSubjects.value,
                                       'preferedMode': selectedMode.value,
