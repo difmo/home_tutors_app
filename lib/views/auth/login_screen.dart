@@ -23,10 +23,11 @@ class LoginScreen extends HookConsumerWidget {
     final phoneController = useTextEditingController();
     final sendOtp = useCallback((String mobile) async {
       try {
-        SendOtpResponseModel response = SendOtpResponseModel();
+        SendOtpResponseModel response =
+            SendOtpResponseModel(phone: phoneController.text.trim());
         await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: mobile,
-          timeout: const Duration(seconds: 120),
+          timeout: const Duration(seconds: 30),
           verificationCompleted: (PhoneAuthCredential credential) async {},
           verificationFailed: (FirebaseAuthException e) {
             log(e.toString());
@@ -91,6 +92,7 @@ class LoginScreen extends HookConsumerWidget {
                 TextFormField(
                   autofocus: true,
                   controller: phoneController,
+                  inputFormatters: numberOnlyInput,
                   keyboardType: TextInputType.number,
                   maxLength: 10,
                   decoration: const InputDecoration(

@@ -1,4 +1,3 @@
-
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/statics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -139,9 +138,10 @@ class AuthControllers {
 }
 
 class SendOtpResponseModel {
+  String? phone;
   String? id;
   int? token;
   String? error;
 
-  SendOtpResponseModel({this.id, this.token, this.error});
+  SendOtpResponseModel({this.phone, this.id, this.token, this.error});
 }

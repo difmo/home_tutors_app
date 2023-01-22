@@ -1,12 +1,12 @@
+import 'dart:async';
+
 import 'package:app/controllers/profile_controllers.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/statics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../controllers/auth_controllers.dart';
@@ -15,13 +15,73 @@ import '../constants.dart';
 
 final _formKey = GlobalKey<FormState>();
 
-class OtpVerifyScreen extends HookConsumerWidget {
+class OtpVerifyScreen extends StatefulWidget {
   final SendOtpResponseModel data;
   const OtpVerifyScreen({super.key, required this.data});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final otpController = useTextEditingController();
+  State<OtpVerifyScreen> createState() => _OtpVerifyScreenState();
+}
+
+class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
+  int secondsRemaining = 30;
+  bool enableResend = false;
+  late Timer timer;
+  final TextEditingController otpController = TextEditingController();
+  SendOtpResponseModel response = SendOtpResponseModel();
+
+  @override
+  initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (secondsRemaining != 0) {
+        setState(() {
+          secondsRemaining--;
+        });
+      } else {
+        setState(() {
+          enableResend = true;
+        });
+      }
+    });
+  }
+
+  void _resendCode() async {
+    Utils.loading();
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: widget.data.phone,
+      timeout: const Duration(seconds: 30),
+      forceResendingToken: response.token ?? widget.data.token,
+      verificationCompleted: (PhoneAuthCredential credential) async {},
+      verificationFailed: (FirebaseAuthException e) {
+        EasyLoading.dismiss();
+        response.error = e.message;
+      },
+      codeSent: (String verificationId, int? resendToken) async {
+        EasyLoading.dismiss();
+        response.id = verificationId;
+        response.token = resendToken;
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        EasyLoading.dismiss();
+        response.id = verificationId;
+      },
+    );
+    setState(() {
+      secondsRemaining = 30;
+      enableResend = false;
+    });
+  }
+
+  @override
+  dispose() {
+    otpController.dispose();
+    timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -67,7 +127,16 @@ class OtpVerifyScreen extends HookConsumerWidget {
                   showCursor: true,
                   onCompleted: (pin) => debugPrint(pin),
                 ),
-                const SizedBox(height: 50.0),
+                const SizedBox(height: 10.0),
+                TextButton(
+                  onPressed: enableResend ? _resendCode : null,
+                  child: const Text('Resend Code'),
+                ),
+                Text(
+                  'after $secondsRemaining seconds',
+                  style: const TextStyle(fontSize: 10),
+                ),
+                const SizedBox(height: 40.0),
                 ElevatedButton(
                     onPressed: () {
                       formSubmitFunction(
@@ -75,7 +144,7 @@ class OtpVerifyScreen extends HookConsumerWidget {
                           submitFunction: () async {
                             Utils.loading();
                             User? user = await AuthControllers.verifyOtp(
-                              id: data.id!,
+                              id: widget.data.id!,
                               code: otpController.text.trim(),
                             );
                             if (user != null) {
