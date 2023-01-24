@@ -9,6 +9,7 @@ import 'package:app/views/admin/users_list.dart';
 import 'package:app/views/admin/wallet_hits_screen.dart';
 import 'package:app/views/auth/login_screen.dart';
 import 'package:app/views/auth/otp_screen.dart';
+import 'package:app/views/notifications_screen.dart';
 import 'package:app/views/user/home/home_screen.dart';
 import 'package:app/views/onboarding_screen.dart';
 import 'package:app/views/posts/post_details.dart';
@@ -45,6 +46,7 @@ class AppRoutes {
   static const String postDetails = '/post_details:id';
   static const String imageView = '/image_view';
   static const String rulesScreen = '/rules_screen';
+  static const String notifications = '/notifications';
 
   static final GoRouter router = GoRouter(
     initialLocation: AuthControllers.manageLogin(),
@@ -170,6 +172,12 @@ class AppRoutes {
         path: rulesScreen,
         builder: (BuildContext context, GoRouterState state) {
           return const RulesScreen();
+        },
+      ),
+      GoRoute(
+        path: notifications,
+        builder: (BuildContext context, GoRouterState state) {
+          return const NotificationsScreen();
         },
       ),
     ],

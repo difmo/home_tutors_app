@@ -41,6 +41,7 @@ class PostDetailsScreen extends HookConsumerWidget {
     final getData = useCallback((String id) async {
       postData.value = await UserControllers.getPostData(id);
     }, []);
+    final radius = useState(3.0);
     final deepLinking = useCallback(() async {
       final deepLinkData = await dynamicLinks.getInitialLink();
       final deepLink = deepLinkData?.link;
@@ -50,6 +51,18 @@ class PostDetailsScreen extends HookConsumerWidget {
           getData(postId.value);
         }
       }
+    }, []);
+    final getLink = useCallback(() async {
+      Utils.loading(msg: "Creating link");
+      DynamicLinkParameters parameters = DynamicLinkParameters(
+          link: Uri.parse(
+              websiteUrl + ("${AppRoutes.postDetails}?id=${postId.value}")),
+          uriPrefix: dynamicUriPrifix,
+          androidParameters: const AndroidParameters(
+              packageName: "com.viptutors.app", minimumVersion: 0));
+      final Uri dynamicLink = await dynamicLinks.buildLink(parameters);
+      EasyLoading.dismiss();
+      return dynamicLink;
     }, []);
 
     useEffect(
@@ -207,33 +220,65 @@ class PostDetailsScreen extends HookConsumerWidget {
 
                           if (ifPurchased.value ||
                               AuthControllers.isAdmin()) ...[
-                            const Divider(
-                              thickness: 1.0,
-                            ),
-                            DetailsColorTileWidget(
-                              icon: Icons.person,
-                              title: "Contact name: ",
-                              value: "${postData.value?["name"]}",
-                            ),
-                            InkWell(
-                              onTap: () {
-                                openUrl("tel:${postData.value?["phone"]}");
-                              },
-                              child: DetailsColorTileWidget(
-                                icon: Icons.phone,
-                                title: "Contact number: ",
-                                value: "${postData.value?["phone"]}",
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                openUrl("mailto:${postData.value?["email"]}");
-                              },
-                              child: DetailsColorTileWidget(
-                                icon: Icons.email,
-                                title: "Contact email: ",
-                                value: "${postData.value?["email"]}",
-                              ),
+                            const SizedBox(height: 20.0),
+                            Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.yellow,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      DetailsColorTileWidget(
+                                        icon: Icons.person,
+                                        title: "Contact name: ",
+                                        value: "${postData.value?["name"]}",
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          openUrl(
+                                              "tel:${postData.value?["phone"]}");
+                                        },
+                                        child: DetailsColorTileWidget(
+                                          icon: Icons.phone,
+                                          title: "Contact number: ",
+                                          value: "${postData.value?["phone"]}",
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          openUrl(
+                                              "mailto:${postData.value?["email"]}");
+                                        },
+                                        child: DetailsColorTileWidget(
+                                          icon: Icons.email,
+                                          title: "Contact email: ",
+                                          value: "${postData.value?["email"]}",
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (AuthControllers.isAdmin())
+                                  IconButton(
+                                      onPressed: () async {
+                                        Uri? link = await getLink();
+                                        String text =
+                                            """VIP Home tutors post ID: ${postData.value?["id"]},
+--------------------
+Contact Name : ${postData.value?["name"]},
+Contact Number : ${postData.value?["phone"]},
+Contact Email : ${postData.value?["email"]}
+--------------------
+Post Link : $link,""";
+                                        Share.share(text);
+                                      },
+                                      icon: const Icon(Icons.share))
+                              ],
                             ),
                           ],
 
@@ -248,13 +293,13 @@ class PostDetailsScreen extends HookConsumerWidget {
                               labelColor: Colors.red,
                               tabs: const [
                                 Tab(
+                                  icon: Icon(Icons.connect_without_contact),
+                                  text: "Matched",
+                                ),
+                                Tab(
                                   icon: Icon(Icons.people),
                                   text: "Collected",
                                 ),
-                                Tab(
-                                  icon: Icon(Icons.connect_without_contact),
-                                  text: "Matched",
-                                )
                               ],
                               controller: tabController,
                               indicatorSize: TabBarIndicatorSize.tab,
@@ -265,12 +310,38 @@ class PostDetailsScreen extends HookConsumerWidget {
                                 Visibility(
                                   maintainState: true,
                                   visible: selectedIndex.value == 0,
-                                  child: CollectedUser(data: postData.value),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 15.0),
+                                      FittedBox(
+                                        fit: BoxFit.fitWidth,
+                                        child: Text(
+                                            "Search Nearby Leads in Radius of [${radius.value} Miles]",
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      Slider(
+                                          label: "${radius.value} Miles",
+                                          min: 1,
+                                          max: 5,
+                                          divisions: 4,
+                                          value: radius.value,
+                                          onChanged: (val) {
+                                            radius.value = val;
+                                          }),
+                                      MatchedUsers(
+                                          postData: GetMatchedUsersApiModel(
+                                              data: postData.value!,
+                                              radius: radius.value)),
+                                    ],
+                                  ),
                                 ),
                                 Visibility(
                                   maintainState: true,
                                   visible: selectedIndex.value == 1,
-                                  child: MatchedUsers(postData: postData.value),
+                                  child: CollectedUser(data: postData.value),
                                 ),
                               ],
                             ),
@@ -412,19 +483,8 @@ class PostDetailsScreen extends HookConsumerWidget {
               actions: [
                 IconButton(
                     onPressed: () async {
-                      Utils.loading(msg: "Creating link");
-                      DynamicLinkParameters parameters = DynamicLinkParameters(
-                          link: Uri.parse(websiteUrl +
-                              ("${AppRoutes.postDetails}?id=${postId.value}")),
-                          uriPrefix: dynamicUriPrifix,
-                          androidParameters: const AndroidParameters(
-                              packageName: "com.viptutors.app",
-                              minimumVersion: 0));
-                      final Uri dynamicLink =
-                          await dynamicLinks.buildLink(parameters);
-                      EasyLoading.dismiss();
-                      // Uri url = dynamicLink.shortUrl;
-                      Share.share(dynamicLink.toString());
+                      Uri? link = await getLink();
+                      Share.share(link.toString());
                     },
                     icon: const Icon(Icons.share))
               ],

@@ -3,7 +3,6 @@ const String contactNumber = "+919988752741";
 const String websiteUrl = "https://www.viptutors.in";
 const String googleApiKey = "AIzaSyA2rMtFcSCZNfZhpcrrMDVfVJa_RXUl4xg";
 const int autoPostDeleteDateRange = 30;
-const double adminLocationRadius = 10;
 
 const List<String> stateList = [
   "Andaman and Nicobar Islands",
@@ -122,6 +121,7 @@ const List<String> boardList = [
 ];
 
 const List<String> subjectList = [
+  "All subjects",
   "English",
   "Hindi",
   "SST",
@@ -176,6 +176,7 @@ const List<String> subjectList = [
   "Tamil",
   "Telugu",
   "Art",
+  "Yoga",
   "Music",
   "Keyboard",
   "Tabla",

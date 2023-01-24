@@ -117,7 +117,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           SchedulerBinding.instance.addPostFrameCallback((_) {
             if (firstTime.value) {
               filterData.value = PostLocationFilterModel(
-                  geoPoint: data["location"], radius: 11.0);
+                  geoPoint: data["location"], radius: 6.0);
               firstTime.value = !firstTime.value;
             }
           });
@@ -142,16 +142,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: FittedBox(
                                 fit: BoxFit.fitWidth,
                                 child: Text(
-                                    "Search Nearby Leads in Radius of [${filterData.value?.radius ?? 11} Miles]",
+                                    "Search Nearby Leads in Radius of [${filterData.value?.radius ?? 6} Miles]",
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold)),
                               )),
                           Slider(
-                              label: "${filterData.value?.radius ?? 11} Miles",
+                              label: "${filterData.value?.radius ?? 6} Miles",
                               min: 1,
-                              max: 31,
+                              max: 11,
                               divisions: 4,
-                              value: filterData.value?.radius ?? 11,
+                              value: filterData.value?.radius ?? 6,
                               onChanged: (val) {
                                 filterData.value!.radius = val;
                                 setState.value = !setState.value;
@@ -167,15 +167,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   appBar: AppBar(
                     titleTextStyle: const TextStyle(fontSize: 14.0),
-                    leading: const Padding(
-                      padding: EdgeInsets.all(5.0),
-                      child: CircleAvatar(
-                          backgroundImage: AssetImage("assets/logo.png")),
-                    ),
+                    leading: IconButton(
+                        onPressed: () {
+                          context.push(AppRoutes.notifications);
+                        },
+                        icon: const Icon(Icons.notifications)),
                     centerTitle: true,
                     title: Row(
                       children: [
-                        const Text("VIP Home Tutors"),
+                        const Text(
+                          "VIP Home Tutors",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(width: 10.0),
                         TextButton(
                             onPressed: () {

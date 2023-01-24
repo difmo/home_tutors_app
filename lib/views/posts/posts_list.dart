@@ -23,6 +23,22 @@ class PostListScreen extends HookConsumerWidget {
       BuildContext context,
       List<QueryDocumentSnapshot<Map<String, dynamic>>>? data,
       ScrollController controller) {
+    if (nearBy) {
+      data?.sort((a, b) {
+        var adate = a['createdOn'];
+        var bdate = b['createdOn'];
+        return bdate.compareTo(adate);
+      });
+      List<QueryDocumentSnapshot<Map<String, dynamic>>>? newList = [];
+      data?.forEach((element) {
+        if (element["createdOn"]
+            .toDate()
+            .isAfter(DateTime.now().subtract(const Duration(days: 3)))) {
+          newList.add(element);
+        }
+        data = newList;
+      });
+    }
     return checkEmpty(data)
         ? Column(
             children: [
@@ -203,13 +219,15 @@ class PostListScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final selectedState = ref.watch(selectedStateProvider);
     final scrollController = useScrollController();
-    final limitCount = useState(20);
+    final limitCount = useState(nearBy ? 200 : 20);
     useEffect(() {
       scrollController.addListener(() {
-        if (scrollController.position.atEdge) {
-          if (scrollController.position.pixels == 0) {
-          } else {
-            limitCount.value = limitCount.value + 20;
+        if (!nearBy) {
+          if (scrollController.position.atEdge) {
+            if (scrollController.position.pixels == 0) {
+            } else {
+              limitCount.value = limitCount.value + 20;
+            }
           }
         }
       });

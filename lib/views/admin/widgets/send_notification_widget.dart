@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -92,11 +93,19 @@ class SendNotificationWidget extends HookConsumerWidget {
                 formKey: _formKey,
                 submitFunction: () async {
                   Utils.loading();
+                  String topic =
+                      "/topics/${selectedState.value.replaceAll(' ', '').toLowerCase()}";
                   await AdminControllers.sendNotification(
-                      deviceToken:
-                          "/topics/${selectedState.value.replaceAll(' ', '').toLowerCase()}",
+                      deviceToken: topic,
                       title: title.text,
                       body: message.text);
+                  Map<String, dynamic> postBody = {
+                    "title": title.text,
+                    "body": message.text,
+                    "topic": topic,
+                    "createdOn": FieldValue.serverTimestamp()
+                  };
+                  await AdminControllers.createNotification(postBody);
                   EasyLoading.dismiss();
                   Navigator.pop(context);
                 });

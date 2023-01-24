@@ -9,7 +9,7 @@ final searchUserFutureProvider =
 });
 
 final matchedUsersFutureProvider = FutureProvider.autoDispose
-    .family((Ref ref, Map<String, dynamic>? data) async {
+    .family((Ref ref, GetMatchedUsersApiModel data) async {
   final apiService = ref.read(adminApiProviders);
   return apiService.getMatchedUsers(data);
 });

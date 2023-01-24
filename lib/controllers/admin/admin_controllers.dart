@@ -371,11 +371,11 @@ class AdminControllers {
   }
 
   Future<List<Map<String, dynamic>?>> getMatchedUsers(
-      Map<String, dynamic>? data) async {
-    if (data?["location"] != null) {
+      GetMatchedUsersApiModel model) async {
+    if (model.data["location"] != null) {
       LessGetGeoPoint getLessGeoPoint = Utils.getGeoPoints(
           data: PostLocationFilterModel(
-              geoPoint: data?["location"], radius: adminLocationRadius));
+              geoPoint: model.data["location"], radius: model.radius));
       var locationCollection = await FirebaseFirestore.instance
           .collection('users')
           .where("location", isLessThan: getLessGeoPoint.great)
@@ -394,7 +394,7 @@ class AdminControllers {
       for (var user in locationListUsers) {
         for (var userClass in user["preferedClassList"]) {
           log("Class from user $userClass");
-          if (data?["classList"].contains(userClass)) {
+          if (model.data["classList"].contains(userClass)) {
             log("contains");
             classListUsers.add(user);
             break;
@@ -406,7 +406,7 @@ class AdminControllers {
       for (var user in classListUsers) {
         for (var userSubject in user["preferedSubjectList"]) {
           log("Subject from user $userSubject");
-          if (data?["subjectList"].contains(userSubject)) {
+          if (model.data["subjectList"].contains(userSubject)) {
             log("contains");
             subjectListUsers.add(user);
             break;
@@ -419,4 +419,52 @@ class AdminControllers {
       return [];
     }
   }
+
+  static Future<String?> createNotification(
+      Map<String, dynamic> postBody) async {
+    try {
+      DocumentReference docRef = await FirebaseFirestore.instance
+          .collection('notifications')
+          .add(postBody);
+      return docRef.id;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future deleteNotification(String id) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('notifications')
+          .doc(id)
+          .delete();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future clearOldNotifications() async {
+    try {
+      var collection = await FirebaseFirestore.instance
+          .collection('notifications')
+          .where('createdOn',
+              isLessThan: Timestamp.fromDate(DateTime.now()
+                  .subtract(const Duration(days: autoPostDeleteDateRange))))
+          .get();
+      for (var element in collection.docs) {
+        log(element["createdOn"].toDate().toString());
+        await element.reference.delete();
+      }
+      return;
+    } catch (e) {
+      rethrow;
+    }
+  }
+}
+
+class GetMatchedUsersApiModel {
+  final double radius;
+  final Map<String, dynamic> data;
+
+  GetMatchedUsersApiModel({required this.radius, required this.data});
 }

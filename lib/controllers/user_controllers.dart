@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:app/controllers/statics.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -71,7 +72,7 @@ class UserControllers {
     }
   }
 
-   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
       fetchOrders() async {
     try {
       QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore
@@ -148,5 +149,22 @@ class UserControllers {
       rethrow;
     }
     return null;
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      fetchNotifications() async {
+    try {
+      var collection = await FirebaseFirestore.instance
+          .collection('notifications')
+          .where('createdOn',
+              isGreaterThan: Timestamp.fromDate(DateTime.now()
+                  .subtract(const Duration(days: autoPostDeleteDateRange))))
+          .orderBy('createdOn', descending: true)
+          .get();
+
+      return collection.docs;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

@@ -25,6 +25,11 @@ final fetchOrdersProvider = FutureProvider.autoDispose((Ref ref) async {
   return apiService.fetchOrders();
 });
 
+final fetchNotifications = FutureProvider.autoDispose((Ref ref) async {
+  final apiService = ref.read(userApiProviders);
+  return apiService.fetchNotifications();
+});
+
 // final alTransactionsProvider =
 //     FutureProvider.autoDispose.family((Ref ref, bool isAdmin) async {
 //   final apiService = ref.read(profileApiProviders);

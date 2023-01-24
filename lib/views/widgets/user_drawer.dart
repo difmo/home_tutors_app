@@ -134,7 +134,7 @@ class UserDrawerWidget extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.all(20.0),
             child: Text(
-              'App version: v0.0.1',
+              'App version: v1.2.1',
               style: TextStyle(fontSize: 12.0, color: Colors.grey),
             ),
           )

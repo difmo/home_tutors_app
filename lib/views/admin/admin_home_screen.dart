@@ -160,6 +160,13 @@ class AdminHomeScreen extends HookConsumerWidget {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.notifications_active),
+              title: const Text('Notification History'),
+              onTap: () {
+                context.push(AppRoutes.notifications);
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.share),
               title: const Text('Share'),
               onTap: () {

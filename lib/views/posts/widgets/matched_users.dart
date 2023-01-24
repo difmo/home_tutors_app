@@ -9,7 +9,7 @@ import '../../../controllers/routes.dart';
 import '../../../controllers/utils.dart';
 
 class MatchedUsers extends HookConsumerWidget {
-  final Map<String, dynamic>? postData;
+  final GetMatchedUsersApiModel postData;
   const MatchedUsers({super.key, required this.postData});
 
   @override
