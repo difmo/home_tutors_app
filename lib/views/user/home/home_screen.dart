@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:app/controllers/routes.dart';
@@ -18,6 +19,7 @@ import 'package:in_app_update/in_app_update.dart';
 
 import '../../../controllers/utils.dart';
 import '../../../providers/profile_provider.dart';
+import '../../widgets/notification_button_widget.dart';
 import '../history_screen.dart';
 
 class HomeScreen extends StatefulHookConsumerWidget {
@@ -48,6 +50,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
       InAppUpdate.performImmediateUpdate().catchError((e) {
         debugPrint(e.toString());
+        return e;
       });
     } else {
       debugPrint('no update');
@@ -108,6 +111,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }, error: (error, stackTrace) {
       return const ErrorWidgetScreen();
     }, data: (data) {
+      log(data?["last_seen_notifications"].toDate().toString() ?? "");
       Utils.subscribeToTopic(data?["state"] == null
           ? "all"
           : data?["state"].replaceAll(' ', '').toLowerCase());
@@ -167,11 +171,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   appBar: AppBar(
                     titleTextStyle: const TextStyle(fontSize: 14.0),
-                    leading: IconButton(
-                        onPressed: () {
-                          context.push(AppRoutes.notifications);
-                        },
-                        icon: const Icon(Icons.notifications)),
+                    leading: NotificationButtonWidget(
+                        data?["last_seen_notifications"] == null
+                            ? DateTime.now()
+                            : data?["last_seen_notifications"].toDate()),
                     centerTitle: true,
                     title: Row(
                       children: [

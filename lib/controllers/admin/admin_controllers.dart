@@ -312,7 +312,8 @@ class AdminControllers {
   static Future<void> sendNotification(
       {required String deviceToken,
       required String title,
-      required String body}) async {
+      required String body,
+      String? navigation}) async {
     const postUrl = 'https://fcm.googleapis.com/fcm/send';
 
     // String toParams = "/topics/$uid";
@@ -322,7 +323,7 @@ class AdminControllers {
         "title": title,
       },
       "priority": "high",
-      "data": {},
+      "data": {"navigation": navigation ?? "home"},
       "to": deviceToken
     };
 

@@ -167,4 +167,21 @@ class UserControllers {
       rethrow;
     }
   }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>>
+      fetchNotificationsStream() {
+    try {
+      var collection = FirebaseFirestore.instance
+          .collection('notifications')
+          .where('createdOn',
+              isGreaterThan: Timestamp.fromDate(DateTime.now()
+                  .subtract(const Duration(days: autoPostDeleteDateRange))))
+          .orderBy('createdOn', descending: true)
+          .snapshots();
+
+      return collection;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

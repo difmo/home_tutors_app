@@ -13,6 +13,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 late SharedPreferences localStorage;
 
+/// Global variables
+/// * [GlobalKey<NavigatorState>]
+class GlobalVariable {
+  /// This global key is used in material app for navigation through firebase notifications.
+  /// [navState] usage can be found in [notification_notifier.dart] file.
+  static final GlobalKey<NavigatorState> navState = GlobalKey<NavigatorState>();
+}
+
 class Utils {
   static void toast(String text) {
     EasyLoading.showToast(text, toastPosition: EasyLoadingToastPosition.bottom);
@@ -29,7 +37,7 @@ class Utils {
     EasyLoading.show(maskType: EasyLoadingMaskType.clear, status: msg);
   }
 
-    static LessGetGeoPoint getGeoPoints({required PostLocationFilterModel data}) {
+  static LessGetGeoPoint getGeoPoints({required PostLocationFilterModel data}) {
     double lat = 0.0144927536231884;
     double lon = 0.0181818181818182;
     double lowerLat = data.geoPoint.latitude - (lat * data.radius);

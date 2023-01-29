@@ -1,4 +1,5 @@
 import 'package:app/controllers/auth_controllers.dart';
+import 'package:app/controllers/utils.dart';
 import 'package:app/views/admin/add_post_screen.dart';
 import 'package:app/views/admin/admin_home_screen.dart';
 import 'package:app/views/admin/all_transactions_screen.dart';
@@ -50,6 +51,7 @@ class AppRoutes {
 
   static final GoRouter router = GoRouter(
     initialLocation: AuthControllers.manageLogin(),
+    navigatorKey: GlobalVariable.navState,
     routes: <GoRoute>[
       GoRoute(
         path: onboarding,

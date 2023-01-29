@@ -1,3 +1,4 @@
+import 'package:app/controllers/routes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -98,7 +99,8 @@ class SendNotificationWidget extends HookConsumerWidget {
                   await AdminControllers.sendNotification(
                       deviceToken: topic,
                       title: title.text,
-                      body: message.text);
+                      body: message.text,
+                      navigation: AppRoutes.notifications);
                   Map<String, dynamic> postBody = {
                     "title": title.text,
                     "body": message.text,
