@@ -40,8 +40,8 @@ class UserControllers {
         LessGetGeoPoint getLessGeoPoint = Utils.getGeoPoints(data: filterData);
         collection = FirebaseFirestore.instance
             .collection('posts')
-            .where("location", isLessThan: getLessGeoPoint.great)
             .where("location", isGreaterThan: getLessGeoPoint.less)
+            .where("location", isLessThan: getLessGeoPoint.great)
             .limit(limit)
             .snapshots();
       }
