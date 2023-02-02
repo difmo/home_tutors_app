@@ -233,13 +233,11 @@ class PostListScreen extends HookConsumerWidget {
       });
       return;
     }, []);
-    return StreamBuilder(
+    return (AuthControllers.isAdmin() || filterData == null) ? StreamBuilder(
         stream: AuthControllers.isAdmin()
             ? AdminControllers.fetchAllPosts(limitCount.value)
-            : UserControllers.fetchAllPosts(
-                filterData: filterData,
-                // selectedState == 'All' ? null : selectedState,
-                limit: limitCount.value),
+            :  UserControllers.fetchAllPosts(
+                limitCount.value) ,
         builder: (context, snapshot) {
           if (snapshot.hasError) return Text('Error: ${snapshot.error}');
 
@@ -252,6 +250,21 @@ class PostListScreen extends HookConsumerWidget {
             case ConnectionState.done:
               return postListWidget(
                   context, snapshot.data?.docs, scrollController);
+          }
+        }) : StreamBuilder(
+        stream: UserControllers.fetchNearbyPosts(filterData: filterData!, limit: limitCount.value) ,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return const Center(child: Text('No data'));
+            case ConnectionState.waiting:
+              return const Center(child: Text('Awaiting...'));
+            case ConnectionState.active:
+            case ConnectionState.done:
+              return postListWidget(
+                  context, snapshot.data?.cast<QueryDocumentSnapshot<Map<String, dynamic>>>(), scrollController);
           }
         });
   }

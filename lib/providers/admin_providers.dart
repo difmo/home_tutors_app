@@ -7,9 +7,9 @@ final searchUserFutureProvider =
   final apiService = ref.read(adminApiProviders);
   return apiService.searchUser(searchValue);
 });
-
-final matchedUsersFutureProvider = FutureProvider.autoDispose
-    .family((Ref ref, GetMatchedUsersApiModel data) async {
-  final apiService = ref.read(adminApiProviders);
-  return apiService.getMatchedUsers(data);
-});
+//
+// final matchedUsersFutureProvider = FutureProvider.autoDispose
+//     .family((Ref ref, GetMatchedUsersApiModel data) async {
+//   final apiService = ref.read(adminApiProviders);
+//   return apiService.getMatchedUsers(data);
+// });

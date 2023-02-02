@@ -41,7 +41,7 @@ class PostDetailsScreen extends HookConsumerWidget {
     final getData = useCallback((String id) async {
       postData.value = await UserControllers.getPostData(id);
     }, []);
-    final radius = useState(3.0);
+    final radius = useState(5.0);
     final deepLinking = useCallback(() async {
       final deepLinkData = await dynamicLinks.getInitialLink();
       final deepLink = deepLinkData?.link;
@@ -227,7 +227,7 @@ class PostDetailsScreen extends HookConsumerWidget {
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                      color: Colors.yellow,
+                                      color: const Color(0xffffecce),
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Column(
                                     crossAxisAlignment:
@@ -318,14 +318,14 @@ Post Link : $link,""";
                                       FittedBox(
                                         fit: BoxFit.fitWidth,
                                         child: Text(
-                                            "Search Nearby Leads in Radius of [${radius.value} Miles]",
+                                            "Search Nearby Leads in Radius of [${radius.value.round()} Kms]",
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.bold)),
                                       ),
                                       Slider(
-                                          label: "${radius.value} Miles",
+                                          label: "${radius.value.round()} Kms",
                                           min: 1,
-                                          max: 5,
+                                          max: 10,
                                           divisions: 4,
                                           value: radius.value,
                                           onChanged: (val) {

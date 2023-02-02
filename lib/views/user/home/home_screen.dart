@@ -121,7 +121,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           SchedulerBinding.instance.addPostFrameCallback((_) {
             if (firstTime.value) {
               filterData.value = PostLocationFilterModel(
-                  geoPoint: data["location"], radius: 6.0);
+                  geoPoint: data["location"], radius: 10.0);
               firstTime.value = !firstTime.value;
             }
           });
@@ -146,16 +146,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: FittedBox(
                                 fit: BoxFit.fitWidth,
                                 child: Text(
-                                    "Search Nearby Leads in Radius of [${filterData.value?.radius ?? 6} Miles]",
+                                    "Search Nearby Leads in Radius of [${filterData.value?.radius.round() ?? 10} Kms]",
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold)),
                               )),
                           Slider(
-                              label: "${filterData.value?.radius ?? 6} Miles",
+                              label: "${filterData.value?.radius.round() ?? 10} Kms",
                               min: 1,
-                              max: 11,
+                              max: 20,
                               divisions: 4,
-                              value: filterData.value?.radius ?? 6,
+                              value: filterData.value?.radius ?? 10,
                               onChanged: (val) {
                                 filterData.value!.radius = val;
                                 setState.value = !setState.value;

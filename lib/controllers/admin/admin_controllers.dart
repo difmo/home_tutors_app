@@ -5,13 +5,12 @@ import 'dart:io';
 import 'package:app/controllers/statics.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../models/utils_model.dart';
-import '../user_controllers.dart';
 import '../utils.dart';
 
 final adminApiProviders = Provider<AdminControllers>((ref) {
@@ -371,54 +370,18 @@ class AdminControllers {
     }
   }
 
-  Future<List<Map<String, dynamic>?>> getMatchedUsers(
-      GetMatchedUsersApiModel model) async {
-    if (model.data["location"] != null) {
-      LessGetGeoPoint getLessGeoPoint = Utils.getGeoPoints(
-          data: PostLocationFilterModel(
-              geoPoint: model.data["location"], radius: model.radius));
-      var locationCollection = await FirebaseFirestore.instance
-          .collection('users')
-          .where("location", isLessThan: getLessGeoPoint.great)
-          .where("location", isGreaterThan: getLessGeoPoint.less)
-          .limit(100)
-          .get();
-      List<Map<String, dynamic>> locationListUsers = [];
-      List<Map<String, dynamic>> classListUsers = [];
-      List<Map<String, dynamic>> subjectListUsers = [];
+  static Stream<List<DocumentSnapshot<Object?>>> getMatchedUsers(
+      GetMatchedUsersApiModel model) {
+      final geo = GeoFlutterFire();
+      GeoFirePoint center = geo.point(
+          latitude: model.data["location"].latitude,
+          longitude: model.data["location"].longitude);
+      var collectionReference = FirebaseFirestore.instance.collection('users');
+      var geoRef = geo.collection(collectionRef: collectionReference);
 
-      for (var element in locationCollection.docs) {
-        locationListUsers.add(element.data());
-      }
-      log("Total all users ${locationListUsers.length}");
-
-      for (var user in locationListUsers) {
-        for (var userClass in user["preferedClassList"]) {
-          log("Class from user $userClass");
-          if (model.data["classList"].contains(userClass)) {
-            log("contains");
-            classListUsers.add(user);
-            break;
-          }
-        }
-      }
-      log("Class users ${classListUsers.length}");
-
-      for (var user in classListUsers) {
-        for (var userSubject in user["preferedSubjectList"]) {
-          log("Subject from user $userSubject");
-          if (model.data["subjectList"].contains(userSubject)) {
-            log("contains");
-            subjectListUsers.add(user);
-            break;
-          }
-        }
-      }
-      log("Subject users ${subjectListUsers.length}");
-      return subjectListUsers;
-    } else {
-      return [];
-    }
+      Stream<List<DocumentSnapshot<Object?>>> stream = geoRef.within(
+          center: center, radius: model.radius, field: "position", strictMode: true);
+      return stream;
   }
 
   static Future<String?> createNotification(

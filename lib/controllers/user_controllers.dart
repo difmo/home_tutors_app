@@ -1,13 +1,11 @@
 import 'dart:developer';
 
 import 'package:app/controllers/statics.dart';
-import 'package:app/controllers/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:http/http.dart' as http;
-
-import '../models/utils_model.dart';
 
 final userApiProviders = Provider<UserControllers>((ref) {
   return UserControllers();
@@ -23,30 +21,40 @@ class PostLocationFilterModel {
 class UserControllers {
   static User? currentUser = FirebaseAuth.instance.currentUser;
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> fetchAllPosts(
-      {PostLocationFilterModel? filterData, required int limit}) {
-    Stream<QuerySnapshot<Map<String, dynamic>>> collection;
+  static Stream<QuerySnapshot<Map<String, dynamic>>>? fetchAllPosts(int limit) {
+    Stream<QuerySnapshot<Map<String, dynamic>>>? collection;
     try {
-      if (filterData == null) {
-        collection = FirebaseFirestore.instance
-            .collection('posts')
-            .where('createdOn',
-                isGreaterThanOrEqualTo: Timestamp.fromDate(
-                    DateTime.now().subtract(const Duration(days: 7))))
-            .orderBy('createdOn', descending: true)
-            .limit(limit)
-            .snapshots();
-      } else {
-        LessGetGeoPoint getLessGeoPoint = Utils.getGeoPoints(data: filterData);
-        collection = FirebaseFirestore.instance
-            .collection('posts')
-            .where("location", isGreaterThan: getLessGeoPoint.less)
-            .where("location", isLessThan: getLessGeoPoint.great)
-            .limit(limit)
-            .snapshots();
-      }
+      collection = FirebaseFirestore.instance
+          .collection('posts')
+          .where('createdOn',
+              isGreaterThanOrEqualTo: Timestamp.fromDate(
+                  DateTime.now().subtract(const Duration(days: 7))))
+          .orderBy('createdOn', descending: true)
+          .limit(limit)
+          .snapshots();
 
       return collection;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Stream<List<DocumentSnapshot<Object?>>> fetchNearbyPosts(
+      {required PostLocationFilterModel filterData, required int limit}) {
+    try {
+      final geo = GeoFlutterFire();
+      GeoFirePoint center = geo.point(
+          latitude: filterData.geoPoint.latitude,
+          longitude: filterData.geoPoint.longitude);
+      var collectionReference = FirebaseFirestore.instance.collection('posts');
+      var geoRef = geo.collection(collectionRef: collectionReference);
+
+      Stream<List<DocumentSnapshot<Object?>>> stream = geoRef.within(
+          center: center,
+          radius: filterData.radius,
+          field: "position",
+          strictMode: true);
+      return stream;
     } catch (e) {
       rethrow;
     }

@@ -9,6 +9,7 @@ import 'package:app/providers/profile_provider.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -553,6 +554,8 @@ class AddLeadScreen extends HookConsumerWidget {
                                 formSubmitFunction(
                                     formKey: _formKey,
                                     submitFunction: () async {
+                                      final geo = GeoFlutterFire();
+                                      GeoFirePoint position = geo.point(latitude: locationPosition.value!.latitude, longitude: locationPosition.value!.longitude);
                                       Map<String, dynamic> postBody = {
                                         "desc": descController.text,
                                         "fee": feeController.text,
@@ -568,6 +571,7 @@ class AddLeadScreen extends HookConsumerWidget {
                                         "locality": localityController.text,
                                         "state": selectedState.value,
                                         "city": selectedCity.value,
+                                        "position":position.data,
                                         "location": locationPosition.value,
                                         "gender": selectedGender.value,
                                         "max_hits":

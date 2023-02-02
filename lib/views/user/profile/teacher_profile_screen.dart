@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -789,6 +790,8 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                           ?.updatePhotoURL(profilePicUrl.value);
                                       await user?.reload();
                                     }
+                                    final geo = GeoFlutterFire();
+                                    GeoFirePoint position = geo.point(latitude: locationPosition.value!.latitude, longitude: locationPosition.value!.longitude);
 
                                     Map<String, dynamic> profilData = {
                                       'name': nameController.text,
@@ -798,6 +801,7 @@ class TeacherProfileScreen extends HookConsumerWidget {
                                       'city': selectedCity.value,
                                       'state': selectedState.value,
                                       "location": locationPosition.value,
+                                      "position":position.data,
                                       'preferedClass':
                                           selectedClasses.value.join(', '),
                                       'preferedClassList':
