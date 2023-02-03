@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app/controllers/push_notification/firebase_messaging.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
 import 'package:app/views/auth/profile_verification_screen.dart';
@@ -16,7 +17,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:in_app_update/in_app_update.dart';
 
-import '../../../controllers/utils.dart';
 import '../../../providers/profile_provider.dart';
 import '../../widgets/notification_button_widget.dart';
 import '../history_screen.dart';
@@ -110,7 +110,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }, error: (error, stackTrace) {
       return const ErrorWidgetScreen();
     }, data: (data) {
-      Utils.subscribeToTopic(data?["state"] == null
+      Messaging.subscribeToTopic(data?["state"] == null
           ? "all"
           : data?["state"].replaceAll(' ', '').toLowerCase());
 
@@ -149,7 +149,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         fontWeight: FontWeight.bold)),
                               )),
                           Slider(
-                              label: "${filterData.value?.radius.round() ?? 10} Kms",
+                              label:
+                                  "${filterData.value?.radius.round() ?? 10} Kms",
                               min: 1,
                               max: 20,
                               divisions: 4,

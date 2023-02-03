@@ -8,9 +8,14 @@ import 'package:go_router/go_router.dart';
 import '../utils.dart';
 
 class Messaging {
-  static void showMessage() {
-    FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  static FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
+  static Future subscribeToTopic(String topic) async {
+    await firebaseMessaging
+        .subscribeToTopic(topic.replaceAll(' ', '').toLowerCase());
+  }
+
+  static void showMessage() {
     // firebaseMessaging.getToken().then((value) => `storeToken(value));
     // // print('fcm token ${fcm_token}');
     // // storeToken(fcm_token);

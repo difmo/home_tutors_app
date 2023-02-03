@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -20,13 +19,6 @@ class GlobalVariable {
 class Utils {
   static void toast(String text) {
     EasyLoading.showToast(text, toastPosition: EasyLoadingToastPosition.bottom);
-  }
-
-  static Future subscribeToTopic(String topic) async {
-    // localStorage = await SharedPreferences.getInstance();
-    // String topic = localStorage.getString('topic') ?? "all";
-    await FirebaseMessaging.instance
-        .subscribeToTopic(topic.replaceAll(' ', '').toLowerCase());
   }
 
   static void loading({String? msg}) {
