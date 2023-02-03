@@ -104,7 +104,7 @@ class UserDetailsScreen extends HookConsumerWidget {
                 ),
                 DetailsTileWidget(
                   icon: Icons.location_city,
-                  title: item?["state"],
+                  title: item?["city"],
                 ),
                 DetailsTileWidget(
                   icon: Icons.location_on,
@@ -314,6 +314,7 @@ class UserDetailsScreen extends HookConsumerWidget {
                             await AdminControllers.deleteUser(userId: item!.id);
                             EasyLoading.dismiss();
                             Future.delayed(Duration.zero).then((value) {
+                              context.pop();
                               context.pop();
                             });
                           },

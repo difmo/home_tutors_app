@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:app/controllers/routes.dart';
@@ -111,7 +110,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }, error: (error, stackTrace) {
       return const ErrorWidgetScreen();
     }, data: (data) {
-      log(data?["last_seen_notifications"].toDate().toString() ?? "");
       Utils.subscribeToTopic(data?["state"] == null
           ? "all"
           : data?["state"].replaceAll(' ', '').toLowerCase());
@@ -180,7 +178,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         const Text(
                           "VIP Home Tutors",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, color: Colors.black),
                         ),
                         const SizedBox(width: 10.0),
                         TextButton(

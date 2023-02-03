@@ -3,6 +3,7 @@ import 'package:app/controllers/auth_controllers.dart';
 import 'package:app/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../controllers/utils.dart';
@@ -33,7 +34,11 @@ class NotificationsScreen extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 10.0),
-                      Text(item["body"]),
+                      Linkify(
+                          onOpen: (link) async {
+                            openUrl(link.url);
+                          },
+                          text: item["body"]),
                       const SizedBox(height: 5.0),
                       Text(formatWithMonthNameTime
                           .format(item["createdOn"].toDate())),

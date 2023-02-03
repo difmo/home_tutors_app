@@ -130,14 +130,6 @@ class UserDrawerWidget extends StatelessWidget {
               await ProfileController.logout(context);
             },
           ),
-          const SizedBox(height: 10.0),
-          const Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Text(
-              'App version: v1.2.1',
-              style: TextStyle(fontSize: 12.0, color: Colors.grey),
-            ),
-          )
         ],
       ),
     );

@@ -17,12 +17,11 @@ class NotificationButtonWidget extends HookConsumerWidget {
   const NotificationButtonWidget(this.lastSeen, {super.key});
 
   Widget countText(int count) {
-    return CircleAvatar(
-        radius: 10,
-        child: Text(
-          count.toString(),
-          style: const TextStyle(fontSize: 10.0),
-        ));
+    return Badge.count(
+      count: count,
+      alignment: AlignmentDirectional.topStart,
+      child: const Icon(Icons.notifications, size: 35),
+    );
   }
 
   @override
@@ -50,27 +49,21 @@ class NotificationButtonWidget extends HookConsumerWidget {
               profileDataProvider(FirebaseAuth.instance.currentUser?.uid));
           context.push(AppRoutes.notifications);
         },
-        icon: Stack(
-          alignment: Alignment.bottomRight,
-          children: [
-            const Icon(Icons.notifications, size: 35),
-            StreamBuilder(
-                stream: UserControllers.fetchNotificationsStream(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return countText(0);
-                  }
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                    case ConnectionState.waiting:
-                      return Center(child: countText(0));
-                    case ConnectionState.active:
-                    case ConnectionState.done:
-                      var count = getCount(snapshot.data?.docs ?? []);
-                      return countText(count);
-                  }
-                }),
-          ],
-        ));
+        icon: StreamBuilder(
+            stream: UserControllers.fetchNotificationsStream(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return countText(0);
+              }
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return countText(0);
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  var count = getCount(snapshot.data?.docs ?? []);
+                  return countText(count);
+              }
+            }));
   }
 }
