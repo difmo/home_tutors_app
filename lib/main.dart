@@ -39,8 +39,10 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         title: 'Home Tutors',
         builder: EasyLoading.init(),
-        theme:
-            ThemeData(primarySwatch: Colors.blue, brightness: Brightness.light),
+        theme: ThemeData(
+            useMaterial3: true,
+            primarySwatch: Colors.blue,
+            brightness: Brightness.light),
         routerConfig: AppRoutes.router);
   }
 }

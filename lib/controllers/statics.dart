@@ -1,6 +1,7 @@
 const String adminPhone = "+918427373281";
 const String contactNumber = "+919988752741";
 const String websiteUrl = "https://www.viptutors.in";
+const String contactUrl = "http://www.viptutors.in/contact.php";
 const String googleApiKey = "AIzaSyA2rMtFcSCZNfZhpcrrMDVfVJa_RXUl4xg";
 const int autoPostDeleteDateRange = 30;
 

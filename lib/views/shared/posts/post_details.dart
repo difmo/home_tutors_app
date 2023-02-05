@@ -7,8 +7,8 @@ import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:app/views/constants.dart';
-import 'package:app/views/posts/widgets/collected_users.dart';
-import 'package:app/views/posts/widgets/matched_users.dart';
+import 'package:app/views/shared/widgets/collected_users.dart';
+import 'package:app/views/shared/widgets/matched_users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -20,10 +20,10 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../controllers/statics.dart';
-import '../../providers/profile_provider.dart';
-import '../admin/add_post_screen.dart';
-import '../admin/widgets/clear_data_confirm_widget.dart';
+import '../../../controllers/statics.dart';
+import '../../../providers/profile_provider.dart';
+import '../../admin/add_post_screen.dart';
+import '../../admin/widgets/clear_data_confirm_widget.dart';
 
 class PostDetailsScreen extends HookConsumerWidget {
   final String id;
@@ -325,7 +325,7 @@ Post Link : $link,""";
                                       Slider(
                                           label: "${radius.value.round()} Kms",
                                           min: 1,
-                                          max: 10,
+                                          max: 5,
                                           divisions: 4,
                                           value: radius.value,
                                           onChanged: (val) {
@@ -468,7 +468,7 @@ Post Link : $link,""";
                     const SizedBox(height: 15.0),
                     TextColoredButton(
                         onTap: () {
-                          openUrl(websiteUrl);
+                          openUrl(contactUrl);
                         },
                         lable: "Connect VIP Tutors Bureau"),
                   ]

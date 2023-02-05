@@ -2,7 +2,7 @@ import 'package:app/controllers/admin/admin_controllers.dart';
 import 'package:app/controllers/utils.dart';
 import 'package:app/views/admin/widgets/clear_data_confirm_widget.dart';
 import 'package:app/views/admin/widgets/send_notification_widget.dart';
-import 'package:app/views/posts/posts_list.dart';
+import 'package:app/views/shared/posts/posts_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -41,8 +41,7 @@ class AdminHomeScreen extends HookConsumerWidget {
           children: [
             const Text('Posts'),
             IconButton(
-                icon: const Icon(Icons.cleaning_services_rounded,
-                    color: Colors.white),
+                icon: const Icon(Icons.cleaning_services_rounded),
                 onPressed: () {
                   showDialog(
                       context: context,
@@ -66,8 +65,8 @@ class AdminHomeScreen extends HookConsumerWidget {
         centerTitle: false,
         actions: [
           TextButton.icon(
-              label: const Text("Add", style: TextStyle(color: Colors.white)),
-              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text("Add"),
+              icon: const Icon(Icons.add),
               onPressed: () async {
                 context.push(AppRoutes.addNewLead);
               }),
@@ -164,6 +163,20 @@ class AdminHomeScreen extends HookConsumerWidget {
               title: const Text('Notification History'),
               onTap: () {
                 context.push(AppRoutes.notifications);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.apps),
+              title: const Text('Connected Apps'),
+              onTap: () {
+                context.push(AppRoutes.connectedApps);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.feedback),
+              title: const Text('Feedbacks'),
+              onTap: () {
+                context.push(AppRoutes.userFeedbacksScreen);
               },
             ),
             ListTile(

@@ -170,7 +170,7 @@ class _AmountOptionsScreenState extends State<AmountOptionsScreen> {
       appBar: AppBar(
         title: const Text("Amount Options"),
         actions: [
-          ElevatedButton.icon(
+          TextButton.icon(
             onPressed: () {
               showDialog(
                   context: context,

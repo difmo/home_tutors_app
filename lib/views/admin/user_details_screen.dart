@@ -12,7 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants.dart';
-import '../posts/post_details.dart';
+import '../shared/posts/post_details.dart';
 import 'widgets/clear_data_confirm_widget.dart';
 
 class UserDetailsScreen extends HookConsumerWidget {

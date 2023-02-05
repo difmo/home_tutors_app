@@ -4,7 +4,7 @@ import 'package:app/controllers/push_notification/firebase_messaging.dart';
 import 'package:app/controllers/routes.dart';
 import 'package:app/controllers/user_controllers.dart';
 import 'package:app/views/auth/profile_verification_screen.dart';
-import 'package:app/views/posts/posts_list.dart';
+import 'package:app/views/shared/posts/posts_list.dart';
 import 'package:app/views/widgets/error_widget_screen.dart';
 import 'package:app/views/widgets/loading_widget_screen.dart';
 import 'package:app/views/widgets/user_drawer.dart';
@@ -190,7 +190,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: Text(
                               "Upgrade ${data?["wallet_balance"] ?? 0}",
                               style: const TextStyle(
-                                  color: Colors.yellow,
+                                  color: Colors.orange,
                                   fontWeight: FontWeight.bold),
                             )),
                       ],

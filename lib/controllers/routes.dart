@@ -6,14 +6,18 @@ import 'package:app/views/admin/all_transactions_screen.dart';
 import 'package:app/views/admin/amount_options_screen.dart';
 import 'package:app/views/admin/search_result_screen.dart';
 import 'package:app/views/admin/user_details_screen.dart';
+import 'package:app/views/admin/user_feedbacks_screen.dart';
 import 'package:app/views/admin/users_list.dart';
 import 'package:app/views/admin/wallet_hits_screen.dart';
 import 'package:app/views/auth/login_screen.dart';
 import 'package:app/views/auth/otp_screen.dart';
 import 'package:app/views/notifications_screen.dart';
+import 'package:app/views/shared/connected_apps.dart';
+import 'package:app/views/user/about_us_screen.dart';
+import 'package:app/views/user/feedback_screen.dart';
 import 'package:app/views/user/home/home_screen.dart';
 import 'package:app/views/onboarding_screen.dart';
-import 'package:app/views/posts/post_details.dart';
+import 'package:app/views/shared/posts/post_details.dart';
 import 'package:app/views/user/profile/teacher_profile_screen.dart';
 import 'package:app/views/user/rules_screen.dart';
 import 'package:app/views/user/wallet/wallet_history_screen.dart';
@@ -48,6 +52,10 @@ class AppRoutes {
   static const String imageView = '/image_view';
   static const String rulesScreen = '/rules_screen';
   static const String notifications = '/notifications';
+  static const String connectedApps = '/connected_apps';
+  static const String feedbackScreen = '/feedback_screen';
+  static const String userFeedbacksScreen = '/user_feedbacks_screen';
+  static const String aboutUsScreen = '/about_us';
 
   static final GoRouter router = GoRouter(
     initialLocation: AuthControllers.manageLogin(),
@@ -180,6 +188,30 @@ class AppRoutes {
         path: notifications,
         builder: (BuildContext context, GoRouterState state) {
           return const NotificationsScreen();
+        },
+      ),
+      GoRoute(
+        path: connectedApps,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ConnectedAppsScreen();
+        },
+      ),
+      GoRoute(
+        path: feedbackScreen,
+        builder: (BuildContext context, GoRouterState state) {
+          return FeedbackScreen();
+        },
+      ),
+      GoRoute(
+        path: userFeedbacksScreen,
+        builder: (BuildContext context, GoRouterState state) {
+          return const UserFeedbackScreen();
+        },
+      ),
+      GoRoute(
+        path: aboutUsScreen,
+        builder: (BuildContext context, GoRouterState state) {
+          return const AboutUsScreen();
         },
       ),
     ],

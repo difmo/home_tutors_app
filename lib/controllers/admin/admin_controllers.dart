@@ -372,16 +372,19 @@ class AdminControllers {
 
   static Stream<List<DocumentSnapshot<Object?>>> getMatchedUsers(
       GetMatchedUsersApiModel model) {
-      final geo = GeoFlutterFire();
-      GeoFirePoint center = geo.point(
-          latitude: model.data["location"].latitude,
-          longitude: model.data["location"].longitude);
-      var collectionReference = FirebaseFirestore.instance.collection('users');
-      var geoRef = geo.collection(collectionRef: collectionReference);
+    final geo = GeoFlutterFire();
+    GeoFirePoint center = geo.point(
+        latitude: model.data["location"].latitude,
+        longitude: model.data["location"].longitude);
+    var collectionReference = FirebaseFirestore.instance.collection('users');
+    var geoRef = geo.collection(collectionRef: collectionReference);
 
-      Stream<List<DocumentSnapshot<Object?>>> stream = geoRef.within(
-          center: center, radius: model.radius, field: "position", strictMode: true);
-      return stream;
+    Stream<List<DocumentSnapshot<Object?>>> stream = geoRef.within(
+        center: center,
+        radius: model.radius,
+        field: "position",
+        strictMode: true);
+    return stream;
   }
 
   static Future<String?> createNotification(
@@ -417,6 +420,69 @@ class AdminControllers {
           .get();
       for (var element in collection.docs) {
         log(element["createdOn"].toDate().toString());
+        await element.reference.delete();
+      }
+      return;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      getConnectedApps() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('connected_apps')
+          .orderBy('createdOn', descending: true)
+          .get();
+      return response.docs;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<String?> addConnectedApp(Map<String, dynamic> postBody) async {
+    try {
+      DocumentReference docRef = await FirebaseFirestore.instance
+          .collection('connected_apps')
+          .add(postBody);
+      return docRef.id;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future deleteConnectedApp(String id) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('connected_apps')
+          .doc(id)
+          .delete();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+      getFeedbacks() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> response = await FirebaseFirestore
+          .instance
+          .collection('feedbacks')
+          .orderBy('createdOn', descending: true)
+          .get();
+      return response.docs;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future clearFeedbacks() async {
+    try {
+      var collection =
+          await FirebaseFirestore.instance.collection('feedbacks').get();
+      for (var element in collection.docs) {
         await element.reference.delete();
       }
       return;

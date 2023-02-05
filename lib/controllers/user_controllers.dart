@@ -192,4 +192,15 @@ class UserControllers {
       rethrow;
     }
   }
+
+  static Future<String?> submitFeedback(Map<String, dynamic> postBody) async {
+    try {
+      DocumentReference docRef = await FirebaseFirestore.instance
+          .collection('feedbacks')
+          .add(postBody);
+      return docRef.id;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

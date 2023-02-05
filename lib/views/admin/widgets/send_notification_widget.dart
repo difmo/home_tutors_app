@@ -24,58 +24,55 @@ class SendNotificationWidget extends HookConsumerWidget {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0))),
       contentPadding: const EdgeInsets.all(20.0),
-      title: const Text("Send notification to:"),
-      content: SizedBox(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              DropdownSearch<String>(
-                validator: (value) {
-                  if (checkEmpty(value)) {
-                    return "Choose state";
-                  } else {
-                    return null;
-                  }
-                },
-                selectedItem:
-                    selectedState.value.isEmpty ? null : selectedState.value,
-                popupProps: const PopupProps.menu(
-                    showSelectedItems: true, showSearchBox: true),
-                items: stateList,
-                dropdownDecoratorProps: const DropDownDecoratorProps(
-                  dropdownSearchDecoration: InputDecoration(
-                    labelText: "Select state",
-                    hintText: "choose state or search",
-                  ),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            DropdownSearch<String>(
+              validator: (value) {
+                if (checkEmpty(value)) {
+                  return "Choose state";
+                } else {
+                  return null;
+                }
+              },
+              selectedItem:
+                  selectedState.value.isEmpty ? null : selectedState.value,
+              popupProps: const PopupProps.menu(
+                  showSelectedItems: true, showSearchBox: true),
+              items: stateList,
+              dropdownDecoratorProps: const DropDownDecoratorProps(
+                dropdownSearchDecoration: InputDecoration(
+                  labelText: "Select state",
+                  hintText: "choose state or search",
                 ),
-                onChanged: (value) {
-                  selectedState.value = value!;
-                },
               ),
-              TextField(
-                controller: title,
-                autofocus: true,
-                decoration: const InputDecoration(
-                    labelText: "Title",
-                    hintText: 'Notification title',
-                    border: InputBorder.none),
-                maxLength: 75,
-              ),
-              TextField(
-                controller: message,
-                decoration: const InputDecoration(
-                    labelText: "Message",
-                    hintText: 'Short Notification content',
-                    border: InputBorder.none),
-                maxLines: 3,
-                maxLength: 150,
-              ),
-            ],
-          ),
+              onChanged: (value) {
+                selectedState.value = value!;
+              },
+            ),
+            TextField(
+              controller: title,
+              autofocus: true,
+              decoration: const InputDecoration(
+                  labelText: "Notification Title",
+                  hintText: 'Notification title',
+                  border: InputBorder.none),
+              maxLength: 75,
+            ),
+            TextField(
+              controller: message,
+              decoration: const InputDecoration(
+                  labelText: "Notification Message",
+                  hintText: 'Short Notification content',
+                  border: InputBorder.none),
+              maxLines: 3,
+              maxLength: 150,
+            ),
+          ],
         ),
       ),
       actions: [

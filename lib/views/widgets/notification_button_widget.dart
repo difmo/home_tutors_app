@@ -17,11 +17,13 @@ class NotificationButtonWidget extends HookConsumerWidget {
   const NotificationButtonWidget(this.lastSeen, {super.key});
 
   Widget countText(int count) {
-    return Badge.count(
-      count: count,
-      alignment: AlignmentDirectional.topStart,
-      child: const Icon(Icons.notifications, size: 35),
-    );
+    return count == 0
+        ? const Icon(Icons.notifications, size: 35)
+        : Badge.count(
+            count: count,
+            alignment: AlignmentDirectional.topStart,
+            child: const Icon(Icons.notifications, size: 35),
+          );
   }
 
   @override

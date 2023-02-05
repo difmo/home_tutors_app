@@ -258,7 +258,7 @@ class WalletScreen extends HookConsumerWidget {
                   style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
-                      color: Colors.yellow),
+                      color: Colors.orange),
                 ),
               ),
             )
