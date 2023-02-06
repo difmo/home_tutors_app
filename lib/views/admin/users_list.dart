@@ -94,20 +94,13 @@ class UsersListScreen extends HookConsumerWidget {
               }),
         ),
         appBar: AppBar(
-          title: TextSelectionTheme(
-            data: const TextSelectionThemeData(
-                selectionColor: Colors.white30, cursorColor: Colors.white),
-            child: TextField(
-              decoration: const InputDecoration(
-                  hintText: "Type Name or number",
-                  hintStyle: TextStyle(color: Colors.white),
-                  border: InputBorder.none),
-              style: const TextStyle(color: Colors.white),
-              textInputAction: TextInputAction.search,
-              onSubmitted: (value) {
-                context.push(AppRoutes.searchResults, extra: value);
-              },
-            ),
+          title: TextField(
+            decoration: const InputDecoration(
+                hintText: "Type Name or number", border: InputBorder.none),
+            textInputAction: TextInputAction.search,
+            onSubmitted: (value) {
+              context.push(AppRoutes.searchResults, extra: value);
+            },
           ),
           actions: [
             IconButton(

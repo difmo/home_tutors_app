@@ -4,7 +4,6 @@ import 'package:app/controllers/profile_controllers.dart';
 import 'package:app/controllers/statics.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:in_app_review/in_app_review.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../controllers/routes.dart';
@@ -26,6 +25,7 @@ class UserDrawerWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 20.0),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -121,13 +121,9 @@ class UserDrawerWidget extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.rate_review_sharp),
               title: const Text("Rate us"),
-              onTap: () async {
-                final InAppReview inAppReview = InAppReview.instance;
-                if (await inAppReview.isAvailable()) {
-                  inAppReview.requestReview();
-                } else {
-                  inAppReview.openStoreListing();
-                }
+              onTap: () {
+                openUrl(
+                    'https://play.google.com/store/apps/details?id=com.viptutors.app');
               },
             ),
             ListTile(
