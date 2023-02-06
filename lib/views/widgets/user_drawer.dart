@@ -83,20 +83,22 @@ class UserDrawerWidget extends StatelessWidget {
                 context.push(AppRoutes.teacherProfile);
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.wallet),
-              title: const Text("Wallet"),
-              onTap: () {
-                context.push(AppRoutes.walletScreen);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.attach_money),
-              title: const Text("Wallet History"),
-              onTap: () {
-                context.push(AppRoutes.walletHistory);
-              },
-            ),
+            if (!Platform.isIOS) ...[
+              ListTile(
+                leading: const Icon(Icons.wallet),
+                title: const Text("Wallet"),
+                onTap: () {
+                  context.push(AppRoutes.walletScreen);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.attach_money),
+                title: const Text("Wallet History"),
+                onTap: () {
+                  context.push(AppRoutes.walletHistory);
+                },
+              ),
+            ],
             ListTile(
               leading: const Icon(Icons.rule),
               title: const Text("Rules"),

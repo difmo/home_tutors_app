@@ -182,17 +182,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           style: TextStyle(
                               fontWeight: FontWeight.w500, color: Colors.black),
                         ),
-                        const SizedBox(width: 10.0),
-                        TextButton(
-                            onPressed: () {
-                              context.push(AppRoutes.walletScreen);
-                            },
-                            child: Text(
-                              "Upgrade ${data?["wallet_balance"] ?? 0}",
-                              style: const TextStyle(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold),
-                            )),
+                        if (!Platform.isIOS) ...[
+                          const SizedBox(width: 10.0),
+                          TextButton(
+                              onPressed: () {
+                                context.push(AppRoutes.walletScreen);
+                              },
+                              child: Text(
+                                "Upgrade ${data?["wallet_balance"] ?? 0}",
+                                style: const TextStyle(
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                        ]
                       ],
                     ),
                     bottom: PreferredSize(

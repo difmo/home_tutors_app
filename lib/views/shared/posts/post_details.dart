@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:app/controllers/admin/admin_controllers.dart';
 import 'package:app/controllers/auth_controllers.dart';
@@ -189,11 +190,12 @@ class PostDetailsScreen extends HookConsumerWidget {
                           //     icon: Icons.school,
                           //     title: "Prefered Qualification: ${postData.value?["qualify"]}"),
                           if (!ifPurchased.value) ...[
-                            DetailsColorTileWidget(
-                              icon: Icons.wallet,
-                              title: "Coins needed: ",
-                              value: "${postData.value?["req_coins"]}",
-                            ),
+                            if (!Platform.isIOS)
+                              DetailsColorTileWidget(
+                                icon: Icons.wallet,
+                                title: "Coins needed: ",
+                                value: "${postData.value?["req_coins"]}",
+                              ),
                             Row(
                               children: [
                                 Icon(Icons.people, color: Colors.grey.shade700),
@@ -356,119 +358,126 @@ Post Link : $link,""";
                           int.parse(postData.value?["max_hits"])) &&
                       !AuthControllers.isAdmin()) ...[
                     const SizedBox(height: 15.0),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              FirebaseAuth auth = FirebaseAuth.instance;
-                              Map<String, dynamic> postBody = {
-                                "uid": auth.currentUser?.uid,
-                                "mobile": auth.currentUser?.phoneNumber,
-                                "post_id": postId.value,
-                                "post_no": postData.value?["id"],
-                                "post_desc": postData.value?["desc"],
-                                "createdOn": FieldValue.serverTimestamp()
-                              };
-                              Utils.loading();
-
-                              await ProfileController.createWalletHit(
-                                  postBody: postBody);
-                              EasyLoading.dismiss();
-
-                              context.push(AppRoutes.walletScreen);
-                            },
-                            child: Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: const Center(
-                                  child: Text(
-                                    "Upgrade Wallet",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.0),
-                                  ),
-                                )),
-                          ),
-                        ),
-                        const SizedBox(width: 15.0),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () async {
-                              if ((postData.value?["users"].length - 1) <
-                                  int.parse(postData.value?["max_hits"])) {
+                    if (!Platform.isIOS)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () async {
+                                FirebaseAuth auth = FirebaseAuth.instance;
+                                Map<String, dynamic> postBody = {
+                                  "uid": auth.currentUser?.uid,
+                                  "mobile": auth.currentUser?.phoneNumber,
+                                  "post_id": postId.value,
+                                  "post_no": postData.value?["id"],
+                                  "post_desc": postData.value?["desc"],
+                                  "createdOn": FieldValue.serverTimestamp()
+                                };
                                 Utils.loading();
-                                var profileData = await ProfileController()
-                                    .fetchProfileData(
-                                        FirebaseAuth.instance.currentUser?.uid);
-                                log(postId.value);
-                                if (profileData?["wallet_balance"] >=
-                                    int.parse(postData.value?["req_coins"])) {
-                                  UserControllers.addUidIntoPost(
-                                      postId: postId.value);
-                                  await ProfileController.updateProfile(
-                                      profileBody: {
-                                        "wallet_balance":
-                                            (profileData?["wallet_balance"] -
-                                                int.parse(postData
-                                                    .value?["req_coins"]))
-                                      });
-                                  User? user =
-                                      FirebaseAuth.instance.currentUser;
 
-                                  Map<String, dynamic> orderData = {
-                                    "uid": user!.uid,
-                                    "phone": user.phoneNumber,
-                                    "post_id": postData.value?["id"],
-                                    "req_coins": postData.value?["req_coins"],
-                                    "wallet_balance":
-                                        profileData?["wallet_balance"],
-                                    "balance_left":
-                                        (profileData?["wallet_balance"] -
-                                            int.parse(
-                                                postData.value?["req_coins"])),
-                                    "createdOn": FieldValue.serverTimestamp()
-                                  };
-                                  await UserControllers.addToOrders(orderData);
-                                  EasyLoading.dismiss();
+                                await ProfileController.createWalletHit(
+                                    postBody: postBody);
+                                EasyLoading.dismiss();
 
-                                  ref.refresh(profileDataProvider(
-                                      FirebaseAuth.instance.currentUser?.uid));
-                                  ifPurchased.value = true;
-                                } else {
-                                  EasyLoading.showError(
-                                      "Please upgrade your wallet");
-                                  EasyLoading.dismiss();
-                                }
-                              }
-                            },
-                            child: Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: const Center(
-                                  child: Text(
-                                    "Show Contact",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.0),
-                                  ),
-                                )),
+                                context.push(AppRoutes.walletScreen);
+                              },
+                              child: Container(
+                                  padding: const EdgeInsets.all(10.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: const Center(
+                                    child: Text(
+                                      "Upgrade Wallet",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14.0),
+                                    ),
+                                  )),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(width: 15.0),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () async {
+                                if ((postData.value?["users"].length - 1) <
+                                    int.parse(postData.value?["max_hits"])) {
+                                  Utils.loading();
+                                  var profileData = await ProfileController()
+                                      .fetchProfileData(FirebaseAuth
+                                          .instance.currentUser?.uid);
+                                  log(postId.value);
+                                  if (profileData?["wallet_balance"] >=
+                                      int.parse(postData.value?["req_coins"])) {
+                                    UserControllers.addUidIntoPost(
+                                        postId: postId.value);
+                                    await ProfileController.updateProfile(
+                                        profileBody: {
+                                          "wallet_balance":
+                                              (profileData?["wallet_balance"] -
+                                                  int.parse(postData
+                                                      .value?["req_coins"]))
+                                        });
+                                    User? user =
+                                        FirebaseAuth.instance.currentUser;
+
+                                    Map<String, dynamic> orderData = {
+                                      "uid": user!.uid,
+                                      "phone": user.phoneNumber,
+                                      "post_id": postData.value?["id"],
+                                      "req_coins": postData.value?["req_coins"],
+                                      "wallet_balance":
+                                          profileData?["wallet_balance"],
+                                      "balance_left":
+                                          (profileData?["wallet_balance"] -
+                                              int.parse(postData
+                                                  .value?["req_coins"])),
+                                      "createdOn": FieldValue.serverTimestamp()
+                                    };
+                                    await UserControllers.addToOrders(
+                                        orderData);
+                                    EasyLoading.dismiss();
+
+                                    ref.refresh(profileDataProvider(FirebaseAuth
+                                        .instance.currentUser?.uid));
+                                    ifPurchased.value = true;
+                                  } else {
+                                    EasyLoading.showError(
+                                        "Please upgrade your wallet");
+                                    EasyLoading.dismiss();
+                                  }
+                                }
+                              },
+                              child: Container(
+                                  padding: const EdgeInsets.all(10.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: const Center(
+                                    child: Text(
+                                      "Show Contact",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14.0),
+                                    ),
+                                  )),
+                            ),
+                          ),
+                        ],
+                      ),
                   ],
                   if (!AuthControllers.isAdmin()) ...[
                     const SizedBox(height: 15.0),
                     TextColoredButton(
                         onTap: () {
-                          openUrl(contactUrl);
+                          if (Platform.isIOS) {
+                            openUrl(
+                                "https://api.whatsapp.com/send?phone=9988752741");
+                          } else {
+                            openUrl(contactUrl);
+                          }
                         },
                         lable: "Connect VIP Tutors Bureau"),
                   ]
