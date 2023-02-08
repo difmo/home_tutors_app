@@ -62,15 +62,16 @@ class UserDrawerWidget extends StatelessWidget {
                         profileData?["state"],
                   ),
                   const SizedBox(height: 10.0),
-                  InkWell(
-                    onTap: () {
-                      openUrl(websiteUrl);
-                    },
-                    child: Text(
-                      "For more details visit our website : www.viptutors.in",
-                      style: TextStyle(color: Colors.grey.shade700),
+                  if (!Platform.isIOS)
+                    InkWell(
+                      onTap: () {
+                        openUrl(websiteUrl);
+                      },
+                      child: Text(
+                        "For more details visit our website : www.viptutors.in",
+                        style: TextStyle(color: Colors.grey.shade700),
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 10.0),
                   const Divider(),
                 ],
